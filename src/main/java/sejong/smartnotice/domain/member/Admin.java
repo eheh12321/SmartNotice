@@ -5,11 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import sejong.smartnotice.domain.Admin_Town;
-import sejong.smartnotice.domain.Town;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static javax.persistence.CascadeType.*;
 
 @Data
 @Entity
@@ -22,14 +23,18 @@ public class Admin {
     @Column(name = "admin_id")
     private Long id;
 
-    @OneToMany(mappedBy = "admin")
+    // Admin 커밋 시 자동으로 딸려감
+    @OneToMany(mappedBy = "admin", cascade = ALL)
     private List<Admin_Town> townList = new ArrayList<>();
 
+    @Enumerated(value = EnumType.STRING)
+    private AdminRole type; // 관리자 타입
+    
     private String loginId;
     private String loginPw;
     private String name;
     private String tel;
-    private String type; // 마을 관리자(마을 관제) / 최고 관리자(Root, 전체 관제)
+    
 
 
 }

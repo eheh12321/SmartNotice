@@ -21,7 +21,7 @@ public class UserController {
      * 유저 회원가입
      * - 회원가입 창에서 아이디, 비밀번호, 유저 정보 입력 (마을정보, 보호자정보 제외)
      * - 회원 가입하면 연결된 단말기도 같이 생성해야됨
-         * http://localhost:8080/user/register?name=name&address=address&tel=tel&loginId=id&loginPw=pw
+     * http://localhost:8080/user/register?name=name&address=address&tel=tel&loginId=id&loginPw=pw
      */
     @PostMapping("/register")
     public void register (

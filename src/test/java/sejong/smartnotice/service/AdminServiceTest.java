@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.Admin_Town;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.member.Admin;
+import sejong.smartnotice.domain.member.AdminRole;
 
 import javax.persistence.EntityManager;
 
@@ -36,7 +37,7 @@ class AdminServiceTest {
                 .loginPw("비밀번호")
                 .name("이름")
                 .tel("전화번호")
-                .type("이장").build();
+                .type(AdminRole.ADMIN).build();
         em.persist(admin);
 
         em.flush();
