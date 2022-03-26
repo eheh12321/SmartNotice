@@ -4,7 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import sejong.smartnotice.domain.Announce;
 import sejong.smartnotice.domain.Device;
+import sejong.smartnotice.domain.EmergencyAlert;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.dto.UserDTO;
 
@@ -15,6 +18,7 @@ import java.util.List;
 import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.*;
 
+@Slf4j
 @Data
 @Builder
 @Entity
@@ -43,4 +47,11 @@ public class User {
     private String name;
     private String address;
     private String tel;
+
+    public void receiveAnnounce(Announce announce) {
+        log.warn("======방송이 도착했습니다=========");
+        log.warn("방송명: {}", announce.getTitle());
+        log.warn("방송타입: {}", announce.getType());
+        log.warn("===============================");
+    }
 }

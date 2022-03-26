@@ -61,7 +61,11 @@ public class AdminController {
         adminService.addTown(name);
     }
 
-    // http://localhost:8080/admin/announce/1
+    /**
+     * 마을 방송하기 (테스트)
+     * http://localhost:8080/admin/announce/1
+     * (사전조건 - 관리자랑 마을이랑 연결되있어야됨)
+     */
     @GetMapping("/announce/{id}")
     public void 관리자방송테스트용(@PathVariable Long id) {
         Admin admin = adminService.findById(id);

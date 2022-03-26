@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.Device;
 import sejong.smartnotice.domain.EmergencyAlert;
+import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.member.Supporter;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.repository.UserRepository;
@@ -43,6 +44,13 @@ public class UserService {
         return opt.get();
     }
 
+    // 유저랑 마을 연결
+    public void selectTown(Long townId, User user) {
+        Town town = em.find(Town.class, townId);
+        user.setTown(town);
+        // 유저랑 마을은 단방향 관계로 만들고 필요시 조인해서 사용하기
+    }
+
     // 유저에 의한 긴급호출
     public void makeEmergencyAlert(User user) {
         Device device = user.getDevice();
@@ -55,6 +63,7 @@ public class UserService {
         List<Supporter> supporterList = user.getSupporterList();
         for (Supporter supporter : supporterList) {
             // 회원과 연결된 보호자에게 알림
+            supporter.emergencyCall(alert);
         }
         em.persist(alert);
     }

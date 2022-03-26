@@ -2,7 +2,6 @@ package sejong.smartnotice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.Admin_Town;
@@ -10,6 +9,7 @@ import sejong.smartnotice.domain.Announce;
 import sejong.smartnotice.domain.Announce_Town;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.member.Admin;
+import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.repository.AdminRepository;
 
 import javax.persistence.EntityManager;
@@ -66,6 +66,7 @@ public class AdminService {
                 .type(type)
                 .time(LocalDateTime.now())
                 .store("./저장소").build();
+        em.persist(announce);
 
         List<Admin_Town> townList = admin.getTownList();
         List<Announce_Town> atList = new ArrayList<>(); // 관리자가 어느 마을에 방송할지 선택함
@@ -75,8 +76,16 @@ public class AdminService {
                     .announce(announce).build();
             em.persist(at);
             atList.add(at);
+
+            //////////////////////// 회원에게 방송 알림 쏘기 (나중에 따로 메소드로 빼기)
+            Town town = at.getTown();
+            List<User> userList = em.createQuery("select u from User u where u.town=:town", User.class)
+                    .setParameter("town", town).getResultList();
+            for (User user : userList) {
+                user.receiveAnnounce(announce);
+            }
+            ///////////////////////
         }
-        em.persist(announce);
     }
 
     // 관리자(Root)가 마을을 추가할 수 있어야됨 -- 나중에 RootService 하나 더 만들던가 하기
@@ -85,7 +94,4 @@ public class AdminService {
                 .name(name).build();
         em.persist(town);
     }
-
-
-
 }
