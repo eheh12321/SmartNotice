@@ -6,11 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import sejong.smartnotice.domain.Device;
 import sejong.smartnotice.domain.Town;
+import sejong.smartnotice.domain.dto.UserDTO;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.*;
 
 @Data
@@ -24,7 +26,8 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
-    @OneToOne(fetch = LAZY)
+    // Device의 생명주기가 User에 의해 정해진다
+    @OneToOne(fetch = LAZY, cascade = ALL)
     @JoinColumn(name = "device_id")
     private Device device;
 

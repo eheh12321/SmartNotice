@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -20,6 +21,10 @@ public class Device {
 
     private Integer sensor1;
     private Integer sensor2;
+
+    @ColumnDefault("false")
     private boolean error;
+
+    @ColumnDefault("false")
     private boolean emergency;
 }

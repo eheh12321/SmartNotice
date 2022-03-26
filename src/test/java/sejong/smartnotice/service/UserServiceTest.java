@@ -47,4 +47,11 @@ class UserServiceTest {
         User user = userRepository.findById(1L).get();
         userService.makeEmergencyAlert(user);
     }
+
+    @Test
+    @Rollback(false)
+    void 회원탈퇴() {
+        // 회원 탈퇴시 연결된 단말기 - 보호자 - 마을 다 정리해야함
+
+    }
 }
