@@ -70,20 +70,6 @@ class DomainTest {
                     .type("이장").build();
             em.persist(admin);
 
-            // 6. 관리자를 통해 마을에 방송하기
-            Announce_Town at1 = new Announce_Town();
-            at1.setTown(town);
-            Announce_Town at2 = new Announce_Town(); // 한번에 여러 마을에 방송할 수 있어야함
-            at2.setTown(town);
-
-            em.persist(at1);
-            em.persist(at2);
-
-            Announce announce = Announce.createAnnounce(admin, at1, at2);
-            at1.setAnnounce(announce);
-            at2.setAnnounce(announce);
-            em.persist(announce);
-
             // 7. 긴급호출
             EmergencyAlert alert = EmergencyAlert.builder()
                     .device(device)

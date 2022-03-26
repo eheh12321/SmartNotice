@@ -18,11 +18,11 @@ public class Announce_Town {
     @Column(name = "announce_town_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "town_id")
     private Town town;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "announce_id")
     private Announce announce;
 }
