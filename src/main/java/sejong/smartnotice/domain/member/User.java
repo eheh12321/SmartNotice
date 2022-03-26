@@ -1,13 +1,19 @@
 package sejong.smartnotice.domain.member;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import sejong.smartnotice.domain.Device;
 import sejong.smartnotice.domain.Town;
 
 import javax.persistence.*;
 
 @Data
+@Builder
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

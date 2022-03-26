@@ -1,11 +1,17 @@
 package sejong.smartnotice.domain.member;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Data
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Supporter {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,5 +25,5 @@ public class Supporter {
     private String loginId;
     private String loginPw;
     private String name;
-    private String address;
+    private String tel;
 }
