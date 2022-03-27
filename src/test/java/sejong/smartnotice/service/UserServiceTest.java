@@ -25,8 +25,6 @@ class UserServiceTest {
     @Rollback(false)
     void 긴급알림() {
         User u = User.builder()
-                .loginId("아이디")
-                .loginPw("비밀번호")
                 .name("이름")
                 .address("주소")
                 .tel("전화번호").build();
@@ -44,14 +42,6 @@ class UserServiceTest {
         em.clear();
         System.out.println("============================================");
 
-        User user = userRepository.findById(1L).get();
-        userService.makeEmergencyAlert(user);
-    }
-
-    @Test
-    @Rollback(false)
-    void 회원탈퇴() {
-        // 회원 탈퇴시 연결된 단말기 - 보호자 - 마을 다 정리해야함
-
+        userService.makeEmergencyAlert(1L);
     }
 }

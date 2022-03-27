@@ -42,16 +42,15 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Supporter> supporterList = new ArrayList<>();
 
-    private String loginId;
-    private String loginPw;
     private String name;
     private String address;
     private String tel;
 
     public void receiveAnnounce(Announce announce) {
-        log.warn("======방송이 도착했습니다=========");
+        log.warn("=======방송이 도착했습니다=========");
         log.warn("방송명: {}", announce.getTitle());
         log.warn("방송타입: {}", announce.getType());
+        log.warn("방송을 받은 사람: {}", this.name);
         log.warn("===============================");
     }
 }

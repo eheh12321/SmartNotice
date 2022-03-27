@@ -3,14 +3,14 @@ package sejong.smartnotice.domain.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import sejong.smartnotice.domain.Admin_Town;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.dto.AdminDTO;
 import sejong.smartnotice.domain.dto.LoginDTO;
+import sejong.smartnotice.domain.dto.UserDTO;
 import sejong.smartnotice.domain.member.Admin;
+import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.service.AdminService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -59,6 +59,24 @@ public class AdminController {
     @PostMapping("/town")
     public void addTown(@RequestParam String name) {
         adminService.addTown(name);
+    }
+
+    /**
+     * 사용자 등록
+     * - 가만 생각해보니 관리자가 사용자 등록을 하는게 맞는것 같음. 사용자는 로그인할 일이 없다
+     * http://localhost:8080/admin/user?name=user&address=address&tel=tel&townId=1
+     */
+    @PostMapping("/user")
+    public void addUser(@ModelAttribute UserDTO userDTO, @RequestParam Long townId) {
+        Town town = adminService.findTownById(townId); // 유저가 소속될 마을 (DB에 미리 존재해야됨)
+
+        User user = User.builder() // 유저 객체 생성
+                .name(userDTO.getName())
+                .address(userDTO.getAddress())
+                .tel(userDTO.getTel())
+                .town(town).build();
+
+        adminService.addUser(user); // 유저 등록
     }
 
     /**
