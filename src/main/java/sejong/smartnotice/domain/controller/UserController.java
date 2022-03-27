@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.member.User;
+import sejong.smartnotice.service.EmergencyAlertService;
 import sejong.smartnotice.service.UserService;
 
 @Slf4j
@@ -13,6 +14,7 @@ import sejong.smartnotice.service.UserService;
 public class UserController {
 
     private final UserService userService;
+    private final EmergencyAlertService alertService;
 
     /**
      * 유저 긴급호출 (테스트)
@@ -21,6 +23,6 @@ public class UserController {
      */
     @GetMapping("/emergency/{userId}")
     public void 유저긴급호출테스트용(@PathVariable Long userId) {
-        userService.makeEmergencyAlert(userId);
+        alertService.호출테스트(userId);
     }
 }

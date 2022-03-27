@@ -35,5 +35,7 @@ public class Supporter {
     public void emergencyCall(EmergencyAlert alert) {
         log.warn("!!!!!!!!!!!!!!긴급 호출이 발생했습니다!!!!!!!!!!!!!");
         log.warn("호출시각: {}", alert.getAlertTime());
+        log.warn("받은사람: {}", this.name);
+        log.warn("================================================");
     }
 }

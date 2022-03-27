@@ -48,37 +48,6 @@ public class AdminService {
         admin.setTownList(adminTownList);
     }
 
-    // 방송하기 (ROOT, ADMIN)
-    public void makeAnnounce(Admin admin, String title, String type) {
-        // 방송정보 세팅 (DTO로 받아옴)
-        Announce announce = Announce.builder()
-                .admin(admin)
-                .title(title)
-                .type(type)
-                .time(LocalDateTime.now())
-                .store("./저장소").build();
-        em.persist(announce);
-
-        List<Admin_Town> townList = admin.getTownList();
-        List<Announce_Town> atList = new ArrayList<>(); // 관리자가 어느 마을에 방송할지 선택함
-        for (Admin_Town adminTown : townList) {
-            Announce_Town at = Announce_Town.builder()
-                    .town(adminTown.getTown())
-                    .announce(announce).build();
-            em.persist(at);
-            atList.add(at);
-
-            //////////////////////// 회원에게 방송 알림 쏘기 (나중에 따로 메소드로 빼기)
-            Town town = at.getTown();
-            List<User> userList = em.createQuery("select u from User u where u.town=:town", User.class)
-                    .setParameter("town", town).getResultList();
-            for (User user : userList) {
-                user.receiveAnnounce(announce);
-            }
-            ///////////////////////
-        }
-    }
-
     // 관리자(Root)가 마을을 추가할 수 있어야됨 (ROOT 권한)
     public void addTown(String name) {
         Town town = Town.builder()

@@ -10,6 +10,7 @@ import sejong.smartnotice.domain.dto.UserDTO;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.service.AdminService;
+import sejong.smartnotice.service.AnnounceService;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ import java.util.List;
 public class AdminController {
 
     private final AdminService adminService;
+    private final AnnounceService announceService;
 
     /**
      * 관리자 회원가입
@@ -84,9 +86,8 @@ public class AdminController {
      * http://localhost:8080/admin/announce/1
      * (사전조건 - 관리자랑 마을이랑 연결되있어야됨)
      */
-    @GetMapping("/announce/{id}")
-    public void 관리자방송테스트용(@PathVariable Long id) {
-        Admin admin = adminService.findById(id);
-        adminService.makeAnnounce(admin, "방송해보자", "일반");
+    @GetMapping("/announce/{adminId}")
+    public void 관리자방송테스트용(@PathVariable Long adminId) {
+        announceService.방송테스트(adminId, "방송제목", "일반");
     }
 }
