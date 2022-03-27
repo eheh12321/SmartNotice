@@ -29,9 +29,9 @@ public class Announce {
     @OneToMany(mappedBy = "announce")
     private List<Announce_Town> towns = new ArrayList<>();
 
-    private String title;
-    private LocalDateTime time;
-    private String type;
+    private String title; // 방송제목
+    private LocalDateTime time; // 방송시각
+    private String category; // 일반 or 재난
+    private String type; // 음성 or 문자
     private String store; // 파일 저장위치
-
 }

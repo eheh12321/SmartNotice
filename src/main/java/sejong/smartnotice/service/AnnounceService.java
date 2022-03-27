@@ -25,11 +25,11 @@ public class AnnounceService {
     private final AdminService adminService;
     private final EntityManager em;
 
-    public void 음성방송() {
+    public void 음성방송발신() {
 
     }
 
-    public void 문자방송() {
+    public void 문자방송발신() {
 
     }
 
@@ -42,11 +42,12 @@ public class AnnounceService {
     }
 
     // 방송 잘 되는지 테스트용
-    public void 방송테스트(Long adminId, String title, String type) {
+    public void 방송테스트(Long adminId, String title, String category, String type) {
         Admin admin = adminService.findById(adminId);
         Announce announce = Announce.builder()
                 .admin(admin)
                 .title(title)
+                .category(category)
                 .type(type)
                 .time(LocalDateTime.now())
                 .store("./저장소").build();

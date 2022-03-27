@@ -46,6 +46,10 @@ public class User {
     private String address;
     private String tel;
 
+    public User 유저정보수정() {
+        return this;
+    }
+
     public void receiveAnnounce(Announce announce) {
         log.warn("=======방송이 도착했습니다=========");
         log.warn("방송명: {}", announce.getTitle());

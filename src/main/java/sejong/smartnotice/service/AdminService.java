@@ -11,7 +11,6 @@ import sejong.smartnotice.repository.AdminRepository;
 import sejong.smartnotice.repository.UserRepository;
 
 import javax.persistence.EntityManager;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -54,6 +53,12 @@ public class AdminService {
                 .name(name).build();
         em.persist(town);
     }
+
+    public void 마을정보수정() { }
+    public void 회원정보수정() { }
+    public void 관리자등록() { }
+    public void 관리자정보수정() { }
+    public void 단말기점검() { }
 
     // 사용자 마을 등록 (ADMIN 권한)
     public void addUser(User user) {

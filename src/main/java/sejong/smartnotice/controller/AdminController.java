@@ -1,4 +1,4 @@
-package sejong.smartnotice.domain.controller;
+package sejong.smartnotice.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -88,6 +88,6 @@ public class AdminController {
      */
     @GetMapping("/announce/{adminId}")
     public void 관리자방송테스트용(@PathVariable Long adminId) {
-        announceService.방송테스트(adminId, "방송제목", "일반");
+        announceService.방송테스트(adminId, "방송제목", "일반", "문자");
     }
 }

@@ -1,4 +1,4 @@
-package sejong.smartnotice.domain.controller;
+package sejong.smartnotice.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

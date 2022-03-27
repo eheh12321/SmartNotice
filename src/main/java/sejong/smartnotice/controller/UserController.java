@@ -1,11 +1,9 @@
-package sejong.smartnotice.domain.controller;
+package sejong.smartnotice.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.service.EmergencyAlertService;
-import sejong.smartnotice.service.UserService;
 
 @Slf4j
 @RestController
@@ -13,7 +11,6 @@ import sejong.smartnotice.service.UserService;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
     private final EmergencyAlertService alertService;
 
     /**
