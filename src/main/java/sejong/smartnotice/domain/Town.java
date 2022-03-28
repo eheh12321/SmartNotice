@@ -19,4 +19,8 @@ public class Town {
     private Long id;
 
     private String name;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id")
+    private Region region; // 소속 지역코드
 }

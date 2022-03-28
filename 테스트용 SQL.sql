@@ -9,11 +9,11 @@ insert into admin(login_id, login_pw, name, tel, type) values("id", "pw", "관�
 insert into admin(login_id, login_pw, name, tel, type) values("id", "pw", "관리자5", "010-1234-1234", "ADMIN");
 
 -- 마을 초기 세팅
-insert into town(name) values("마을1");
-insert into town(name) values("마을2");
-insert into town(name) values("마을3");
-insert into town(name) values("마을4");
-insert into town(name) values("마을5");
+insert into town(name, region_id) values("마을1", 2);
+insert into town(name, region_id) values("마을2", 3);
+insert into town(name, region_id) values("마을3", 4);
+insert into town(name, region_id) values("마을4", 5);
+insert into town(name, region_id) values("마을5", 6);
 
 -- 단말기 초기 세팅(사용자 수만큼만)
 insert into device (emergency, error, sensor1, sensor2) values (false, false, 0, 0);
@@ -50,8 +50,13 @@ insert into admin_town (admin_id, town_id) values (3, 3);
 insert into admin_town (admin_id, town_id) values (4, 4);
 insert into admin_town (admin_id, town_id) values (5, 5);
 
+select * from emergency_alert;
 select * from device;
 select * from user;
 select * from admin;
 select * from town;
+select * from region;
+select * from supporter;
+select * from announce;
+select * from announce_town;
 select * from admin_town;
