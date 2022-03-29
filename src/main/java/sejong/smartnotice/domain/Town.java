@@ -1,16 +1,13 @@
 package sejong.smartnotice.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import sejong.smartnotice.domain.member.User;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
 @Entity
 @Builder
 @NoArgsConstructor

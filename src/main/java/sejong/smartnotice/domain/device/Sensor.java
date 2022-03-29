@@ -1,11 +1,12 @@
 package sejong.smartnotice.domain.device;
 
 import lombok.Data;
+import lombok.Getter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
 @Entity
 public class Sensor {
 
