@@ -1,10 +1,8 @@
 package sejong.smartnotice.domain.member;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import sejong.smartnotice.domain.Admin_Town;
+import sejong.smartnotice.domain.Town;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -12,7 +10,7 @@ import java.util.List;
 
 import static javax.persistence.CascadeType.*;
 
-@Data
+@Getter
 @Entity
 @Builder
 @NoArgsConstructor
@@ -28,19 +26,43 @@ public class Admin {
     private List<Admin_Town> townList = new ArrayList<>();
 
     @Enumerated(value = EnumType.STRING)
-    private AdminRole type; // 관리자 타입
+    private AdminRole role; // 관리자 타입
     
     private String loginId;
     private String loginPw;
     private String name;
     private String tel;
 
-    public void 로그인() {
-
+    // 관리자 생성
+    public static Admin createAdmin(String name, String tel, String loginId, String loginPw, AdminRole role) {
+        return Admin.builder()
+                .name(name)
+                .tel(tel)
+                .loginId(loginId)
+                .loginPw(loginPw)
+                .townList(new ArrayList<>())
+                .role(role).build();
     }
-    public void 로그아웃() {
 
+    // 관리자 관리 마을 변경
+    public void setManageTown(List<Town> townList) {
+        List<Admin_Town> atList = new ArrayList<>();
+        for (Town town : townList) {
+            Admin_Town at = Admin_Town.builder()
+                    .town(town)
+                    .admin(this).build();
+            atList.add(at);
+        }
+    }
+    
+    // 서비스 계층에서 검증이후 들어와야함
+    public void changePassword(String inputId, String inputPw) {
+        this.loginId = inputId;
+        this.loginPw = inputPw;
     }
 
-
+    public void changeAdminInfo(String name, String tel) {
+        this.name = name;
+        this.tel = tel;
+    }
 }
