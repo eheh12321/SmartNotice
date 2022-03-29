@@ -2,7 +2,7 @@ package sejong.smartnotice.domain.member;
 
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import sejong.smartnotice.domain.Announce;
+import sejong.smartnotice.domain.announce.Announce;
 import sejong.smartnotice.domain.device.Device;
 import sejong.smartnotice.domain.Town;
 

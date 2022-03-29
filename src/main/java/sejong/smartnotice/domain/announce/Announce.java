@@ -1,6 +1,8 @@
-package sejong.smartnotice.domain;
+package sejong.smartnotice.domain.announce;
 
 import lombok.*;
+import sejong.smartnotice.domain.Announce_Town;
+import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.User;
 
@@ -29,11 +31,16 @@ public class Announce {
 
     private String title; // 방송제목
     private LocalDateTime time; // 방송시각
-    private String category; // 일반 or 재난
-    private String type; // 음성 or 문자
+
+    @Enumerated(EnumType.STRING)
+    private AnnounceCategory category; // 일반 or 재난
+
+    @Enumerated(EnumType.STRING)
+    private AnnounceType type; // 음성 or 문자
+
     private String store; // 파일 저장위치
 
-    public static Announce makeAnnounce(Admin admin, String title, String category, String type, List<Town> townList) {
+    public static Announce makeAnnounce(Admin admin, String title, AnnounceCategory category, AnnounceType type, List<Town> townList) {
         // 1. 방송 생성
         Announce announce = Announce.builder()
                 .admin(admin)
