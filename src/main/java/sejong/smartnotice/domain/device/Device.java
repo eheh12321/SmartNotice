@@ -38,4 +38,10 @@ public class Device {
         this.error = true;
         return this.getId();
     }
+
+    // 단말기 사용자 변경
+    public Long changeUser(User user) {
+        this.user = user;
+        return user.getId();
+    }
 }

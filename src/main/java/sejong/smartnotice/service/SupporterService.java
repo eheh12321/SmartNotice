@@ -8,7 +8,6 @@ import sejong.smartnotice.domain.member.Supporter;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.repository.SupporterRepository;
 
-import javax.persistence.EntityManager;
 import java.util.Optional;
 
 @Slf4j
@@ -17,28 +16,44 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SupporterService {
 
+    private final UserService userService;
     private final SupporterRepository supporterRepository;
-    private final EntityManager em;
 
     // 회원가입
-    public void register(Supporter supporter) {
+    public void register(String name, String tel, String loginId, String loginPw) {
         log.info("== 보호자 회원가입 ==");
+        // 검증로직 들어가야함
+        Supporter supporter = Supporter.createSupporter(name, tel, loginId, loginPw);
         supporterRepository.save(supporter);
     }
 
     // 보호자랑 회원 연결
-    public void selectUser(Long userId, Supporter supporter) {
-        User user = em.find(User.class, userId);
-        supporter.setUser(user);
-        user.getSupporterList().add(supporter); // 나중에 편의 메소드로 합칠것!
+    public Long connectWithUser(Long userId, Supporter supporter) {
+        User user = userService.findUserById(userId);
+        // + 뭔가 검증 로직을 거쳐야함
+        supporter.connectUser(user);
+        return user.getId();
     }
 
     // 보호자 조회
-    public Supporter findById(Long id) {
-        Optional<Supporter> opt = supporterRepository.findById(id);
+    public Supporter findById(Long supporterId) {
+        return validateSupporterId(supporterId);
+    }
+
+    // 보호자 정보 수정
+    public void 보호자정보수정() {}
+    
+    // 보호자 삭제
+    public void remove(Long supporterId) {
+        Supporter supporter = validateSupporterId(supporterId);
+        supporterRepository.delete(supporter);
+    }
+
+    private Supporter validateSupporterId(Long supporterId) {
+        Optional<Supporter> opt = supporterRepository.findById(supporterId);
         if(opt.isEmpty()) {
-            log.warn("회원을 찾지 못했습니다");
-            throw new RuntimeException("대충 에러 던지기");
+            log.warn("보호자가 존재하지 않습니다");
+            throw new RuntimeException("에러");
         }
         return opt.get();
     }

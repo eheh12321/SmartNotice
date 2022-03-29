@@ -4,24 +4,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import sejong.smartnotice.domain.Region;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.device.Device;
+import sejong.smartnotice.domain.member.Supporter;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.repository.TownRepository;
 import sejong.smartnotice.repository.UserRepository;
 import sejong.smartnotice.service.DeviceService;
+import sejong.smartnotice.service.SupporterService;
 import sejong.smartnotice.service.TownService;
+import sejong.smartnotice.service.UserService;
 
 import javax.persistence.EntityManager;
+import java.util.Arrays;
+import java.util.List;
 
 @SpringBootTest
 @Transactional
 public class Test {
 
-    @Autowired UserRepository userRepository;
+    @Autowired UserService userService;
     @Autowired TownService townService;
     @Autowired DeviceService deviceService;
+    @Autowired SupporterService supporterService;
     @Autowired EntityManager em;
 
     @Rollback(false)
@@ -43,19 +50,6 @@ public class Test {
 
         Town town = townService.findTownById(1L);
         Device device = deviceService.findDeviceById(1L);
-
-        User user = User.builder()
-                .name("이름")
-                .address("주소")
-                .tel("전화번호")
-                .town(town)
-                .device(device)
-                .loginId("로그인ID")
-                .loginPw("로그인PW").build();
-
-        userRepository.save(user);
-
-        townService.removeTown(2L);
     }
 }
 

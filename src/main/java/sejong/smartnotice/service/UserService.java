@@ -9,6 +9,7 @@ import sejong.smartnotice.domain.device.Device;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Slf4j
@@ -29,12 +30,8 @@ public class UserService {
         // 2. 주민이 사용할 단밀기 조회
         Device device = deviceService.findDeviceById(deviceId);
 
-        User user = User.builder()
-                .name(name)
-                .tel(tel)
-                .address(address)
-                .town(town)
-                .device(device).build();
+        // 3. 마을주민 생성
+        User user = User.createUser(name, tel, address, town, device);
 
         userRepository.save(user);
         return user.getId();
@@ -44,6 +41,9 @@ public class UserService {
     public User findUserById(Long userId) {
         return validateUserId(userId);
     }
+
+    // 주민 삭제
+    public void 주민삭제() {}
 
     // 주민 마을 수정
     public void ModifyUserTown(Long userId, Long townId) {

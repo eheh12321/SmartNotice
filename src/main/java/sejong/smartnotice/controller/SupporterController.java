@@ -25,13 +25,7 @@ public class SupporterController {
             @ModelAttribute LoginDTO loginDTO,
             @ModelAttribute SupporterDTO supporterDTO) {
 
-        Supporter supporter = Supporter.builder()
-                .loginId(loginDTO.getLoginId())
-                .loginPw(loginDTO.getLoginPw())
-                .name(supporterDTO.getName())
-                .tel(supporterDTO.getTel()).build();
-
-        supporterService.register(supporter);
+        supporterService.register(supporterDTO.getName(), supporterDTO.getTel(), loginDTO.getLoginId(), loginDTO.getLoginPw());
     }
 
     /**
@@ -45,6 +39,6 @@ public class SupporterController {
     @PostMapping("/select/{id}")
     public void selectUser(@PathVariable Long id, @RequestParam Long userId) {
         Supporter supporter = supporterService.findById(id);
-        supporterService.selectUser(userId, supporter);
+        supporterService.connectWithUser(userId, supporter);
     }
 }

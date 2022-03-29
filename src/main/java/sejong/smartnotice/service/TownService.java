@@ -9,6 +9,7 @@ import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.repository.TownRepository;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Slf4j
@@ -26,7 +27,8 @@ public class TownService {
         /// 마을이름 중복 검증 코드 들어가야함 ///
         Town town = Town.builder()
                 .name(townName)
-                .region(region).build();
+                .region(region)
+                .userList(new ArrayList<>()).build();
 
         townRepository.save(town);
         return town.getId();

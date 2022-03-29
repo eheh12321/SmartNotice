@@ -43,8 +43,19 @@ public class User {
     private String loginId;
     private String loginPw;
 
+    public static User createUser(String name, String tel, String address, Town town, Device device) {
+        return User.builder()
+                .name(name)
+                .tel(tel)
+                .address(address)
+                .supporterList(new ArrayList<>())
+                .town(town)
+                .device(device).build();
+    }
+
     public long changeDevice(Device device) {
         this.device = device;
+        device.changeUser(this);
         return device.getId();
     }
 
@@ -55,7 +66,8 @@ public class User {
         return town.getId();
     }
 
-    public void changeCredential(String inputId, String inputPw) {
+    // 서비스 계층에서 검증이후 들어와야함
+    public void changePassword(String inputId, String inputPw) {
         this.loginId = inputId;
         this.loginPw = inputPw;
     }
