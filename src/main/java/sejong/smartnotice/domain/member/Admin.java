@@ -34,7 +34,13 @@ public class Admin {
     private String loginPw;
     private String name;
     private String tel;
-    
+
+    public void 로그인() {
+
+    }
+    public void 로그아웃() {
+
+    }
 
 
 }

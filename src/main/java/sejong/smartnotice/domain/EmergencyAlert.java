@@ -1,17 +1,17 @@
 package sejong.smartnotice.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import sejong.smartnotice.domain.device.Device;
+import sejong.smartnotice.domain.member.Supporter;
 import sejong.smartnotice.domain.member.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static javax.persistence.FetchType.*;
 
-@Data
+@Getter
 @Entity
 @Builder
 @NoArgsConstructor
@@ -26,9 +26,23 @@ public class EmergencyAlert {
     @JoinColumn(name = "device_id")
     private Device device;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
-
     private LocalDateTime alertTime;
+
+    public static EmergencyAlert createAlert(User user) {
+        // 마을주민 단말기 참조
+        Device device = user.getDevice();
+        // 단말기 긴급상황 표시
+        device.doAlert();
+        // Alert 생성
+        EmergencyAlert alert = EmergencyAlert.builder()
+                .device(device)
+                .alertTime(LocalDateTime.now()).build();
+
+        // 마을 주민과 연결된 보호자에게 전화알림
+        List<Supporter> supporterList = user.getSupporterList();
+        for (Supporter supporter : supporterList) {
+            supporter.emergencyCall(alert); // API 들어가야됨
+        }
+        return alert;
+    }
 }

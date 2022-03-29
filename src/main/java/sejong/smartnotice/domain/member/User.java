@@ -1,15 +1,10 @@
 package sejong.smartnotice.domain.member;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import sejong.smartnotice.domain.Announce;
-import sejong.smartnotice.domain.Device;
-import sejong.smartnotice.domain.EmergencyAlert;
+import sejong.smartnotice.domain.device.Device;
 import sejong.smartnotice.domain.Town;
-import sejong.smartnotice.domain.dto.UserDTO;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -19,7 +14,7 @@ import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.*;
 
 @Slf4j
-@Data
+@Getter
 @Builder
 @Entity
 @NoArgsConstructor
@@ -45,11 +40,33 @@ public class User {
     private String name;
     private String address;
     private String tel;
+    private String loginId;
+    private String loginPw;
 
-    public User 유저정보수정() {
-        return this;
+    public long changeDevice(Device device) {
+        this.device = device;
+        return device.getId();
     }
 
+    public long changeTown(Town town) {
+        this.town.getUserList().remove(this); // 기존 마을 정보 삭제
+        this.town = town;
+        town.getUserList().add(this);
+        return town.getId();
+    }
+
+    public void changeCredential(String inputId, String inputPw) {
+        this.loginId = inputId;
+        this.loginPw = inputPw;
+    }
+
+    public void changeUserInfo(String name, String address, String tel) {
+        this.name = name;
+        this.address = address;
+        this.tel = tel;
+    }
+
+    /// 방송 수신 테스트용 (실제로는 임베디드 단에서 구현) ///
     public void receiveAnnounce(Announce announce) {
         log.warn("=======방송이 도착했습니다=========");
         log.warn("방송명: {}", announce.getTitle());

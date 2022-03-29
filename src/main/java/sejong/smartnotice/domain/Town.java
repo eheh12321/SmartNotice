@@ -4,8 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import sejong.smartnotice.domain.member.User;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -23,4 +26,9 @@ public class Town {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id")
     private Region region; // 소속 지역코드
+
+    @OneToMany(mappedBy = "town")
+    private List<User> userList = new ArrayList<>();
+
+
 }

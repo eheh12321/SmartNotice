@@ -3,8 +3,8 @@ package sejong.smartnotice.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import sejong.smartnotice.domain.dto.LoginDTO;
-import sejong.smartnotice.domain.dto.SupporterDTO;
+import sejong.smartnotice.dto.LoginDTO;
+import sejong.smartnotice.dto.SupporterDTO;
 import sejong.smartnotice.domain.member.Supporter;
 import sejong.smartnotice.service.SupporterService;
 

@@ -1,4 +1,4 @@
-package sejong.smartnotice.domain.dto;
+package sejong.smartnotice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

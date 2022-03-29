@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.*;
+import sejong.smartnotice.domain.device.Device;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.repository.AdminRepository;
@@ -65,7 +66,7 @@ public class AdminService {
         log.info("== 사용자 등록 ==");
 
         Device device = Device.builder().build(); // 유저랑 연결될 단말기 생성
-        user.setDevice(device);
+        user.changeDevice(device);
 
         userRepository.save(user);
 

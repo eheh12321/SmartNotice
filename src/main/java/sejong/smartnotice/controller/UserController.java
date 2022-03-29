@@ -3,7 +3,9 @@ package sejong.smartnotice.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.service.EmergencyAlertService;
+import sejong.smartnotice.service.UserService;
 
 @Slf4j
 @RestController
@@ -11,6 +13,7 @@ import sejong.smartnotice.service.EmergencyAlertService;
 @RequiredArgsConstructor
 public class UserController {
 
+    private final UserService userService;
     private final EmergencyAlertService alertService;
 
     /**
@@ -19,7 +22,8 @@ public class UserController {
      * (사전조건 - 유저랑 보호자랑 연결되있어야됨)
      */
     @GetMapping("/emergency/{userId}")
-    public void 유저긴급호출테스트용(@PathVariable Long userId) {
-        alertService.호출테스트(userId);
+    public void doUserEmergencyAlert(@PathVariable Long userId) {
+        User user = userService.findUserById(userId);
+        alertService.createAlert(user);
     }
 }

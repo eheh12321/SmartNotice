@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.Town;
-import sejong.smartnotice.domain.dto.AdminDTO;
-import sejong.smartnotice.domain.dto.LoginDTO;
-import sejong.smartnotice.domain.dto.UserDTO;
+import sejong.smartnotice.dto.AdminDTO;
+import sejong.smartnotice.dto.LoginDTO;
+import sejong.smartnotice.dto.UserDTO;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.service.AdminService;
@@ -83,11 +83,11 @@ public class AdminController {
 
     /**
      * 마을 방송하기 (테스트)
-     * http://localhost:8080/admin/announce/1
+     * http://localhost:8080/admin/announce/3?title=방송제목&category=일반&type=음성
      * (사전조건 - 관리자랑 마을이랑 연결되있어야됨)
      */
     @GetMapping("/announce/{adminId}")
-    public void 관리자방송테스트용(@PathVariable Long adminId) {
-        announceService.방송테스트(adminId, "방송제목", "일반", "문자");
+    public void 관리자방송테스트용(@PathVariable Long adminId, @RequestParam String title, @RequestParam String category, @RequestParam String type) {
+        announceService.방송테스트(adminId, title, category, type);
     }
 }
