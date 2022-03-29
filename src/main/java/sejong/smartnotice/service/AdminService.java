@@ -24,11 +24,12 @@ public class AdminService {
     private final AdminRepository adminRepository;
     
     // 회원가입
-    public void register(AdminDTO adminDTO, LoginDTO loginDTO) {
+    public Long register(AdminDTO adminDTO, LoginDTO loginDTO) {
         log.info("== 관리자 회원가입 ==");
         Admin admin = Admin.createAdmin(adminDTO.getName(), adminDTO.getTel(),
                 loginDTO.getLoginId(), loginDTO.getLoginPw(), AdminRole.ADMIN);
         adminRepository.save(admin);
+        return admin.getId();
     }
 
     // 관리자가 관리하는 마을 설정 (ROOT, ADMIN)
@@ -51,5 +52,10 @@ public class AdminService {
             throw new RuntimeException("대충 에러 ㄱ");
         }
         return opt.get();
+    }
+
+    // 관리자 전체 목록 조회
+    public List<Admin> getAdminList() {
+        return adminRepository.findAll();
     }
 }

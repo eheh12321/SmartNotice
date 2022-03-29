@@ -54,6 +54,7 @@ public class Admin {
             atList.add(at);
             at.setAdmin(this); // 양방향 맺어주기
         }
+        this.townList = atList; // 배열 갈아끼기
     }
     
     // 서비스 계층에서 검증이후 들어와야함
