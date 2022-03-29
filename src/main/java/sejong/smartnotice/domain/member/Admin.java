@@ -52,6 +52,7 @@ public class Admin {
                     .town(town)
                     .admin(this).build();
             atList.add(at);
+            at.setAdmin(this); // 양방향 맺어주기
         }
     }
     

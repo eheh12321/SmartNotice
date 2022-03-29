@@ -51,6 +51,6 @@ public class AdminController {
      */
     @GetMapping("/announce/{adminId}")
     public void 관리자방송테스트용(@PathVariable Long adminId, @RequestParam String title, @RequestParam String category, @RequestParam String type) {
-        announceService.방송테스트(adminId, title, category, type);
+
     }
 }
