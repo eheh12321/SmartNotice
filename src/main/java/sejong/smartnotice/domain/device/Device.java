@@ -6,6 +6,7 @@ import sejong.smartnotice.domain.member.User;
 
 import javax.persistence.*;
 
+import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.*;
 
 @Getter
@@ -27,6 +28,9 @@ public class Device {
 
     @ColumnDefault("false")
     private boolean emergency;
+
+    @OneToOne(mappedBy = "device", fetch = LAZY)
+    private Sensor sensor;
 
     // 단말기 연결상태 점검
     public Long checkError() {

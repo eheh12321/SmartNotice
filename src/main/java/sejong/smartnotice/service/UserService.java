@@ -23,7 +23,7 @@ public class UserService {
     private final DeviceService deviceService;
 
     // 신규 주민 등록
-    public Long registerUser(String name, String tel, String address, Long townId, Long deviceId) {
+    public Long register(String name, String tel, String address, Long townId, Long deviceId) {
         // 1. 주민이 포함될 마을 조회
         Town town = townService.findTownById(townId);
 

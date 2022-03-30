@@ -20,11 +20,12 @@ public class SupporterService {
     private final SupporterRepository supporterRepository;
 
     // 회원가입
-    public void register(String name, String tel, String loginId, String loginPw) {
+    public Long register(String name, String tel, String loginId, String loginPw) {
         log.info("== 보호자 회원가입 ==");
         // 검증로직 들어가야함
         Supporter supporter = Supporter.createSupporter(name, tel, loginId, loginPw);
         supporterRepository.save(supporter);
+        return supporter.getId();
     }
 
     // 보호자랑 회원 연결
@@ -36,7 +37,7 @@ public class SupporterService {
     }
 
     // 보호자 조회
-    public Supporter findById(Long supporterId) {
+    public Supporter findSupporterById(Long supporterId) {
         return validateSupporterId(supporterId);
     }
 

@@ -34,6 +34,14 @@ public class TownService {
         return town.getId();
     }
 
+    // 신규 지역 등록 (할 일은 없는데 테스트용)
+    public Long registerRegion(Long regionCode,String mainRegion, String subRegion) {
+        // 대충 검증 코드
+        Region region = Region.createRegion(regionCode, mainRegion, subRegion);
+        em.persist(region);
+        return region.getRegionCode();
+    }
+
     // 마을 조회 (단순 위임 및 예외처리)
     public Town findTownById(Long townId) {
         return validateTownId(townId);

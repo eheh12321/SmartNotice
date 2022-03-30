@@ -38,7 +38,7 @@ public class SupporterController {
      */
     @PostMapping("/select/{id}")
     public void selectUser(@PathVariable Long id, @RequestParam Long userId) {
-        Supporter supporter = supporterService.findById(id);
+        Supporter supporter = supporterService.findSupporterById(id);
         supporterService.connectWithUser(userId, supporter);
     }
 }
