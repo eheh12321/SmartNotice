@@ -22,25 +22,34 @@ import static javax.persistence.FetchType.*;
 public class User {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     private Long id;
 
     // Device의 생명주기가 User에 의해 정해진다
     @OneToOne(fetch = LAZY, cascade = ALL)
-    @JoinColumn(name = "device_id")
+    @JoinColumn(name = "device_id", nullable = false)
     private Device device;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "town_id")
+    @JoinColumn(name = "town_id", nullable = true)
     private Town town;
 
     @OneToMany(mappedBy = "user")
     private List<Supporter> supporterList = new ArrayList<>();
 
+    @Column(nullable = false, length = 50)
     private String name;
+
+    @Column(nullable = false, length = 50)
     private String address;
+
+    @Column(nullable = false, length = 15)
     private String tel;
+
+    @Column(nullable = false, length = 50)
     private String loginId;
+
+    @Column(nullable = false, length = 256)
     private String loginPw;
 
     public static User createUser(String name, String tel, String address, Town town, Device device) {

@@ -1,6 +1,7 @@
 package sejong.smartnotice.domain;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import sejong.smartnotice.domain.device.Device;
 import sejong.smartnotice.domain.member.Supporter;
 import sejong.smartnotice.domain.member.User;
@@ -19,13 +20,14 @@ import static javax.persistence.FetchType.*;
 public class EmergencyAlert {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "alert_id")
+    @Column(name = "alert_id", nullable = false)
     private Long id;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "device_id")
+    @JoinColumn(name = "device_id", nullable = false)
     private Device device;
 
+    @Column(nullable = false)
     private LocalDateTime alertTime;
 
     public static EmergencyAlert createAlert(User user) {

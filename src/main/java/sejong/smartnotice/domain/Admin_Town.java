@@ -16,14 +16,14 @@ import javax.persistence.*;
 public class Admin_Town {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "admin_town_id")
+    @Column(name = "admin_town_id", nullable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "admin_id")
+    @JoinColumn(name = "admin_id", nullable = false)
     private Admin admin;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "town_id")
+    @JoinColumn(name = "town_id", nullable = false)
     private Town town;
 }

@@ -17,16 +17,23 @@ import static javax.persistence.FetchType.*;
 public class Supporter {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "supporter_id")
+    @Column(name = "supporter_id", nullable = false)
     private Long id;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(nullable = false)
     private String loginId;
+
+    @Column(nullable = false)
     private String loginPw;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private String tel;
 
     public static Supporter createSupporter(String name, String tel, String loginId, String loginPw) {

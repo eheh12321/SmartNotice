@@ -1,6 +1,7 @@
 package sejong.smartnotice.domain;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import sejong.smartnotice.domain.member.User;
 
 import javax.persistence.*;
@@ -15,9 +16,10 @@ import java.util.List;
 public class Town {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "town_id")
+    @Column(name = "town_id", nullable = false)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -26,6 +28,5 @@ public class Town {
 
     @OneToMany(mappedBy = "town")
     private List<User> userList = new ArrayList<>();
-
 
 }

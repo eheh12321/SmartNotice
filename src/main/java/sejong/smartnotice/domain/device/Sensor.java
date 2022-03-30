@@ -18,7 +18,7 @@ public abstract class Sensor {
 
     @MapsId
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "device_id")
+    @JoinColumn(name = "device_id", nullable = false)
     private Device device;
 
     @ColumnDefault("0")

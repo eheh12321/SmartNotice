@@ -1,6 +1,7 @@
 package sejong.smartnotice.domain.member;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import sejong.smartnotice.domain.Admin_Town;
 import sejong.smartnotice.domain.Town;
 
@@ -18,7 +19,7 @@ import static javax.persistence.CascadeType.*;
 public class Admin {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "admin_id")
+    @Column(name = "admin_id", nullable = false)
     private Long id;
 
     // Admin 커밋 시 자동으로 딸려감
@@ -26,11 +27,19 @@ public class Admin {
     private List<Admin_Town> townList = new ArrayList<>();
 
     @Enumerated(value = EnumType.STRING)
+    @ColumnDefault("ADMIN")
     private AdminRole role; // 관리자 타입
-    
+
+    @Column(nullable = false)
     private String loginId;
+
+    @Column(nullable = false)
     private String loginPw;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private String tel;
 
     // 관리자 생성
