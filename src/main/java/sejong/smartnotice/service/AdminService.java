@@ -25,10 +25,16 @@ public class AdminService {
     
     // 회원가입
     public Long register(AdminDTO adminDTO, LoginDTO loginDTO) {
-        log.info("== 관리자 회원가입 ==");
         Admin admin = Admin.createAdmin(adminDTO.getName(), adminDTO.getTel(),
-                loginDTO.getLoginId(), loginDTO.getLoginPw(), AdminRole.ADMIN);
+                loginDTO.getLoginId(), loginDTO.getLoginPw(), adminDTO.getType());
         adminRepository.save(admin);
+        return admin.getId();
+    }
+
+    // 관리자 정보 수정
+    public Long changeAdminInfo(Long id, AdminDTO adminDTO) {
+        Admin admin = findById(id);
+        admin.changeMemberInfo(adminDTO.getName(), adminDTO.getTel());
         return admin.getId();
     }
 

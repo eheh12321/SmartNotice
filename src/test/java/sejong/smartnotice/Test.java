@@ -39,9 +39,6 @@ public class Test {
         townService.registerTown("마을1", 1L);
         townService.registerTown("마을2", 1L);
         townService.registerTown("마을3", 2L);
-        deviceService.registerDevice();
-        deviceService.registerDevice();
-        deviceService.registerDevice();
 
         em.flush();
         em.clear();

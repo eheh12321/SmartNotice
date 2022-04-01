@@ -2,6 +2,8 @@ package sejong.smartnotice.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.dto.AdminDTO;
 import sejong.smartnotice.dto.LoginDTO;
@@ -12,7 +14,7 @@ import sejong.smartnotice.service.AnnounceService;
 import java.util.List;
 
 @Slf4j
-@RestController
+@Controller
 @RequestMapping("/admin")
 @RequiredArgsConstructor
 public class AdminController {
@@ -20,16 +22,29 @@ public class AdminController {
     private final AdminService adminService;
     private final AnnounceService announceService;
 
-    /**
-     * 관리자 회원가입
-     * http://localhost:8080/admin/register?name=name&type=ADMIN&tel=tel&loginId=id&loginPw=pw
-     */
-    @PostMapping("/register")
-    public void register(
-            @ModelAttribute LoginDTO loginDTO,
-            @ModelAttribute AdminDTO adminDTO) {
+    @GetMapping
+    public String getAdminList(Model model) {
+        log.info("== 관리자 목록 조회 ==");
+        List<Admin> adminList = adminService.getAdminList();
+        model.addAttribute("adminList", adminList);
+        return "admin/adminList";
+    }
 
-        adminService.register(adminDTO, loginDTO);
+    @GetMapping("/{id}")
+    public String modify(@PathVariable Long id, Model model) {
+        log.info("== 관리자 조회 ==");
+        Admin admin = adminService.findById(id);
+        model.addAttribute("admin", admin);
+
+        return "admin/modify";
+    }
+
+    @PutMapping("/{id}")
+    public String modify2(@PathVariable Long id, @ModelAttribute AdminDTO adminDTO) {
+        log.info("== 관리자 정보 수정 ==");
+        adminService.changeAdminInfo(id, adminDTO);
+
+        return "redirect:/admin";
     }
 
     /**

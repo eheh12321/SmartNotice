@@ -24,4 +24,10 @@ public class Member {
     private String loginId;
 
     private String loginPw;
+
+    // 회원 정보 수정
+    public void changeMemberInfo(String name, String tel) {
+        this.name = name;
+        this.tel = tel;
+    }
 }
