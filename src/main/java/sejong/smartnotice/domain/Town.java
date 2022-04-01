@@ -29,4 +29,9 @@ public class Town {
     @OneToMany(mappedBy = "town")
     private List<User> userList = new ArrayList<>();
 
+    public void changeTown(String name, Region region) {
+        this.name = name;
+        this.region = region;
+    }
+
 }

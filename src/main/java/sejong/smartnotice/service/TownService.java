@@ -10,6 +10,7 @@ import sejong.smartnotice.repository.TownRepository;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -40,6 +41,19 @@ public class TownService {
         Region region = Region.createRegion(regionCode, mainRegion, subRegion);
         em.persist(region);
         return region.getRegionCode();
+    }
+
+    // 마을 정보 수정
+    public Long changeTownInfo(Long id, String name, Long regionCode) {
+        Town town = findTownById(id);
+        Region region = em.find(Region.class, regionCode);
+        town.changeTown(name, region);
+        return town.getId();
+    }
+
+    // 마을 목록 조회
+    public List<Town> getTownList() {
+        return townRepository.findAll();
     }
 
     // 마을 조회 (단순 위임 및 예외처리)

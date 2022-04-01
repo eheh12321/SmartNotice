@@ -24,7 +24,7 @@ public class HomeController {
 
     @GetMapping("/register/admin")
     public String registerAdmin() {
-        return "register/admin";
+        return "adminRegister";
     }
 
     /**
