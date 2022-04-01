@@ -1,6 +1,7 @@
 package sejong.smartnotice.domain.member;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import sejong.smartnotice.domain.EmergencyAlert;
 
@@ -11,29 +12,14 @@ import static javax.persistence.FetchType.*;
 @Getter
 @Slf4j
 @Entity
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class Supporter {
-
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "supporter_id", nullable = false)
-    private Long id;
+@SuperBuilder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Supporter extends Member {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(nullable = false)
-    private String loginId;
-
-    @Column(nullable = false)
-    private String loginPw;
-
-    @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
     private String tel;
 
     public static Supporter createSupporter(String name, String tel, String loginId, String loginPw) {
@@ -55,22 +41,11 @@ public class Supporter {
         }
     }
 
-    public void changeInfo(String name, String tel) {
-        this.name = name;
-        this.tel = tel;
-    }
-
-    // 서비스 계층에서 검증이후 들어와야함
-    public void changePassword(String inputId, String inputPw) {
-        this.loginId = inputId;
-        this.loginPw = inputPw;
-    }
-
     // 테스트용(임베디드 단에서 구현할것)
     public void emergencyCall(EmergencyAlert alert) {
         log.warn("!!!!!!!!!!!!!!긴급 호출이 발생했습니다!!!!!!!!!!!!!");
         log.warn("호출시각: {}", alert.getAlertTime());
-        log.warn("받은사람: {}", this.name);
+        log.warn("받은사람: {}", this.getName());
         log.warn("================================================");
     }
 }

@@ -31,7 +31,7 @@ public class UserService {
         Device device = deviceService.findDeviceById(deviceId);
 
         // 3. 마을주민 생성
-        User user = User.createUser(name, tel, address, town, device);
+        User user = User.createUser(name, tel, address, town, "아이디", "비밀번호");
 
         userRepository.save(user);
         return user.getId();

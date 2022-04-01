@@ -17,6 +17,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "announce")
 public class Announce {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +45,7 @@ public class Announce {
     @Column(nullable = false)
     private AnnounceType type; // 음성 or 문자
 
-    @ColumnDefault("[저장소 경로]")
+    // @ColumnDefault("[저장소 경로]")
     private String store; // 파일 저장위치
 
     public static Announce makeAnnounce(Admin admin, String title, AnnounceCategory category, AnnounceType type, List<Town> townList) {
