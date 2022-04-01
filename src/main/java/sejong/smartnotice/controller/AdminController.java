@@ -20,7 +20,6 @@ import java.util.List;
 public class AdminController {
 
     private final AdminService adminService;
-    private final AnnounceService announceService;
 
     @GetMapping
     public String getAdminList(Model model) {
@@ -31,7 +30,7 @@ public class AdminController {
     }
 
     @GetMapping("/{id}")
-    public String modify(@PathVariable Long id, Model model) {
+    public String getAdmin(@PathVariable Long id, Model model) {
         log.info("== 관리자 조회 ==");
         Admin admin = adminService.findById(id);
         model.addAttribute("admin", admin);
@@ -40,9 +39,17 @@ public class AdminController {
     }
 
     @PutMapping("/{id}")
-    public String modify2(@PathVariable Long id, @ModelAttribute AdminDTO adminDTO) {
+    public String modify(@PathVariable Long id, @ModelAttribute AdminDTO adminDTO) {
         log.info("== 관리자 정보 수정 ==");
         adminService.changeAdminInfo(id, adminDTO);
+
+        return "redirect:/admin";
+    }
+
+    @DeleteMapping("/{id}")
+    public String remove(@PathVariable Long id) {
+        log.info("== 관리자 삭제 ==");
+        adminService.remove(id);
 
         return "redirect:/admin";
     }

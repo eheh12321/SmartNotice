@@ -38,6 +38,12 @@ public class AdminService {
         return admin.getId();
     }
 
+    // 관리자 삭제
+    public void remove(Long id) {
+        Admin admin = findById(id);
+        adminRepository.delete(admin);
+    }
+
     // 관리자가 관리하는 마을 설정 (ROOT, ADMIN)
     public void setManageTown(Admin admin, List<Long> townIdList) {
         // 아예 새거로 갈아끼는 방식

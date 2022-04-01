@@ -27,8 +27,11 @@
 
     <button class="btn btn-primary" type="button" onclick="location.href='/admin'">뒤로가기</button>
     <button class="btn btn-primary" type="submit">수정</button>
-    <button class="btn btn-danger" type="submit">삭제</button>
+</form>
 
+<form action="" method="post" th:object="${admin}">
+    <input type="hidden" name="_method" value="DELETE"/>
+    <button class="btn btn-danger" type="submit">삭제</button>
 </form>
 
 </body>
