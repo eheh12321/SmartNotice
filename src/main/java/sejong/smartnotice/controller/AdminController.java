@@ -6,11 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.dto.AdminDTO;
-import sejong.smartnotice.dto.LoginDTO;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.service.AdminService;
-import sejong.smartnotice.service.AnnounceService;
-
 import java.util.List;
 
 @Slf4j
@@ -32,6 +29,15 @@ public class AdminController {
     @GetMapping("/{id}")
     public String getAdmin(@PathVariable Long id, Model model) {
         log.info("== 관리자 조회 ==");
+        Admin admin = adminService.findById(id);
+        model.addAttribute("admin", admin);
+
+        return "admin/adminDetail";
+    }
+    
+    @GetMapping("/{id}/edit")
+    public String modifyForm(@PathVariable Long id, Model model) {
+        log.info("== 관리자 수정 ==");
         Admin admin = adminService.findById(id);
         model.addAttribute("admin", admin);
 
@@ -64,15 +70,5 @@ public class AdminController {
     public void modifyManageTown(@PathVariable Long id, @RequestParam List<Long> tid) {
         Admin admin = adminService.findById(id);
         adminService.setManageTown(admin, tid);
-    }
-
-    /**
-     * 마을 방송하기 (테스트)
-     * http://localhost:8080/admin/announce/3?title=방송제목&category=일반&type=음성
-     * (사전조건 - 관리자랑 마을이랑 연결되있어야됨)
-     */
-    @GetMapping("/announce/{adminId}")
-    public void 관리자방송테스트용(@PathVariable Long adminId, @RequestParam String title, @RequestParam String category, @RequestParam String type) {
-
     }
 }
