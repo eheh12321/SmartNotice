@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.Region;
 import sejong.smartnotice.domain.Town;
+import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.repository.TownRepository;
 
 import javax.persistence.EntityManager;
@@ -19,6 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TownService {
 
+    private final AdminService adminService;
     private final TownRepository townRepository;
     private final EntityManager em;
 
@@ -69,6 +71,14 @@ public class TownService {
             throw new RuntimeException("에러");
         }
         em.remove(town);
+    }
+
+    // 마을 관리자 등록
+    public void addTownAdmin(Long townId, Long adminId) {
+        Town town = findTownById(townId);
+        Admin admin = adminService.findById(adminId);
+
+        town.addTownAdmin(admin);
     }
 
     // 마을ID 검증

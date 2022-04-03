@@ -59,16 +59,4 @@ public class AdminController {
 
         return "redirect:/admin";
     }
-
-    /**
-     * 관리자랑 마을 연결
-     * - 관리자가 여러 마을을 동시에 관리할 수도 있음 (ROOT)
-     * - 한 마을에 여러 관리자가 있을수도 있음
-     * http://localhost:8080/admin/modify/town/1?tid=1&tid=2
-     */
-    @PostMapping("/modify/town/{id}")
-    public void modifyManageTown(@PathVariable Long id, @RequestParam List<Long> tid) {
-        Admin admin = adminService.findById(id);
-        adminService.setManageTown(admin, tid);
-    }
 }

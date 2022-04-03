@@ -25,4 +25,13 @@ public class Region {
     public static Region createRegion(Long regionCode, String mainRegion, String subRegion) {
         return new Region(regionCode, mainRegion, subRegion);
     }
+
+    @Override
+    public String toString() {
+        return "Region{" +
+                "regionCode=" + regionCode +
+                ", mainRegion='" + mainRegion + '\'' +
+                ", subRegion='" + subRegion + '\'' +
+                '}';
+    }
 }

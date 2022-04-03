@@ -6,6 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.Town;
+import sejong.smartnotice.domain.member.Admin;
+import sejong.smartnotice.service.AdminService;
 import sejong.smartnotice.service.TownService;
 
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.List;
 public class TownController {
 
     private final TownService townService;
+    private final AdminService adminService;
 
     @GetMapping
     public String getTownList(Model model) {
@@ -66,5 +69,25 @@ public class TownController {
         log.info("== 마을 삭제 ==");
         townService.removeTown(id);
         return "redirect:/town";
+    }
+
+    // 마을 관리자 등록(목록 조회)
+    @GetMapping("/{id}/admin/new")
+    public String addTownAdminForm(@PathVariable Long id, Model model) {
+        log.info("== 마을 관리자 등록 ==");
+        Town town = townService.findTownById(id);
+        model.addAttribute("town", town);
+
+        List<Admin> adminList = adminService.getAdminList();
+        model.addAttribute("adminList", adminList);
+
+        return "/town/adminList";
+    }
+
+    // 마을 관리자 등록(등록)
+    @PostMapping("/{id}/admin/new")
+    public String addTownAdmin(@PathVariable Long id, @RequestParam Long adminId) {
+        townService.addTownAdmin(id, adminId);
+        return "redirect:/town/{id}";
     }
 }

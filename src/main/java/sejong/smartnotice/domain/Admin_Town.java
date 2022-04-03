@@ -1,14 +1,11 @@
 package sejong.smartnotice.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import sejong.smartnotice.domain.member.Admin;
 
 import javax.persistence.*;
 
-@Data
+@Getter @Setter
 @Entity
 @Builder
 @NoArgsConstructor
@@ -26,4 +23,9 @@ public class Admin_Town {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "town_id", nullable = false)
     private Town town;
+
+    @Override
+    public String toString() {
+        return town.getName();
+    }
 }

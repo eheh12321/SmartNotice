@@ -33,4 +33,14 @@ public class Member {
         this.name = name;
         this.tel = tel;
     }
+
+    @Override
+    public String toString() {
+        return "Member{" +
+                "id=" + id +
+                ", dtype='" + dtype + '\'' +
+                ", name='" + name + '\'' +
+                ", tel='" + tel + '\'' +
+                '}';
+    }
 }

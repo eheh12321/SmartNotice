@@ -2,9 +2,7 @@ package sejong.smartnotice.domain.member;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.ColumnDefault;
 import sejong.smartnotice.domain.Admin_Town;
-import sejong.smartnotice.domain.Town;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -36,18 +34,5 @@ public class Admin extends Member {
                 .role(role)
                 .townList(new ArrayList<>())
                 .build();
-    }
-
-    // 관리자 관리 마을 변경
-    public void setManageTown(List<Town> townList) {
-        List<Admin_Town> atList = new ArrayList<>();
-        for (Town town : townList) {
-            Admin_Town at = Admin_Town.builder()
-                    .town(town)
-                    .admin(this).build();
-            atList.add(at);
-            at.setAdmin(this); // 양방향 맺어주기
-        }
-        this.townList = atList; // 배열 갈아끼기
     }
 }

@@ -46,6 +46,31 @@
             </tbody>
         </table>
     </div>
+
+    <h2>소속 마을 관리자 목록</h2>
+    <button type="button" class="btn btn-primary" th:onclick="|location.href='@{/town/{id}/admin/new(id=${town.id})}'|">마을 관리자 등록</button>
+    <div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>이름</th>
+                <th>전화번호</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="admin : ${town.adminList}">
+                <td th:text="${admin.admin.id}"></td>
+                <td th:text="${admin.admin.name}"></td>
+                <td th:text="${admin.admin.tel}"></td>
+                <td>
+                    <a href="#" th:href="@{/admin/{id} (id=${admin.admin.id})}"
+                       class="btn btn-primary" role="button">상세</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 </body>
 </html>
