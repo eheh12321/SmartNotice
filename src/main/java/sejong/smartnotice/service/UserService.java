@@ -49,7 +49,17 @@ public class UserService {
     }
     
     // 주민 삭제
-    public void 주민삭제() {}
+    public void remove(Long id) {
+        User user = findUserById(id);
+        userRepository.delete(user);
+    }
+
+    // 주민 정보 수정
+    public void changeUserInfo(Long userId, UserDTO userDTO) {
+        User user = findUserById(userId);
+        user.changeMemberInfo(userDTO.getName(), userDTO.getTel());
+        user.changeUserInfo(userDTO.getAddress(), userDTO.getInfo(), userDTO.getAge());
+    }
 
     // 주민 마을 수정
     public void ModifyUserTown(Long userId, Long townId) {
@@ -65,7 +75,6 @@ public class UserService {
         user.changeDevice(device);
     }
 
-    public void 주민정보수정(String name, String address, String tel) {}
     public void 주민비밀번호수정() {}
 
     private User validateUserId(Long userId) {

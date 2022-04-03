@@ -7,9 +7,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.User;
+import sejong.smartnotice.dto.UserDTO;
 import sejong.smartnotice.service.EmergencyAlertService;
 import sejong.smartnotice.service.UserService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Slf4j
@@ -29,7 +31,42 @@ public class UserController {
         return "/user/userList";
     }
 
+    @GetMapping("/{id}")
+    public String getUser(@PathVariable Long id, Model model, HttpServletRequest request) {
+        log.info("== 마을 주민 조회 ==");
+        User user = userService.findUserById(id);
+        model.addAttribute("user", user);
 
+        String referer = request.getHeader("Referer");
+        log.info(referer);
+        model.addAttribute("referer", referer);
+
+        return "/user/userDetail";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String modifyForm(@PathVariable Long id, Model model) {
+        log.info("== 마을 주민 수정 ==");
+        User user = userService.findUserById(id);
+        model.addAttribute("user", user);
+
+        return "/user/modify";
+    }
+
+    @PutMapping("/{id}")
+    public String modify(@PathVariable Long id, @ModelAttribute UserDTO userDTO) {
+        log.info("== 마을 주민 정보 수정 ==");
+        userService.changeUserInfo(id, userDTO);
+
+        return "redirect:/";
+    }
+
+    @DeleteMapping("/{id}")
+    public String remove(@PathVariable Long id) {
+        log.info("== 마을 주민 삭제 ==");
+        userService.remove(id);
+        return "redirect:/";
+    }
 
     /**
      * 유저 긴급호출 (테스트)

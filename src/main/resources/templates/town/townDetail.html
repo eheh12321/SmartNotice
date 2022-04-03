@@ -19,6 +19,33 @@
         <button class="btn btn-danger" type="submit">삭제</button>
     </form>
 
+    <h2>소속 마을 주민 목록</h2>
+    <div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>이름</th>
+                <th>나이</th>
+                <th>전화번호</th>
+                <th>주소</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${town.userList}">
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.name}"></td>
+                <td th:text="${user.age}"></td>
+                <td th:text="${user.tel}"></td>
+                <td th:text="${user.address}"></td>
+                <td>
+                    <a href="#" th:href="@{/user/{id} (id=${user.id})}"
+                       class="btn btn-primary" role="button">상세</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 </body>
 </html>

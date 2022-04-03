@@ -52,6 +52,12 @@ public class User extends Member {
                 .town(town).build();
     }
 
+    public void changeUserInfo(String address, String info, int age) {
+        this.address = address;
+        this.info = info;
+        this.age = age;
+    }
+
     public long changeDevice(Device device) {
         this.device = device;
         device.changeUser(this);
