@@ -2,19 +2,34 @@ package sejong.smartnotice.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.service.EmergencyAlertService;
 import sejong.smartnotice.service.UserService;
 
+import java.util.List;
+
 @Slf4j
-@RestController
+@Controller
 @RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
     private final EmergencyAlertService alertService;
+
+    @GetMapping
+    public String getUserList(Model model) {
+        log.info("== 마을 주민 목록 조회 ==");
+        List<User> userList = userService.getUserList();
+        model.addAttribute("userList", userList);
+        return "/user/userList";
+    }
+
+
 
     /**
      * 유저 긴급호출 (테스트)

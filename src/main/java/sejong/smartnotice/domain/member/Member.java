@@ -17,6 +17,9 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
+    @Column(insertable = false, updatable = false)
+    private String dtype;
+
     private String name;
 
     private String tel;

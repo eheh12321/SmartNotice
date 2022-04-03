@@ -7,9 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.device.Device;
 import sejong.smartnotice.domain.member.User;
+import sejong.smartnotice.dto.LoginDTO;
+import sejong.smartnotice.dto.UserDTO;
 import sejong.smartnotice.repository.UserRepository;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -23,15 +26,13 @@ public class UserService {
     private final DeviceService deviceService;
 
     // 신규 주민 등록
-    public Long register(String name, String tel, String address, Long townId, Long deviceId) {
+    public Long register(UserDTO userDTO, LoginDTO loginDTO, Long townId) {
         // 1. 주민이 포함될 마을 조회
         Town town = townService.findTownById(townId);
 
-        // 2. 주민이 사용할 단밀기 조회
-        Device device = deviceService.findDeviceById(deviceId);
-
-        // 3. 마을주민 생성
-        User user = User.createUser(name, tel, address, town, "아이디", "비밀번호");
+        // 2. 마을주민 생성
+        User user = User.createUser(userDTO.getName(), userDTO.getTel(), userDTO.getAddress(), userDTO.getAge(), town,
+                loginDTO.getLoginId(), loginDTO.getLoginPw());
 
         userRepository.save(user);
         return user.getId();
@@ -42,6 +43,11 @@ public class UserService {
         return validateUserId(userId);
     }
 
+    // 마을 주민 목록 조회
+    public List<User> getUserList() {
+        return userRepository.findAll();
+    }
+    
     // 주민 삭제
     public void 주민삭제() {}
 

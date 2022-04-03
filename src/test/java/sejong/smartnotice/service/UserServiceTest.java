@@ -11,6 +11,8 @@ import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.device.Device;
 import sejong.smartnotice.domain.member.Supporter;
 import sejong.smartnotice.domain.member.User;
+import sejong.smartnotice.dto.LoginDTO;
+import sejong.smartnotice.dto.UserDTO;
 
 import javax.persistence.EntityManager;
 
@@ -38,7 +40,9 @@ class UserServiceTest {
         Supporter supporter2 = createSupporter("보호자2");
         Supporter supporter3 = createSupporter("보호자3");
 
-        Long uid = userService.register("이름", "010-1111-1111", "서울시 광진구", 1L, 1L);
+        UserDTO userDTO = new UserDTO("이름", "서울시 광진구", "010-1212-1212", 70);
+        LoginDTO loginDTO = new LoginDTO("ID", "PW");
+        Long uid = userService.register(userDTO, loginDTO, 1L);
 
         User user = userService.findUserById(uid);
         supporterService.connectWithUser(uid, supporter1);

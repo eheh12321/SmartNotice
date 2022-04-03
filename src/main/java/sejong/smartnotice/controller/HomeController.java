@@ -3,13 +3,17 @@ package sejong.smartnotice.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import sejong.smartnotice.domain.member.Member;
 import sejong.smartnotice.dto.AdminDTO;
 import sejong.smartnotice.dto.LoginDTO;
+import sejong.smartnotice.dto.UserDTO;
 import sejong.smartnotice.service.AdminService;
+import sejong.smartnotice.service.UserService;
+
+import javax.persistence.EntityManager;
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -18,19 +22,22 @@ import sejong.smartnotice.service.AdminService;
 public class HomeController {
 
     private final AdminService adminService;
+    private final UserService userService;
 
     @GetMapping("/register")
     public void register() { }
 
     @GetMapping("/register/admin")
-    public String registerAdmin() {
-        return "adminRegister";
+    public String registerAdminForm() {
+        return "register/adminRegister";
     }
 
-    /**
-     * 관리자 회원가입
-     * http://localhost:8080/admin/register?name=name&type=ADMIN&tel=tel&loginId=id&loginPw=pw
-     */
+    @GetMapping("/register/user")
+    public String registerUserForm() {
+        return "register/userRegister";
+    }
+    
+    // 관리자 회원가입
     @PostMapping("/register/admin")
     public String registerAdmin(
             @ModelAttribute LoginDTO loginDTO,
@@ -41,5 +48,33 @@ public class HomeController {
 
         adminService.register(adminDTO, loginDTO);
         return "redirect:/";
+    }
+
+    // 마을 주민 회원가입
+    @PostMapping("/register/user")
+    public String registerUser(
+            @ModelAttribute UserDTO userDTO,
+            @ModelAttribute LoginDTO loginDTO,
+            @RequestParam Long townId) {
+
+        log.info("adminDTO: {}" ,userDTO);
+        log.info("LoginDTO: {}", loginDTO);
+        log.info("townId: {}", townId);
+
+        userService.register(userDTO, loginDTO, townId);
+
+        return "redirect:/";
+    }
+
+    // 테스트용 전체 회원목록 조회
+    private final EntityManager em;
+
+    @GetMapping("/members")
+    public String getMemberList(Model model) {
+        List<Member> memberList = em.createQuery("select m from Member m", Member.class)
+                .getResultList();
+
+        model.addAttribute("memberList", memberList);
+        return "memberList";
     }
 }

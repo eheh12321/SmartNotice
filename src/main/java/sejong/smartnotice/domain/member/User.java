@@ -40,11 +40,12 @@ public class User extends Member {
 
     private int age;
 
-    public static User createUser(String name, String tel, String address, Town town, String id, String pw) {
+    public static User createUser(String name, String tel, String address, int age, Town town, String id, String pw) {
         return User.builder()
                 .name(name)
                 .tel(tel)
                 .address(address)
+                .age(age)
                 .loginId(id)
                 .loginPw(pw)
                 .supporterList(new ArrayList<>())
