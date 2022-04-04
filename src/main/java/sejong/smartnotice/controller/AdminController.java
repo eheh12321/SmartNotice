@@ -4,10 +4,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StreamUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.dto.AdminDTO;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.service.AdminService;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -19,9 +23,14 @@ public class AdminController {
     private final AdminService adminService;
 
     @GetMapping
-    public String getAdminList(Model model) {
+    public String getAdminList(Model model, @RequestParam(required = false) String name) {
         log.info("== 관리자 목록 조회 ==");
-        List<Admin> adminList = adminService.getAdminList();
+        List<Admin> adminList;
+        if(StringUtils.hasText(name)) {
+            adminList = adminService.getAdminListByName(name);
+        } else {
+            adminList = adminService.getAdminList();
+        }
         model.addAttribute("adminList", adminList);
         return "admin/adminList";
     }

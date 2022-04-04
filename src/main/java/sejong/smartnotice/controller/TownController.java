@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.member.Admin;
@@ -22,9 +23,14 @@ public class TownController {
     private final AdminService adminService;
 
     @GetMapping
-    public String getTownList(Model model) {
+    public String getTownList(Model model, @RequestParam(required = false) String name) {
         log.info("== 마을 목록 조회 ==");
-        List<Town> townList = townService.getTownList();
+        List<Town> townList;
+        if(StringUtils.hasText(name)) {
+            townList = townService.getTownListByName(name);
+        } else {
+            townList = townService.getTownList();
+        }
         model.addAttribute("townList", townList);
         return "/town/townList";
     }

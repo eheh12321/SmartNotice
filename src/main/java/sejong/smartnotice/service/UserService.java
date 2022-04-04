@@ -75,6 +75,11 @@ public class UserService {
         user.changeDevice(device);
     }
 
+    // 마을 주민 검색(이름으로)
+    public List<User> getUserListByName(String name) {
+        return userRepository.findByNameContaining(name);
+    }
+
     public void 주민비밀번호수정() {}
 
     private User validateUserId(Long userId) {

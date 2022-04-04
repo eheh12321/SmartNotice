@@ -4,10 +4,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sejong.smartnotice.domain.Admin_Town;
+import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.dto.AdminDTO;
 import sejong.smartnotice.dto.LoginDTO;
 import sejong.smartnotice.repository.AdminRepository;
+
+import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +23,7 @@ import java.util.Optional;
 public class AdminService {
 
     private final AdminRepository adminRepository;
+    private final EntityManager em;
     
     // 회원가입
     public Long register(AdminDTO adminDTO, LoginDTO loginDTO) {
@@ -53,5 +59,24 @@ public class AdminService {
     // 관리자 전체 목록 조회
     public List<Admin> getAdminList() {
         return adminRepository.findAll();
+    }
+
+    // 관리자 이름 검색
+    public List<Admin> getAdminListByName(String name) {
+        return adminRepository.findByNameContaining(name);
+    }
+
+    // 마을 관리 관리자 목록 조회
+    public List<Admin> getAdminListByTown(Long townId) {
+        Town town = em.find(Town.class, townId);
+        List<Admin_Town> atList = em.createQuery("select at from Admin_Town at where at.town=:town", Admin_Town.class)
+                .setParameter("town", town)
+                .getResultList();
+
+        List<Admin> adminList = new ArrayList<>();
+        for (Admin_Town at : atList) {
+            adminList.add(at.getAdmin());
+        }
+        return adminList;
     }
 }

@@ -104,6 +104,11 @@ public class TownService {
         town.removeTownAdmin(newAtList);
     }
 
+    // 마을 이름 검색
+    public List<Town> getTownListByName(String name) {
+        return townRepository.findByNameContaining(name);
+    }
+
     // 마을ID 검증
     private Town validateTownId(Long townId) {
         Optional<Town> opt = townRepository.findById(townId);

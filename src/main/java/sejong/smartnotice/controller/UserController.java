@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.User;
@@ -24,9 +25,14 @@ public class UserController {
     private final EmergencyAlertService alertService;
 
     @GetMapping
-    public String getUserList(Model model) {
+    public String getUserList(Model model, @RequestParam(required = false) String name) {
         log.info("== 마을 주민 목록 조회 ==");
-        List<User> userList = userService.getUserList();
+        List<User> userList;
+        if(StringUtils.hasText(name)) {
+            userList = userService.getUserListByName(name);
+        } else {
+            userList = userService.getUserList();
+        }
         model.addAttribute("userList", userList);
         return "/user/userList";
     }
