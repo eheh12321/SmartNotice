@@ -1,13 +1,16 @@
 package sejong.smartnotice.domain;
 
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.User;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Getter
 @Entity
 @Builder
@@ -46,6 +49,11 @@ public class Town {
         at.setTown(this); // 양방향 설정
     }
 
+    // 마을 관리자 삭제
+    public void removeTownAdmin(List<Admin_Town> atList) {
+        this.adminList = atList;
+    }
+    
     @Override
     public String toString() {
         return "Town{" +

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sejong.smartnotice.domain.Admin_Town;
 import sejong.smartnotice.domain.Region;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.member.Admin;
@@ -13,6 +14,7 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -79,6 +81,27 @@ public class TownService {
         Admin admin = adminService.findById(adminId);
 
         town.addTownAdmin(admin);
+    }
+
+    // 마을 관리자 삭제
+    public void removeTownAdmin(Long townId, Long adminId) {
+        Town town = findTownById(townId);
+        Admin admin = adminService.findById(adminId);
+
+        List<Admin_Town> atList = em.createQuery("select at from Admin_Town at where at.town=:town", Admin_Town.class)
+                .setParameter("town", town).getResultList();
+
+        List<Admin_Town> newAtList = atList.stream().filter(at -> {
+            if (at.getAdmin() == admin) {
+                log.info("관리자 확인, {}", admin.getName());
+                at.getAdmin().getTownList().remove(at);
+                em.remove(at);
+                log.info("남은 관리마을: {}", admin.getTownList().toString());
+                return false;
+            } else return true;
+        }).collect(Collectors.toList());
+
+        town.removeTownAdmin(newAtList);
     }
 
     // 마을ID 검증

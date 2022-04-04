@@ -72,9 +72,9 @@ public class TownController {
     }
 
     // 마을 관리자 등록(목록 조회)
-    @GetMapping("/{id}/admin/new")
+    @GetMapping("/{id}/admin")
     public String addTownAdminForm(@PathVariable Long id, Model model) {
-        log.info("== 마을 관리자 등록 ==");
+        log.info("== 마을 관리자 목록 조회 ==");
         Town town = townService.findTownById(id);
         model.addAttribute("town", town);
 
@@ -85,9 +85,18 @@ public class TownController {
     }
 
     // 마을 관리자 등록(등록)
-    @PostMapping("/{id}/admin/new")
+    @PostMapping("/{id}/admin")
     public String addTownAdmin(@PathVariable Long id, @RequestParam Long adminId) {
+        log.info("== 마을 관리자 등록 ==");
         townService.addTownAdmin(id, adminId);
+        return "redirect:/town/{id}";
+    }
+
+    // 마을 관리자 삭제
+    @DeleteMapping("/{id}/admin")
+    public String removeTownAdmin(@PathVariable Long id, @RequestParam Long adminId) {
+        log.info("== 마을 관리자 삭제 ==");
+        townService.removeTownAdmin(id, adminId);
         return "redirect:/town/{id}";
     }
 }

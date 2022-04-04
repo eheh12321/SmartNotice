@@ -48,7 +48,7 @@
     </div>
 
     <h2>소속 마을 관리자 목록</h2>
-    <button type="button" class="btn btn-primary" th:onclick="|location.href='@{/town/{id}/admin/new(id=${town.id})}'|">마을 관리자 등록</button>
+    <button type="button" class="btn btn-primary" th:onclick="|location.href='@{/town/{id}/admin(id=${town.id})}'|">마을 관리자 관리</button>
     <div>
         <table class="table table-striped">
             <thead>

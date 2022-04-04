@@ -7,6 +7,7 @@ import sejong.smartnotice.domain.Admin_Town;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static javax.persistence.CascadeType.*;
 
@@ -34,5 +35,18 @@ public class Admin extends Member {
                 .role(role)
                 .townList(new ArrayList<>())
                 .build();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Admin admin = (Admin) o;
+        return Objects.equals(getTownList(), admin.getTownList()) && getRole() == admin.getRole();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getTownList(), getRole());
     }
 }
