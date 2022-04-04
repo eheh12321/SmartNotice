@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @SuperBuilder
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
@@ -18,14 +18,18 @@ public class Member {
     private Long id;
 
     @Column(insertable = false, updatable = false)
-    private String dtype;
+    private String dtype; // 조회용 (수정불가)
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String tel;
 
+    @Column(nullable = false)
     private String loginId;
 
+    @Column(nullable = false)
     private String loginPw;
 
     // 회원 정보 수정

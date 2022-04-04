@@ -14,13 +14,20 @@ import static javax.persistence.FetchType.*;
 @Entity
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Supporter extends Member {
+public class Supporter {
+
+    @Id @GeneratedValue
+    @Column(name = "supporter_id")
+    private Long id;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     private String tel;
+    private String name;
+    private String loginId;
+    private String loginPw;
 
     public static Supporter createSupporter(String name, String tel, String loginId, String loginPw) {
         return Supporter.builder()

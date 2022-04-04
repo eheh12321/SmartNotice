@@ -27,13 +27,13 @@ public class User extends Member {
     private Device device;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "town_id", nullable = false)
+    @JoinColumn(name = "town_id")
     private Town town;
 
     @OneToMany(mappedBy = "user")
     private List<Supporter> supporterList = new ArrayList<>();
 
-    @Column(nullable = false, length = 50)
+    @Column(length = 50)
     private String address;
 
     private String info;
@@ -58,17 +58,15 @@ public class User extends Member {
         this.age = age;
     }
 
-    public long changeDevice(Device device) {
+    public void changeDevice(Device device) {
         this.device = device;
         device.changeUser(this);
-        return device.getId();
     }
 
-    public long changeTown(Town town) {
+    public void changeTown(Town town) {
         this.town.getUserList().remove(this); // 기존 마을 정보 삭제
         this.town = town;
         town.getUserList().add(this);
-        return town.getId();
     }
 
     /// 방송 수신 테스트용 (실제로는 임베디드 단에서 구현) ///
