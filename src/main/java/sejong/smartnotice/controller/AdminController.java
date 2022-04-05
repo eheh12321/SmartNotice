@@ -4,14 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.dto.AdminDTO;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.service.AdminService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -27,9 +25,9 @@ public class AdminController {
         log.info("== 관리자 목록 조회 ==");
         List<Admin> adminList;
         if(StringUtils.hasText(name)) {
-            adminList = adminService.getAdminListByName(name);
+            adminList = adminService.findByName(name);
         } else {
-            adminList = adminService.getAdminList();
+            adminList = adminService.findAll();
         }
         model.addAttribute("adminList", adminList);
         return "admin/adminList";
@@ -56,7 +54,7 @@ public class AdminController {
     @PutMapping("/{id}")
     public String modify(@PathVariable Long id, @ModelAttribute AdminDTO adminDTO) {
         log.info("== 관리자 정보 수정 ==");
-        adminService.changeAdminInfo(id, adminDTO);
+        adminService.modifyAdminInfo(id, adminDTO);
 
         return "redirect:/admin";
     }
@@ -64,7 +62,7 @@ public class AdminController {
     @DeleteMapping("/{id}")
     public String remove(@PathVariable Long id) {
         log.info("== 관리자 삭제 ==");
-        adminService.remove(id);
+        adminService.delete(id);
 
         return "redirect:/admin";
     }

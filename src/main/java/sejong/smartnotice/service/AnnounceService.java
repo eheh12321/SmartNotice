@@ -29,7 +29,7 @@ public class AnnounceService {
         // 1. 방송 대상 마을 추출
         List<Town> townList = new ArrayList<>();
         for (Long tid : townIdList) {
-            Town town = townService.findTownById(tid);
+            Town town = townService.findById(tid);
             townList.add(town);
         }
 

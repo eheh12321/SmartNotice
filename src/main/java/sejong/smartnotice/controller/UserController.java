@@ -6,7 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.dto.UserDTO;
 import sejong.smartnotice.service.EmergencyAlertService;
@@ -29,9 +28,9 @@ public class UserController {
         log.info("== 마을 주민 목록 조회 ==");
         List<User> userList;
         if(StringUtils.hasText(name)) {
-            userList = userService.getUserListByName(name);
+            userList = userService.findByName(name);
         } else {
-            userList = userService.getUserList();
+            userList = userService.findAll();
         }
         model.addAttribute("userList", userList);
         return "/user/userList";
@@ -40,7 +39,7 @@ public class UserController {
     @GetMapping("/{id}")
     public String getUser(@PathVariable Long id, Model model, HttpServletRequest request) {
         log.info("== 마을 주민 조회 ==");
-        User user = userService.findUserById(id);
+        User user = userService.findById(id);
         model.addAttribute("user", user);
 
         String referer = request.getHeader("Referer");
@@ -53,7 +52,7 @@ public class UserController {
     @GetMapping("/{id}/edit")
     public String modifyForm(@PathVariable Long id, Model model) {
         log.info("== 마을 주민 수정 ==");
-        User user = userService.findUserById(id);
+        User user = userService.findById(id);
         model.addAttribute("user", user);
 
         return "/user/modify";
@@ -62,7 +61,7 @@ public class UserController {
     @PutMapping("/{id}")
     public String modify(@PathVariable Long id, @ModelAttribute UserDTO userDTO) {
         log.info("== 마을 주민 정보 수정 ==");
-        userService.changeUserInfo(id, userDTO);
+        userService.modifyUserInfo(id, userDTO);
 
         return "redirect:/";
     }
@@ -70,7 +69,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     public String remove(@PathVariable Long id) {
         log.info("== 마을 주민 삭제 ==");
-        userService.remove(id);
+        userService.delete(id);
         return "redirect:/";
     }
 
@@ -81,7 +80,7 @@ public class UserController {
      */
     @GetMapping("/emergency/{userId}")
     public void doUserEmergencyAlert(@PathVariable Long userId) {
-        User user = userService.findUserById(userId);
+        User user = userService.findById(userId);
         alertService.createAlert(user);
     }
 }

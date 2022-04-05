@@ -30,7 +30,7 @@ public class SupporterService {
 
     // 보호자랑 회원 연결
     public Long connectWithUser(Long userId, Supporter supporter) {
-        User user = userService.findUserById(userId);
+        User user = userService.findById(userId);
         // + 뭔가 검증 로직을 거쳐야함
         supporter.connectUser(user);
         return user.getId();
@@ -40,9 +40,6 @@ public class SupporterService {
     public Supporter findSupporterById(Long supporterId) {
         return validateSupporterId(supporterId);
     }
-
-    // 보호자 정보 수정
-    public void 보호자정보수정() {}
     
     // 보호자 삭제
     public void remove(Long supporterId) {

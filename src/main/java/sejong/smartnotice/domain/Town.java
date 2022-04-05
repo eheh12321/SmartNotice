@@ -8,7 +8,6 @@ import sejong.smartnotice.domain.member.User;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Getter
@@ -35,7 +34,16 @@ public class Town {
     @OneToMany(mappedBy = "town", cascade = CascadeType.ALL)
     private List<Admin_Town> adminList = new ArrayList<>(); // 소속 관리자 목록
 
-    public void changeTown(String name, Region region) {
+    // 마을 생성
+    public static Town createTown(String name, Region region) {
+        return Town.builder()
+                .name(name)
+                .region(region)
+                .userList(new ArrayList<>()).build();
+    }
+
+    // 마을 정보 수정
+    public void modifyTownInfo(String name, Region region) {
         this.name = name;
         this.region = region;
     }

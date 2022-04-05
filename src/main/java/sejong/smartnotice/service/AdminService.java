@@ -12,9 +12,7 @@ import sejong.smartnotice.dto.LoginDTO;
 import sejong.smartnotice.repository.AdminRepository;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -34,14 +32,14 @@ public class AdminService {
     }
 
     // 관리자 정보 수정
-    public Long changeAdminInfo(Long id, AdminDTO adminDTO) {
+    public Long modifyAdminInfo(Long id, AdminDTO adminDTO) {
         Admin admin = findById(id);
-        admin.changeAdminInfo(adminDTO.getName(), adminDTO.getTel());
+        admin.modifyAdminInfo(adminDTO.getName(), adminDTO.getTel());
         return admin.getId();
     }
 
     // 관리자 삭제
-    public void remove(Long id) {
+    public void delete(Long id) {
         Admin admin = findById(id);
         adminRepository.delete(admin);
     }
@@ -57,17 +55,17 @@ public class AdminService {
     }
 
     // 관리자 전체 목록 조회
-    public List<Admin> getAdminList() {
+    public List<Admin> findAll() {
         return adminRepository.findAll();
     }
 
     // 관리자 이름 검색
-    public List<Admin> getAdminListByName(String name) {
+    public List<Admin> findByName(String name) {
         return adminRepository.findByNameContaining(name);
     }
 
     // 마을 관리 관리자 목록 조회
-    public List<Admin> getAdminListByTown(Long townId) {
+    public List<Admin> findByTown(Long townId) {
         Town town = em.find(Town.class, townId);
         List<Admin_Town> atList = em.createQuery("select at from Admin_Town at where at.town=:town", Admin_Town.class)
                 .setParameter("town", town)

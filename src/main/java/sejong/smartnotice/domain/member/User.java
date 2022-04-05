@@ -1,7 +1,6 @@
 package sejong.smartnotice.domain.member;
 
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import sejong.smartnotice.domain.announce.Announce;
 import sejong.smartnotice.domain.device.Device;
@@ -17,7 +16,7 @@ import static javax.persistence.FetchType.*;
 
 @Slf4j
 @Getter
-@SuperBuilder
+@Builder
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
@@ -69,7 +68,7 @@ public class User {
                 .town(town).build();
     }
 
-    public void changeUserInfo(String name, String tel, String address, String info, int age) {
+    public void modifyUserInfo(String name, String tel, String address, String info, int age) {
         this.name = name;
         this.tel = tel;
         this.address = address;
@@ -77,12 +76,12 @@ public class User {
         this.age = age;
     }
 
-    public void changeDevice(Device device) {
+    public void modifyDevice(Device device) {
         this.device = device;
         device.changeUser(this);
     }
 
-    public void changeTown(Town town) {
+    public void modifyTown(Town town) {
         this.town.getUserList().remove(this); // 기존 마을 정보 삭제
         this.town = town;
         town.getUserList().add(this);

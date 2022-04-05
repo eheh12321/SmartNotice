@@ -11,7 +11,6 @@ import sejong.smartnotice.dto.LoginDTO;
 import sejong.smartnotice.dto.UserDTO;
 import sejong.smartnotice.repository.UserRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +27,7 @@ public class UserService {
     // 신규 주민 등록
     public Long register(UserDTO userDTO, LoginDTO loginDTO, Long townId) {
         // 1. 주민이 포함될 마을 조회
-        Town town = townService.findTownById(townId);
+        Town town = townService.findById(townId);
 
         // 2. 마을주민 생성
         User user = User.createUser(userDTO.getName(), userDTO.getTel(), userDTO.getAddress(), userDTO.getAge(), town,
@@ -38,48 +37,46 @@ public class UserService {
         return user.getId();
     }
 
-    // 마을 주민 조회
-    public User findUserById(Long userId) {
-        return validateUserId(userId);
-    }
-
-    // 마을 주민 목록 조회
-    public List<User> getUserList() {
-        return userRepository.findAll();
-    }
-    
     // 주민 삭제
-    public void remove(Long id) {
-        User user = findUserById(id);
+    public void delete(Long id) {
+        User user = findById(id);
         userRepository.delete(user);
     }
 
     // 주민 정보 수정
-    public void changeUserInfo(Long userId, UserDTO userDTO) {
-        User user = findUserById(userId);
-        user.changeUserInfo(userDTO.getName(), userDTO.getTel(), userDTO.getAddress(), userDTO.getInfo(), userDTO.getAge());
+    public void modifyUserInfo(Long userId, UserDTO userDTO) {
+        User user = findById(userId);
+        user.modifyUserInfo(userDTO.getName(), userDTO.getTel(), userDTO.getAddress(), userDTO.getInfo(), userDTO.getAge());
     }
 
     // 주민 마을 수정
-    public void ModifyUserTown(Long userId, Long townId) {
-        Town town = townService.findTownById(townId);
+    public void modifyTown(Long userId, Long townId) {
+        Town town = townService.findById(townId);
         User user = validateUserId(userId);
-        user.changeTown(town);
+        user.modifyTown(town);
     }
 
     // 주민 단말기 수정
-    public void ModifyUserDevice(Long userId, Long deviceId) {
+    public void modifyDevice(Long userId, Long deviceId) {
         Device device = deviceService.findDeviceById(deviceId);
         User user = validateUserId(userId);
-        user.changeDevice(device);
+        user.modifyDevice(device);
+    }
+
+    // 마을 주민 조회
+    public User findById(Long userId) {
+        return validateUserId(userId);
+    }
+
+    // 마을 주민 목록 조회
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 
     // 마을 주민 검색(이름으로)
-    public List<User> getUserListByName(String name) {
+    public List<User> findByName(String name) {
         return userRepository.findByNameContaining(name);
     }
-
-    public void 주민비밀번호수정() {}
 
     private User validateUserId(Long userId) {
         Optional<User> opt = userRepository.findById(userId);

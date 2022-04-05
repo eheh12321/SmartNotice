@@ -27,9 +27,9 @@ public class TownController {
         log.info("== 마을 목록 조회 ==");
         List<Town> townList;
         if(StringUtils.hasText(name)) {
-            townList = townService.getTownListByName(name);
+            townList = townService.findByName(name);
         } else {
-            townList = townService.getTownList();
+            townList = townService.findAll();
         }
         model.addAttribute("townList", townList);
         return "/town/townList";
@@ -43,14 +43,14 @@ public class TownController {
     @PostMapping
     public String register(String name, Long regionCode) {
         log.info("== 마을 등록 ==");
-        townService.registerTown(name, regionCode);
+        townService.register(name, regionCode);
         return "redirect:/town";
     }
 
     @GetMapping("/{id}")
     public String getTownDetail(@PathVariable Long id, Model model) {
         log.info("== 마을 상세 조회 ==");
-        Town town = townService.findTownById(id);
+        Town town = townService.findById(id);
         model.addAttribute("town", town);
         return "/town/townDetail";
     }
@@ -58,7 +58,7 @@ public class TownController {
     @GetMapping("/{id}/edit")
     public String modify(@PathVariable Long id, Model model) {
         log.info("== 마을 수정 ==");
-        Town town = townService.findTownById(id);
+        Town town = townService.findById(id);
         model.addAttribute("town", town);
         return "/town/modify";
     }
@@ -66,14 +66,14 @@ public class TownController {
     @PutMapping("/{id}")
     public String modify(@PathVariable Long id, @RequestParam String name, @RequestParam Long regionCode) {
         log.info("== 마을 수정 ==");
-        townService.changeTownInfo(id, name, regionCode);
+        townService.modifyTownInfo(id, name, regionCode);
         return "redirect:/town";
     }
     
     @DeleteMapping("/{id}")
     public String remove(@PathVariable Long id) {
         log.info("== 마을 삭제 ==");
-        townService.removeTown(id);
+        townService.delete(id);
         return "redirect:/town";
     }
 
@@ -81,10 +81,10 @@ public class TownController {
     @GetMapping("/{id}/admin")
     public String addTownAdminForm(@PathVariable Long id, Model model) {
         log.info("== 마을 관리자 목록 조회 ==");
-        Town town = townService.findTownById(id);
+        Town town = townService.findById(id);
         model.addAttribute("town", town);
 
-        List<Admin> adminList = adminService.getAdminList();
+        List<Admin> adminList = adminService.findAll();
         model.addAttribute("adminList", adminList);
 
         return "/town/adminList";

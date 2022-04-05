@@ -11,7 +11,6 @@ import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.repository.TownRepository;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,13 +26,9 @@ public class TownService {
     private final EntityManager em;
 
     // 신규 마을 등록
-    public Long registerTown(String townName, Long regionCode) {
+    public Long register(String townName, Long regionCode) {
         Region region = em.find(Region.class, regionCode); // 지역코드 조회
-        /// 마을이름 중복 검증 코드 들어가야함 ///
-        Town town = Town.builder()
-                .name(townName)
-                .region(region)
-                .userList(new ArrayList<>()).build();
+        Town town = Town.createTown(townName, region);
 
         townRepository.save(town);
         return town.getId();
@@ -47,26 +42,8 @@ public class TownService {
         return region.getRegionCode();
     }
 
-    // 마을 정보 수정
-    public Long changeTownInfo(Long id, String name, Long regionCode) {
-        Town town = findTownById(id);
-        Region region = em.find(Region.class, regionCode);
-        town.changeTown(name, region);
-        return town.getId();
-    }
-
-    // 마을 목록 조회
-    public List<Town> getTownList() {
-        return townRepository.findAll();
-    }
-
-    // 마을 조회 (단순 위임 및 예외처리)
-    public Town findTownById(Long townId) {
-        return validateTownId(townId);
-    }
-
     // 마을 삭제
-    public void removeTown(Long townId) {
+    public void delete(Long townId) {
         Town town = validateTownId(townId);
         if(!town.getUserList().isEmpty()) {
             log.warn("마을 주민이 없어야 마을을 삭제할 수 있습니다");
@@ -75,9 +52,17 @@ public class TownService {
         em.remove(town);
     }
 
+    // 마을 정보 수정
+    public Long modifyTownInfo(Long id, String name, Long regionCode) {
+        Town town = findById(id);
+        Region region = em.find(Region.class, regionCode);
+        town.modifyTownInfo(name, region);
+        return town.getId();
+    }
+
     // 마을 관리자 등록
     public void addTownAdmin(Long townId, Long adminId) {
-        Town town = findTownById(townId);
+        Town town = findById(townId);
         Admin admin = adminService.findById(adminId);
 
         town.addTownAdmin(admin);
@@ -85,7 +70,7 @@ public class TownService {
 
     // 마을 관리자 삭제
     public void removeTownAdmin(Long townId, Long adminId) {
-        Town town = findTownById(townId);
+        Town town = findById(townId);
         Admin admin = adminService.findById(adminId);
 
         List<Admin_Town> atList = em.createQuery("select at from Admin_Town at where at.town=:town", Admin_Town.class)
@@ -104,8 +89,18 @@ public class TownService {
         town.removeTownAdmin(newAtList);
     }
 
+    // 마을 목록 조회
+    public List<Town> findAll() {
+        return townRepository.findAll();
+    }
+
+    // 마을 조회 (단순 위임 및 예외처리)
+    public Town findById(Long townId) {
+        return validateTownId(townId);
+    }
+
     // 마을 이름 검색
-    public List<Town> getTownListByName(String name) {
+    public List<Town> findByName(String name) {
         return townRepository.findByNameContaining(name);
     }
 

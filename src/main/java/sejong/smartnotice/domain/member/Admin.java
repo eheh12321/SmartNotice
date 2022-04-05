@@ -1,19 +1,16 @@
 package sejong.smartnotice.domain.member;
 
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 import sejong.smartnotice.domain.Admin_Town;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static javax.persistence.CascadeType.*;
 
 @Getter
 @Entity
-@SuperBuilder
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "admin")
 public class Admin {
@@ -53,7 +50,7 @@ public class Admin {
                 .build();
     }
 
-    public void changeAdminInfo(String name, String tel) {
+    public void modifyAdminInfo(String name, String tel) {
         this.name = name;
         this.tel = tel;
     }
