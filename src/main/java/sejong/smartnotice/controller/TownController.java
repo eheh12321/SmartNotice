@@ -32,7 +32,7 @@ public class TownController {
             townList = townService.findAll();
         }
         model.addAttribute("townList", townList);
-        return "/town/townList";
+        return "town/townList";
     }
 
     @GetMapping("/new")
@@ -52,7 +52,7 @@ public class TownController {
         log.info("== 마을 상세 조회 ==");
         Town town = townService.findById(id);
         model.addAttribute("town", town);
-        return "/town/townDetail";
+        return "town/townDetail";
     }
 
     @GetMapping("/{id}/edit")
@@ -60,7 +60,7 @@ public class TownController {
         log.info("== 마을 수정 ==");
         Town town = townService.findById(id);
         model.addAttribute("town", town);
-        return "/town/modify";
+        return "town/modify";
     }
 
     @PutMapping("/{id}")
@@ -87,7 +87,7 @@ public class TownController {
         List<Admin> adminList = adminService.findAll();
         model.addAttribute("adminList", adminList);
 
-        return "/town/adminList";
+        return "town/adminList";
     }
 
     // 마을 관리자 등록(등록)

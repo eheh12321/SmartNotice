@@ -8,8 +8,6 @@ import sejong.smartnotice.domain.Admin_Town;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.AdminRole;
-import sejong.smartnotice.dto.AdminDTO;
-import sejong.smartnotice.dto.LoginDTO;
 import sejong.smartnotice.repository.AdminRepository;
 
 import javax.persistence.EntityManager;

@@ -1,4 +1,4 @@
-package sejong.smartnotice.dto;
+package sejong.smartnotice.form;
 
 import lombok.Data;
 import sejong.smartnotice.domain.member.AdminRole;
@@ -6,19 +6,15 @@ import sejong.smartnotice.domain.member.AdminRole;
 import javax.validation.constraints.NotBlank;
 
 @Data
-public class AdminRegisterForm {
+public class AdminModifyForm {
+
+    private Long id;
 
     @NotBlank
     private String name;
 
     @NotBlank
     private String tel;
-
-    @NotBlank
-    private String loginId;
-
-    @NotBlank
-    private String loginPw;
 
     private AdminRole role;
 }

@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import sejong.smartnotice.dto.AdminRegisterForm;
+import sejong.smartnotice.form.AdminRegisterForm;
 import sejong.smartnotice.dto.LoginDTO;
 import sejong.smartnotice.dto.UserDTO;
 import sejong.smartnotice.service.AdminService;

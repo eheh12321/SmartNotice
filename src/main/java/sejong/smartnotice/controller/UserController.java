@@ -33,7 +33,7 @@ public class UserController {
             userList = userService.findAll();
         }
         model.addAttribute("userList", userList);
-        return "/user/userList";
+        return "user/userList";
     }
 
     @GetMapping("/{id}")
@@ -46,7 +46,7 @@ public class UserController {
         log.info(referer);
         model.addAttribute("referer", referer);
 
-        return "/user/userDetail";
+        return "user/userDetail";
     }
 
     @GetMapping("/{id}/edit")
@@ -55,7 +55,7 @@ public class UserController {
         User user = userService.findById(id);
         model.addAttribute("user", user);
 
-        return "/user/modify";
+        return "user/modify";
     }
 
     @PutMapping("/{id}")

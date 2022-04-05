@@ -5,9 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import sejong.smartnotice.dto.AdminDTO;
 import sejong.smartnotice.domain.member.Admin;
+import sejong.smartnotice.form.AdminModifyForm;
 import sejong.smartnotice.service.AdminService;
 
 import java.util.List;
@@ -52,10 +54,14 @@ public class AdminController {
     }
 
     @PutMapping("/{id}")
-    public String modify(@PathVariable Long id, @ModelAttribute AdminDTO adminDTO) {
+    public String modify(@PathVariable Long id, @Validated @ModelAttribute("admin") AdminModifyForm form,
+                         BindingResult bindingResult) {
         log.info("== 관리자 정보 수정 ==");
-        adminService.modifyAdminInfo(id, adminDTO.getName(), adminDTO.getTel());
-
+        if(bindingResult.hasErrors()) {
+            log.warn("검증 오류 발생: {}", bindingResult);
+            return "admin/modify";
+        }
+        adminService.modifyAdminInfo(id, form.getName(), form.getTel());
         return "redirect:/admin";
     }
 
