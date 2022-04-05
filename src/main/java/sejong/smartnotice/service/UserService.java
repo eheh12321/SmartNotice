@@ -57,8 +57,7 @@ public class UserService {
     // 주민 정보 수정
     public void changeUserInfo(Long userId, UserDTO userDTO) {
         User user = findUserById(userId);
-        user.changeMemberInfo(userDTO.getName(), userDTO.getTel());
-        user.changeUserInfo(userDTO.getAddress(), userDTO.getInfo(), userDTO.getAge());
+        user.changeUserInfo(userDTO.getName(), userDTO.getTel(), userDTO.getAddress(), userDTO.getInfo(), userDTO.getAge());
     }
 
     // 주민 마을 수정

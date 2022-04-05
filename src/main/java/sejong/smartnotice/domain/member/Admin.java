@@ -16,7 +16,23 @@ import static javax.persistence.CascadeType.*;
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "admin")
-public class Admin extends Member {
+public class Admin {
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "admin_id")
+    private Long id;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false, unique = true)
+    private String tel;
+
+    @Column(nullable = false, unique = true)
+    private String loginId;
+
+    @Column(nullable = false)
+    private String loginPw;
 
     // Admin 커밋 시 자동으로 딸려감
     @OneToMany(mappedBy = "admin", cascade = ALL)
@@ -37,16 +53,21 @@ public class Admin extends Member {
                 .build();
     }
 
+    public void changeAdminInfo(String name, String tel) {
+        this.name = name;
+        this.tel = tel;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Admin admin = (Admin) o;
-        return Objects.equals(getTownList(), admin.getTownList()) && getRole() == admin.getRole();
+        return Objects.equals(getId(), admin.getId()) && Objects.equals(getLoginId(), admin.getLoginId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getTownList(), getRole());
+        return Objects.hash(getId());
     }
 }

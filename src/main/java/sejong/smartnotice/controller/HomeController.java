@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import sejong.smartnotice.domain.member.Member;
 import sejong.smartnotice.dto.AdminDTO;
 import sejong.smartnotice.dto.LoginDTO;
 import sejong.smartnotice.dto.UserDTO;
@@ -64,17 +63,5 @@ public class HomeController {
         userService.register(userDTO, loginDTO, townId);
 
         return "redirect:/";
-    }
-
-    // 테스트용 전체 회원목록 조회
-    private final EntityManager em;
-
-    @GetMapping("/members")
-    public String getMemberList(Model model) {
-        List<Member> memberList = em.createQuery("select m from Member m", Member.class)
-                .getResultList();
-
-        model.addAttribute("memberList", memberList);
-        return "memberList";
     }
 }

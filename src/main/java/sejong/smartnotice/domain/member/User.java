@@ -10,6 +10,7 @@ import sejong.smartnotice.domain.Town;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.*;
@@ -19,7 +20,30 @@ import static javax.persistence.FetchType.*;
 @SuperBuilder
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends Member {
+public class User {
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    private Long id;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false, unique = true)
+    private String tel;
+
+    @Column(nullable = false, unique = true)
+    private String loginId;
+
+    @Column(nullable = false)
+    private String loginPw;
+
+    @Column(length = 50)
+    private String address;
+
+    private String info;
+
+    private int age;
 
     // Device의 생명주기가 User에 의해 정해진다
     @OneToOne(fetch = LAZY, cascade = ALL)
@@ -33,13 +57,6 @@ public class User extends Member {
     @OneToMany(mappedBy = "user")
     private List<Supporter> supporterList = new ArrayList<>();
 
-    @Column(length = 50)
-    private String address;
-
-    private String info;
-
-    private int age;
-
     public static User createUser(String name, String tel, String address, int age, Town town, String id, String pw) {
         return User.builder()
                 .name(name)
@@ -52,7 +69,9 @@ public class User extends Member {
                 .town(town).build();
     }
 
-    public void changeUserInfo(String address, String info, int age) {
+    public void changeUserInfo(String name, String tel, String address, String info, int age) {
+        this.name = name;
+        this.tel = tel;
         this.address = address;
         this.info = info;
         this.age = age;
@@ -76,5 +95,18 @@ public class User extends Member {
         log.warn("방송타입: {}", announce.getType());
         log.warn("방송을 받은 사람: {}", this.getName());
         log.warn("===============================");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(getId(), user.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

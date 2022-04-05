@@ -36,7 +36,7 @@ public class AdminService {
     // 관리자 정보 수정
     public Long changeAdminInfo(Long id, AdminDTO adminDTO) {
         Admin admin = findById(id);
-        admin.changeMemberInfo(adminDTO.getName(), adminDTO.getTel());
+        admin.changeAdminInfo(adminDTO.getName(), adminDTO.getTel());
         return admin.getId();
     }
 
