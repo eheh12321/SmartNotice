@@ -54,7 +54,7 @@ public class AdminController {
     @PutMapping("/{id}")
     public String modify(@PathVariable Long id, @ModelAttribute AdminDTO adminDTO) {
         log.info("== 관리자 정보 수정 ==");
-        adminService.modifyAdminInfo(id, adminDTO);
+        adminService.modifyAdminInfo(id, adminDTO.getName(), adminDTO.getTel());
 
         return "redirect:/admin";
     }

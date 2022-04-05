@@ -3,16 +3,14 @@ package sejong.smartnotice.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import sejong.smartnotice.dto.AdminDTO;
+import sejong.smartnotice.dto.AdminRegisterForm;
 import sejong.smartnotice.dto.LoginDTO;
 import sejong.smartnotice.dto.UserDTO;
 import sejong.smartnotice.service.AdminService;
 import sejong.smartnotice.service.UserService;
-
-import javax.persistence.EntityManager;
-import java.util.List;
 
 @Slf4j
 @Controller
@@ -38,14 +36,13 @@ public class HomeController {
     
     // 관리자 회원가입
     @PostMapping("/register/admin")
-    public String registerAdmin(
-            @ModelAttribute LoginDTO loginDTO,
-            @ModelAttribute AdminDTO adminDTO) {
-
-        log.info("LoginDTO: {}", loginDTO);
-        log.info("adminDTO: {}" ,adminDTO);
-
-        adminService.register(adminDTO, loginDTO);
+    public String registerAdmin(@Validated @ModelAttribute("admin") AdminRegisterForm form,
+                                BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            log.warn("검증 오류 발생: {}", bindingResult);
+            return "register/adminRegister";
+        }
+        adminService.register(form.getName(), form.getTel(), form.getLoginId(), form.getLoginPw(), form.getRole());
         return "redirect:/";
     }
 

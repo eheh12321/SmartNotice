@@ -4,6 +4,7 @@ import lombok.*;
 import sejong.smartnotice.domain.Admin_Town;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.*;
 
 import static javax.persistence.CascadeType.*;
@@ -12,6 +13,7 @@ import static javax.persistence.CascadeType.*;
 @Entity
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "admin")
 public class Admin {
 
@@ -19,15 +21,19 @@ public class Admin {
     @Column(name = "admin_id")
     private Long id;
 
+    @NotBlank
     @Column(nullable = false)
     private String name;
 
+    @NotBlank
     @Column(nullable = false, unique = true)
     private String tel;
 
+    @NotBlank
     @Column(nullable = false, unique = true)
     private String loginId;
 
+    @NotBlank
     @Column(nullable = false)
     private String loginPw;
 

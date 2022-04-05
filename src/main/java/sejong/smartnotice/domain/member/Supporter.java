@@ -12,8 +12,9 @@ import static javax.persistence.FetchType.*;
 @Getter
 @Slf4j
 @Entity
-@SuperBuilder
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Supporter {
 
     @Id @GeneratedValue

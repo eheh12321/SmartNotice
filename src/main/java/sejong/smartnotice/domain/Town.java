@@ -13,8 +13,8 @@ import java.util.List;
 @Getter
 @Entity
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Town {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.Admin_Town;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.member.Admin;
+import sejong.smartnotice.domain.member.AdminRole;
 import sejong.smartnotice.dto.AdminDTO;
 import sejong.smartnotice.dto.LoginDTO;
 import sejong.smartnotice.repository.AdminRepository;
@@ -24,17 +25,16 @@ public class AdminService {
     private final EntityManager em;
     
     // 회원가입
-    public Long register(AdminDTO adminDTO, LoginDTO loginDTO) {
-        Admin admin = Admin.createAdmin(adminDTO.getName(), adminDTO.getTel(),
-                loginDTO.getLoginId(), loginDTO.getLoginPw(), adminDTO.getType());
+    public Long register(String name, String tel, String id, String pw, AdminRole role) {
+        Admin admin = Admin.createAdmin(name, tel, id, pw, role);
         adminRepository.save(admin);
         return admin.getId();
     }
 
     // 관리자 정보 수정
-    public Long modifyAdminInfo(Long id, AdminDTO adminDTO) {
+    public Long modifyAdminInfo(Long id, String name, String tel) {
         Admin admin = findById(id);
-        admin.modifyAdminInfo(adminDTO.getName(), adminDTO.getTel());
+        admin.modifyAdminInfo(name, tel);
         return admin.getId();
     }
 
@@ -49,7 +49,7 @@ public class AdminService {
         Optional<Admin> opt = adminRepository.findById(id);
         if(opt.isEmpty()) {
             log.warn("관리자가 존재하지 않습니다");
-            throw new RuntimeException("대충 에러 ㄱ");
+            throw new NullPointerException("관리자가 존재하지 않습니다.");
         }
         return opt.get();
     }
