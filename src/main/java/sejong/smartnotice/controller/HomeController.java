@@ -3,6 +3,7 @@ package sejong.smartnotice.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -25,12 +26,13 @@ public class HomeController {
     public void register() { }
 
     @GetMapping("/register/admin")
-    public String registerAdminForm() {
+    public String registerAdminForm(Model model) {
+        model.addAttribute("admin", new AdminRegisterForm());
         return "register/adminRegister";
     }
 
     @GetMapping("/register/user")
-    public String registerUserForm() {
+    public String registerUserForm(Model model) {
         return "register/userRegister";
     }
     
