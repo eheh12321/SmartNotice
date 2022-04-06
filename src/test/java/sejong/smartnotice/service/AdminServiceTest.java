@@ -1,12 +1,11 @@
 package sejong.smartnotice.service;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.member.Admin;
-import sejong.smartnotice.domain.member.AdminRole;
+import sejong.smartnotice.domain.member.AdminType;
 
 import javax.persistence.EntityManager;
 
@@ -69,7 +68,7 @@ class AdminServiceTest {
     }
 
     private Admin createAdmin(String name, String tel, String id, String pw) {
-        Long adminId = adminService.register(name, tel, id, pw, AdminRole.ADMIN);
+        Long adminId = adminService.register(name, tel, id, pw, AdminType.ADMIN);
         return adminService.findById(adminId);
     }
 }

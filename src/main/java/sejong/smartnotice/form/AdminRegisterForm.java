@@ -1,7 +1,7 @@
 package sejong.smartnotice.form;
 
 import lombok.Data;
-import sejong.smartnotice.domain.member.AdminRole;
+import sejong.smartnotice.domain.member.AdminType;
 
 import javax.validation.constraints.NotBlank;
 
@@ -20,5 +20,5 @@ public class AdminRegisterForm {
     @NotBlank
     private String loginPw;
 
-    private AdminRole role;
+    private AdminType type;
 }

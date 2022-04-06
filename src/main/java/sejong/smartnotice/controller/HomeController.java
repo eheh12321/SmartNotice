@@ -44,7 +44,7 @@ public class HomeController {
             log.warn("검증 오류 발생: {}", bindingResult);
             return "register/adminRegister";
         }
-        adminService.register(form.getName(), form.getTel(), form.getLoginId(), form.getLoginPw(), form.getRole());
+        adminService.register(form.getName(), form.getTel(), form.getLoginId(), form.getLoginPw(), form.getType());
         return "redirect:/";
     }
 

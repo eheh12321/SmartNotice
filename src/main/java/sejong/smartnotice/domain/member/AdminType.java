@@ -1,5 +1,5 @@
 package sejong.smartnotice.domain.member;
 
-public enum AdminRole {
+public enum AdminType {
     ADMIN, ROOT
 }

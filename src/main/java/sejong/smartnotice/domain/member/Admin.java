@@ -43,10 +43,10 @@ public class Admin {
     private List<Admin_Town> atList = new ArrayList<>();
 
     @Enumerated(value = EnumType.STRING)
-    private AdminRole role; // 관리자 타입
+    private AdminType role; // 관리자 타입
 
     // 관리자 생성
-    public static Admin createAdmin(String name, String tel, String loginId, String loginPw, AdminRole role) {
+    public static Admin createAdmin(String name, String tel, String loginId, String loginPw, AdminType role) {
         return Admin.builder()
                 .name(name)
                 .tel(tel)

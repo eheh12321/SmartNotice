@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.Admin_Town;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.member.Admin;
-import sejong.smartnotice.domain.member.AdminRole;
+import sejong.smartnotice.domain.member.AdminType;
 import sejong.smartnotice.repository.AdminRepository;
 
 import javax.persistence.EntityManager;
@@ -23,8 +23,8 @@ public class AdminService {
     private final EntityManager em;
     
     // 회원가입
-    public Long register(String name, String tel, String id, String pw, AdminRole role) {
-        Admin admin = Admin.createAdmin(name, tel, id, pw, role);
+    public Long register(String name, String tel, String id, String pw, AdminType type) {
+        Admin admin = Admin.createAdmin(name, tel, id, pw, type);
         adminRepository.save(admin);
         return admin.getId();
     }
