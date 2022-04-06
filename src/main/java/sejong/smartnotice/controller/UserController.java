@@ -33,7 +33,7 @@ public class UserController {
             userList = userService.findAll();
         }
         model.addAttribute("userList", userList);
-        return "user/userList";
+        return "user/list";
     }
 
     @GetMapping("/{id}")
@@ -41,12 +41,8 @@ public class UserController {
         log.info("== 마을 주민 조회 ==");
         User user = userService.findById(id);
         model.addAttribute("user", user);
-
-        String referer = request.getHeader("Referer");
-        log.info(referer);
-        model.addAttribute("referer", referer);
-
-        return "user/userDetail";
+        model.addAttribute("supporterList", user.getSupporterList());
+        return "user/detail";
     }
 
     @GetMapping("/{id}/edit")

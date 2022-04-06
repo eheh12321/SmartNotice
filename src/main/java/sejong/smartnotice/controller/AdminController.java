@@ -32,7 +32,7 @@ public class AdminController {
             adminList = adminService.findAll();
         }
         model.addAttribute("adminList", adminList);
-        return "admin/adminList";
+        return "admin/list";
     }
 
     @GetMapping("/{id}")
@@ -41,7 +41,7 @@ public class AdminController {
         Admin admin = adminService.findById(id);
         model.addAttribute("admin", admin);
 
-        return "admin/adminDetail";
+        return "admin/detail";
     }
     
     @GetMapping("/{id}/edit")
