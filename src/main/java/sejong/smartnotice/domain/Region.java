@@ -28,10 +28,6 @@ public class Region {
 
     @Override
     public String toString() {
-        return "Region{" +
-                "regionCode=" + regionCode +
-                ", mainRegion='" + mainRegion + '\'' +
-                ", subRegion='" + subRegion + '\'' +
-                '}';
+        return mainRegion + " " + subRegion;
     }
 }

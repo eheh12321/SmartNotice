@@ -8,27 +8,35 @@
 </head>
 <body>
 
-<form th:action="@{/town/{id}(id=${town.id})}" method="post" th:object="${town}">
+<div class="container">
+    <h1>마을 정보 수정</h1>
+    <hr>
+    <form th:action="@{/town/{id}(id=${town.id})}" method="post" th:object="${town}">
+        <div class="form-group mb-3">
+            <label for="name">마을 이름</label>
+            <input type="text" class="form-control form-control-user"
+                   id="name" placeholder="name" th:field="*{name}">
+        </div>
+        <div class="form-group mb-3">
+            <div>지역 선택</div>
+            <select name="regionCode" class="form-select">
+                <option th:each="region : ${regionList}"
+                        th:value="${region.regionCode}"
+                        th:selected="(${region.regionCode} == ${town.region.regionCode})"
+                        th:text="${region.toString()}">지역명</option>
+            </select>
+        </div>
 
-    <div class="form-group mb-3">
-        <input type="text" class="form-control form-control-user"
-               id="name" placeholder="name" th:field="*{name}">
-    </div>
-    <div class="form-group mb-3">
-        <input type="text" class="form-control form-control-user"
-               id="regionCode" name="regionCode" placeholder="regionCode" th:value="*{region.regionCode}">
-    </div>
+        <input type="hidden" name="_method" value="PUT"/>
+        <hr>
+        <button class="btn btn-primary" type="button" onclick="location.href='/town'">뒤로가기</button>
+        <button class="btn btn-primary" type="submit">수정</button>
+    </form>
 
-    <input type="hidden" name="_method" value="PUT"/>
-
-    <button class="btn btn-primary" type="button" onclick="location.href='/town'">뒤로가기</button>
-    <button class="btn btn-primary" type="submit">수정</button>
-</form>
-
-<form action="" method="post">
-    <input type="hidden" name="_method" value="DELETE"/>
-    <button class="btn btn-danger" type="submit">삭제</button>
-</form>
-
+    <form th:action="@{/town/{id}(id=${town.id})}" method="post">
+        <input type="hidden" name="_method" value="DELETE"/>
+        <button class="btn btn-danger" type="submit">삭제</button>
+    </form>
+</div>
 </body>
 </html>

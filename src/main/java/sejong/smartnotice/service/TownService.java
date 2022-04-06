@@ -113,4 +113,10 @@ public class TownService {
         }
         return opt.get();
     }
+
+    // 지역 목록 반환
+    public List<Region> findAllRegion() {
+        return em.createQuery("select r from Region r", Region.class)
+                .getResultList();
+    }
 }

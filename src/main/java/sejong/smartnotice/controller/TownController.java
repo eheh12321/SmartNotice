@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import sejong.smartnotice.domain.Region;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.AdminType;
@@ -40,7 +41,9 @@ public class TownController {
     }
 
     @GetMapping("/new")
-    public String registerTown() {
+    public String registerTown(Model model) {
+        List<Region> regionList = townService.findAllRegion();
+        model.addAttribute("regionList", regionList);
         return "town/register";
     }
 
@@ -63,7 +66,9 @@ public class TownController {
     public String modify(@PathVariable Long id, Model model) {
         log.info("== 마을 수정 ==");
         Town town = townService.findById(id);
+        List<Region> regionList = townService.findAllRegion();
         model.addAttribute("town", town);
+        model.addAttribute("regionList", regionList);
         return "town/modify";
     }
 

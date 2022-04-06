@@ -14,13 +14,16 @@
             <tr>
                 <th>#</th>
                 <th>마을 이름</th>
+                <th>지역</th>
                 <th>지역코드</th>
+                <th>관리</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="town : ${townList}">
                 <td th:text="${town.id}"></td>
                 <td th:text="${town.name}"></td>
+                <td th:text="${town.region.toString()}"></td>
                 <td th:text="${town.region.getRegionCode()}"></td>
                 <td>
                     <a href="#" th:href="@{/town/{id} (id=${town.id})}"
