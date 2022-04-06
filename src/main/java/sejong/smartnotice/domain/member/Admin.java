@@ -2,6 +2,7 @@ package sejong.smartnotice.domain.member;
 
 import lombok.*;
 import sejong.smartnotice.domain.Admin_Town;
+import sejong.smartnotice.domain.Town;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -39,7 +40,7 @@ public class Admin {
 
     // Admin 커밋 시 자동으로 딸려감
     @OneToMany(mappedBy = "admin", cascade = ALL)
-    private List<Admin_Town> townList = new ArrayList<>();
+    private List<Admin_Town> atList = new ArrayList<>();
 
     @Enumerated(value = EnumType.STRING)
     private AdminRole role; // 관리자 타입
@@ -52,13 +53,22 @@ public class Admin {
                 .loginId(loginId)
                 .loginPw(loginPw)
                 .role(role)
-                .townList(new ArrayList<>())
+                .atList(new ArrayList<>())
                 .build();
     }
 
     public void modifyAdminInfo(String name, String tel) {
         this.name = name;
         this.tel = tel;
+    }
+
+    // 관리자 마을 목록 반환 (Admin_Town 엔티티 다루기 복잡하니까 변하게 사용하도록)
+    public List<Town> getTownList() {
+        List<Town> townList = new ArrayList<>();
+        for (Admin_Town at : atList) {
+            townList.add(at.getTown());
+        }
+        return townList;
     }
 
     @Override

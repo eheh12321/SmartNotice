@@ -32,7 +32,7 @@ public class Town {
     private List<User> userList = new ArrayList<>(); // 소속 마을 주민 목록
 
     @OneToMany(mappedBy = "town", cascade = CascadeType.ALL)
-    private List<Admin_Town> adminList = new ArrayList<>(); // 소속 관리자 목록
+    private List<Admin_Town> atList = new ArrayList<>(); // 소속 관리자 목록
 
     // 마을 생성
     public static Town createTown(String name, Region region) {
@@ -53,15 +53,24 @@ public class Town {
         Admin_Town at = Admin_Town.builder()
                 .admin(admin)
                 .town(this).build();
-        adminList.add(at);
+        atList.add(at);
         at.setTown(this); // 양방향 설정
     }
 
     // 마을 관리자 삭제
     public void removeTownAdmin(List<Admin_Town> atList) {
-        this.adminList = atList;
+        this.atList = atList;
     }
-    
+
+    // 마을 관리자 목록 반환
+    public List<Admin> getAdminList() {
+        List<Admin> adminList = new ArrayList<>();
+        for (Admin_Town at : atList) {
+            adminList.add(at.getAdmin());
+        }
+        return adminList;
+    }
+
     @Override
     public String toString() {
         return "Town{" +

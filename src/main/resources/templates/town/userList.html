@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>마을 관리자 등록</title>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+    <div>
+        <h1>마을 주민을 마을 관리자로 등록</h1>
+        <hr><br>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>이름</th>
+                <th>전화번호</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${userList}">
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.name}"></td>
+                <td th:text="${user.tel}"></td>
+                <td>
+                    <form action="" method="post" th:if="${!user.isAdmin()}">
+                        <input type="hidden" name="userId" th:value="${user.id}"/>
+                        <button class="btn btn-primary" type="submit">등록</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h1>관리자를 마을 관리자로 등록</h1>
+        <hr><br>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>이름</th>
+                <th>전화번호</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="admin : ${adminList}">
+                <td th:text="${admin.id}"></td>
+                <td th:text="${admin.name}"></td>
+                <td th:text="${admin.tel}"></td>
+                <td>
+                    <form action="" method="post">
+                        <input type="hidden" name="adminId" th:value="${admin.id}"/>
+                        <button class="btn btn-primary" type="submit">등록</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <button class="btn btn-primary" type="button" th:onclick="|location.href='@{/town/{id}(id=${townId})}'|">뒤로가기</button>
+    </div>
+</div>
+</body>
+</html>

@@ -8,10 +8,15 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.member.Admin;
+import sejong.smartnotice.domain.member.AdminRole;
+import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.service.AdminService;
 import sejong.smartnotice.service.TownService;
+import sejong.smartnotice.service.UserService;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -21,6 +26,7 @@ public class TownController {
 
     private final TownService townService;
     private final AdminService adminService;
+    private final UserService userService;
 
     @GetMapping
     public String getTownList(Model model, @RequestParam(required = false) String name) {
@@ -37,7 +43,7 @@ public class TownController {
 
     @GetMapping("/new")
     public String registerTown() {
-        return "/town/register";
+        return "town/register";
     }
 
     @PostMapping
@@ -77,24 +83,45 @@ public class TownController {
         return "redirect:/town";
     }
 
-    // 마을 관리자 등록(목록 조회)
+    // 마을 관리자 목록 조회
     @GetMapping("/{id}/admin")
-    public String addTownAdminForm(@PathVariable Long id, Model model) {
+    public String getTownAdminList(@PathVariable Long id, Model model) {
         log.info("== 마을 관리자 목록 조회 ==");
         Town town = townService.findById(id);
         model.addAttribute("town", town);
 
-        List<Admin> adminList = adminService.findAll();
-        model.addAttribute("adminList", adminList);
-
         return "town/adminList";
     }
 
+    @GetMapping("/{id}/admin/new")
+    public String addTownAdminForm(@PathVariable Long id, Model model) {
+        log.info("== 마을 관리자 신규 등록 ==");
+        Town town = townService.findById(id);
+        List<User> userList = town.getUserList();
+        List<Admin> adminList = adminService.findAll();
+
+        model.addAttribute("userList", userList);
+        model.addAttribute("adminList", adminList);
+        model.addAttribute("townId", id);
+
+        return "town/userList";
+    }
+
     // 마을 관리자 등록(등록)
-    @PostMapping("/{id}/admin")
-    public String addTownAdmin(@PathVariable Long id, @RequestParam Long adminId) {
+    @PostMapping("/{id}/admin/new")
+    public String addTownAdmin(@PathVariable Long id, @RequestParam(required = false) Long userId, @RequestParam(required = false) Long adminId) {
         log.info("== 마을 관리자 등록 ==");
-        townService.addTownAdmin(id, adminId);
+
+        if(userId != null && adminId == null) {
+            User user = userService.findById(userId); // 주민 정보 조회
+            Long newAdminId = adminService.register(user.getName(), user.getTel(), user.getLoginId(), user.getLoginPw(), AdminRole.ADMIN); // 주민 계정 정보로 관리자 계정 생성
+            user.modifyUserIsAdmin(); // 마을 주민이 마을 관리자라는 상태 표시
+            townService.addTownAdmin(id, newAdminId); // 관리자와 마을 연결
+        } else if (userId == null && adminId != null) {
+            townService.addTownAdmin(id, adminId); // 관리자와 마을 연결
+        } else {
+            log.warn("잘못된 요청입니다");
+        }
         return "redirect:/town/{id}";
     }
 

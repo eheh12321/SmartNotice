@@ -2,6 +2,7 @@ package sejong.smartnotice.domain.member;
 
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.ColumnDefault;
 import sejong.smartnotice.domain.announce.Announce;
 import sejong.smartnotice.domain.device.Device;
 import sejong.smartnotice.domain.Town;
@@ -44,6 +45,9 @@ public class User {
     private String info;
 
     private int age;
+
+    @ColumnDefault("0")
+    private boolean isAdmin; // 마을 주민이 관리자인지?
 
     // Device의 생명주기가 User에 의해 정해진다
     @OneToOne(fetch = LAZY, cascade = ALL)
@@ -88,6 +92,11 @@ public class User {
         town.getUserList().add(this);
     }
 
+    // 마을 주민 계정을 관리자 등록
+    public void modifyUserIsAdmin() {
+        this.isAdmin = true;
+    }
+
     /// 방송 수신 테스트용 (실제로는 임베디드 단에서 구현) ///
     public void receiveAnnounce(Announce announce) {
         log.warn("=======방송이 도착했습니다=========");
@@ -108,5 +117,18 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(getId());
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                ", tel='" + tel + '\'' +
+                ", loginId='" + loginId + '\'' +
+                ", loginPw='" + loginPw + '\'' +
+                ", address='" + address + '\'' +
+                ", info='" + info + '\'' +
+                ", age=" + age +
+                '}';
     }
 }
