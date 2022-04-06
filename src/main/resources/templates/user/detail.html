@@ -32,8 +32,8 @@
                    placeholder="info" th:field="*{info}" readonly>
         </div>
         <hr>
-        <button class="btn btn-primary" type="button" th:onclick="|location.href='@{/town/{id}(id=${user.town.id})}'|">뒤로가기</button>
-        <button class="btn btn-primary" type="button" th:onclick="|location.href='@{/user/{id}/edit(id=${user.id})}'|">수정</button>
+        <button class="btn btn-primary" type="button" th:onclick="|location.href='@{/towns/{id}(id=${user.town.id})}'|">뒤로가기</button>
+        <button class="btn btn-primary" type="button" th:onclick="|location.href='@{/users/{id}/edit(id=${user.id})}'|">수정</button>
     </form>
     <hr>
     <h1>연결된 보호자 목록</h1>
@@ -54,7 +54,7 @@
                 <td th:text="${supporter.name}"></td>
                 <td th:text="${supporter.tel}"></td>
                 <td>
-                    <a href="#" th:href="@{/supporter/{id} (id=${supporter.id})}"
+                    <a href="#" th:href="@{/supporters/{id} (id=${supporter.id})}"
                        class="btn btn-primary" role="button">상세</a>
                 </td>
             </tr>

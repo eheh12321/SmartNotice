@@ -28,8 +28,8 @@
                    id="user" placeholder="user" th:field="*{user.name}" readonly>
         </div>
         <hr>
-        <button class="btn btn-primary" type="button" onclick="location.href='/supporter'">뒤로가기</button>
-        <button class="btn btn-primary" type="button" th:onclick="|location.href='@{/supporter/{id}/edit(id=${supporter.id})}'|">수정</button>
+        <button class="btn btn-primary" type="button" onclick="location.href='/supporters'">뒤로가기</button>
+        <button class="btn btn-primary" type="button" th:onclick="|location.href='@{/supporters/{id}/edit(id=${supporter.id})}'|">수정</button>
     </form>
 </div>
 </body>

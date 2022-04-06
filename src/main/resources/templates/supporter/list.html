@@ -28,7 +28,7 @@
                 <td th:text="${supporter.tel}"></td>
                 <td th:if="${supporter.user}" th:text="${supporter.user.name}"></td>
                 <td>
-                    <a href="#" th:href="@{/supporter/{id} (id=${supporter.id})}"
+                    <a href="#" th:href="@{/supporters/{id} (id=${supporter.id})}"
                        class="btn btn-primary" role="button">상세</a>
                 </td>
             </tr>

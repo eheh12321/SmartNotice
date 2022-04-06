@@ -19,7 +19,7 @@ import java.util.List;
 
 @Slf4j
 @Controller
-@RequestMapping("/town")
+@RequestMapping("/towns")
 @RequiredArgsConstructor
 public class TownController {
 
@@ -51,7 +51,7 @@ public class TownController {
     public String register(String name, Long regionCode) {
         log.info("== 마을 등록 ==");
         townService.register(name, regionCode);
-        return "redirect:/town";
+        return "redirect:/towns";
     }
 
     @GetMapping("/{id}")
@@ -76,14 +76,14 @@ public class TownController {
     public String modify(@PathVariable Long id, @RequestParam String name, @RequestParam Long regionCode) {
         log.info("== 마을 수정 ==");
         townService.modifyTownInfo(id, name, regionCode);
-        return "redirect:/town";
+        return "redirect:/towns";
     }
     
     @DeleteMapping("/{id}")
     public String remove(@PathVariable Long id) {
         log.info("== 마을 삭제 ==");
         townService.delete(id);
-        return "redirect:/town";
+        return "redirect:/towns";
     }
 
     // 마을 관리자 목록 조회
@@ -125,7 +125,7 @@ public class TownController {
         } else {
             log.warn("잘못된 요청입니다");
         }
-        return "redirect:/town/{id}";
+        return "redirect:/towns/{id}";
     }
 
     // 마을 관리자 삭제
@@ -133,6 +133,6 @@ public class TownController {
     public String removeTownAdmin(@PathVariable Long id, @RequestParam Long adminId) {
         log.info("== 마을 관리자 삭제 ==");
         townService.removeTownAdmin(id, adminId);
-        return "redirect:/town/{id}";
+        return "redirect:/towns/{id}";
     }
 }

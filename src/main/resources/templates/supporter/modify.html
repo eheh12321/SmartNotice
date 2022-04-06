@@ -20,7 +20,7 @@
 <div class="container">
     <h1>보호자 정보 수정</h1>
     <hr>
-    <form th:action="@{/supporter/{id}(id=${supporter.id})}" method="post" th:object="${supporter}">
+    <form th:action="@{/supporters/{id}(id=${supporter.id})}" method="post" th:object="${supporter}">
         <div class="form-group mb-3">
             <label for="name">이름</label>
             <input type="text" class="form-control" id="name" placeholder="name"
@@ -40,11 +40,11 @@
         </div>
         <hr>
         <input type="hidden" name="_method" value="PUT"/>
-        <button class="btn btn-primary" type="button" onclick="location.href='/supporter'">뒤로가기</button>
+        <button class="btn btn-primary" type="button" onclick="location.href='/supporters'">뒤로가기</button>
         <button class="btn btn-primary" type="submit">수정</button>
     </form>
 
-    <form th:action="@{/supporter/{id}(id=${supporter.id})}" method="post" th:object="${supporter}">
+    <form th:action="@{/supporters/{id}(id=${supporter.id})}" method="post" th:object="${supporter}">
         <input type="hidden" name="_method" value="DELETE"/>
         <button class="btn btn-danger" type="submit">삭제</button>
     </form>

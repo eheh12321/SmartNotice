@@ -16,7 +16,7 @@ import java.util.List;
 
 @Slf4j
 @Controller
-@RequestMapping("/supporter")
+@RequestMapping("/supporters")
 @RequiredArgsConstructor
 public class SupporterController {
 
@@ -55,7 +55,7 @@ public class SupporterController {
             return "supporter/modify";
         }
         supporterService.modifySupporterInfo(id, form.getName(), form.getTel());
-        return "redirect:/supporter";
+        return "redirect:/supporters";
     }
 
     @DeleteMapping("/{id}")
@@ -63,6 +63,6 @@ public class SupporterController {
         log.info("== 보호자 삭제 ==");
         supporterService.delete(id);
 
-        return "redirect:/supporter";
+        return "redirect:/supporters";
     }
 }

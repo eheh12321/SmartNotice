@@ -26,13 +26,13 @@
                 <td th:text="${town.region.toString()}"></td>
                 <td th:text="${town.region.getRegionCode()}"></td>
                 <td>
-                    <a href="#" th:href="@{/town/{id} (id=${town.id})}"
+                    <a href="#" th:href="@{/towns/{id} (id=${town.id})}"
                        class="btn btn-primary" role="button">상세 조회</a>
                 </td>
             </tr>
             </tbody>
         </table>
-        <button class="btn btn-primary" type="button" onclick="location.href='/town/new'">마을 추가</button>
+        <button class="btn btn-primary" type="button" onclick="location.href='/towns/new'">마을 추가</button>
         <button class="btn btn-primary" type="button" onclick="location.href='/'">메인 화면으로</button>
         <form>
             <input type="text" class="form-control col-3" name="name">

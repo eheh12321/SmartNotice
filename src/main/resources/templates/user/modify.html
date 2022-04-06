@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<form th:action="@{/user/{id}(id=${user.id})}" method="post" th:object="${user}">
+<form th:action="@{/users/{id}(id=${user.id})}" method="post" th:object="${user}">
 
     <div class="form-group mb-3">
         <input type="text" class="form-control form-control-user"
@@ -33,11 +33,11 @@
 
     <input type="hidden" name="_method" value="PUT"/>
 
-    <button class="btn btn-primary" type="button" th:onclick="|location.href='@{/user/{id}(id=${user.id})}'|">뒤로가기</button>
+    <button class="btn btn-primary" type="button" th:onclick="|location.href='@{/users/{id}(id=${user.id})}'|">뒤로가기</button>
     <button class="btn btn-primary" type="submit">수정</button>
 </form>
 
-<form th:action="@{/user/{id}(id=${user.id})}" method="post" th:object="${user}">
+<form th:action="@{/users/{id}(id=${user.id})}" method="post" th:object="${user}">
     <input type="hidden" name="_method" value="DELETE"/>
     <button class="btn btn-danger" type="submit">삭제</button>
 </form>

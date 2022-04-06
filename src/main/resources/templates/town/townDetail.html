@@ -10,8 +10,8 @@
 <div class="container">
     <div>
         <h1 th:text="|${town.id}번 마을 상세 페이지|">마을 상세 페이지</h1>
-        <button class="btn btn-primary" type="button" onclick="location.href='/town'">목록으로</button>
-        <button class="btn btn-primary" type="button" th:onclick="|location.href='@{/town/{id}/edit(id=${town.id})}'|">마을 정보 수정</button>
+        <button class="btn btn-primary" type="button" onclick="location.href='/towns'">목록으로</button>
+        <button class="btn btn-primary" type="button" th:onclick="|location.href='@{/towns/{id}/edit(id=${town.id})}'|">마을 정보 수정</button>
     </div>
 
     <form action="" method="post">
@@ -39,7 +39,7 @@
                 <td th:text="${user.tel}"></td>
                 <td th:text="${user.address}"></td>
                 <td>
-                    <a href="#" th:href="@{/user/{id} (id=${user.id})}"
+                    <a href="#" th:href="@{/users/{id} (id=${user.id})}"
                        class="btn btn-primary" role="button">상세</a>
                 </td>
             </tr>
@@ -48,7 +48,7 @@
     </div>
 
     <h2>소속 마을 관리자 목록</h2>
-    <button type="button" class="btn btn-primary" th:onclick="|location.href='@{/town/{id}/admin(id=${town.id})}'|">마을 관리자 관리</button>
+    <button type="button" class="btn btn-primary" th:onclick="|location.href='@{/towns/{id}/admin(id=${town.id})}'|">마을 관리자 관리</button>
     <div>
         <table class="table table-striped">
             <thead>

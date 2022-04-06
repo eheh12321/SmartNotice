@@ -11,7 +11,7 @@
 <div class="container">
     <h1>마을 정보 수정</h1>
     <hr>
-    <form th:action="@{/town/{id}(id=${town.id})}" method="post" th:object="${town}">
+    <form th:action="@{/towns/{id}(id=${town.id})}" method="post" th:object="${town}">
         <div class="form-group mb-3">
             <label for="name">마을 이름</label>
             <input type="text" class="form-control form-control-user"
@@ -29,11 +29,11 @@
 
         <input type="hidden" name="_method" value="PUT"/>
         <hr>
-        <button class="btn btn-primary" type="button" onclick="location.href='/town'">뒤로가기</button>
+        <button class="btn btn-primary" type="button" onclick="location.href='/towns'">뒤로가기</button>
         <button class="btn btn-primary" type="submit">수정</button>
     </form>
 
-    <form th:action="@{/town/{id}(id=${town.id})}" method="post">
+    <form th:action="@{/towns/{id}(id=${town.id})}" method="post">
         <input type="hidden" name="_method" value="DELETE"/>
         <button class="btn btn-danger" type="submit">삭제</button>
     </form>
