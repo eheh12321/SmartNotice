@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.form.AdminRegisterForm;
 import sejong.smartnotice.dto.LoginDTO;
 import sejong.smartnotice.dto.UserDTO;
+import sejong.smartnotice.form.SupporterRegisterForm;
 import sejong.smartnotice.service.AdminService;
+import sejong.smartnotice.service.SupporterService;
 import sejong.smartnotice.service.UserService;
 
 @Slf4j
@@ -21,6 +23,7 @@ public class HomeController {
 
     private final AdminService adminService;
     private final UserService userService;
+    private final SupporterService supporterService;
 
     @GetMapping("/register")
     public void register() { }
@@ -31,11 +34,7 @@ public class HomeController {
         return "register/adminRegister";
     }
 
-    @GetMapping("/register/user")
-    public String registerUserForm(Model model) {
-        return "register/userRegister";
-    }
-    
+
     // 관리자 회원가입
     @PostMapping("/register/admin")
     public String registerAdmin(@Validated @ModelAttribute("admin") AdminRegisterForm form,
@@ -46,6 +45,11 @@ public class HomeController {
         }
         adminService.register(form.getName(), form.getTel(), form.getLoginId(), form.getLoginPw(), form.getType());
         return "redirect:/";
+    }
+
+    @GetMapping("/register/user")
+    public String registerUserForm(Model model) {
+        return "register/userRegister";
     }
 
     // 마을 주민 회원가입
@@ -61,6 +65,23 @@ public class HomeController {
 
         userService.register(userDTO, loginDTO, townId);
 
+        return "redirect:/";
+    }
+
+    @GetMapping("/register/supporter")
+    public String registerSupporterForm(Model model) {
+        model.addAttribute("supporter", new SupporterRegisterForm());
+        return "register/supporterRegister";
+    }
+
+    @PostMapping("/register/supporter")
+    public String registerSupporter(@Validated @ModelAttribute("supporter") SupporterRegisterForm form,
+                                    BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            log.warn("검증 오류 발생: {}", bindingResult);
+            return "register/supporterRegister";
+        }
+        supporterService.register(form.getName(), form.getTel(), form.getLoginId(), form.getLoginPw(), form.getUserId());
         return "redirect:/";
     }
 }

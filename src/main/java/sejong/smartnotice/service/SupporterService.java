@@ -8,6 +8,7 @@ import sejong.smartnotice.domain.member.Supporter;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.repository.SupporterRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -20,11 +21,14 @@ public class SupporterService {
     private final SupporterRepository supporterRepository;
 
     // 회원가입
-    public Long register(String name, String tel, String loginId, String loginPw) {
+    public Long register(String name, String tel, String loginId, String loginPw, Long userId) {
         log.info("== 보호자 회원가입 ==");
-        // 검증로직 들어가야함
+        // 1. 보호자 등록
         Supporter supporter = Supporter.createSupporter(name, tel, loginId, loginPw);
         supporterRepository.save(supporter);
+
+        // 2. 보호자와 주민 연결
+        connectWithUser(userId, supporter);
         return supporter.getId();
     }
 
@@ -36,13 +40,26 @@ public class SupporterService {
         return user.getId();
     }
 
+    // 보호자 정보 수정
+    public Long modifySupporterInfo(Long id, String name, String tel) {
+        Supporter supporter = findById(id);
+        supporter.modifySupporterInfo(name, tel);
+        return supporter.getId();
+    }
+
+
     // 보호자 조회
-    public Supporter findSupporterById(Long supporterId) {
+    public Supporter findById(Long supporterId) {
         return validateSupporterId(supporterId);
     }
-    
+
+    // 보호자 목록 조회
+    public List<Supporter> findAll() {
+        return supporterRepository.findAll();
+    }
+
     // 보호자 삭제
-    public void remove(Long supporterId) {
+    public void delete(Long supporterId) {
         Supporter supporter = validateSupporterId(supporterId);
         supporterRepository.delete(supporter);
     }

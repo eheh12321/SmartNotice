@@ -56,4 +56,10 @@ public class Supporter {
         log.warn("받은사람: {}", this.getName());
         log.warn("================================================");
     }
+
+    // 보호자 정보 수정
+    public void modifySupporterInfo(String name, String tel) {
+        this.name = name;
+        this.tel = tel;
+    }
 }

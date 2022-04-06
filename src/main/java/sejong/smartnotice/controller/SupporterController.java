@@ -2,43 +2,67 @@ package sejong.smartnotice.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import sejong.smartnotice.dto.LoginDTO;
-import sejong.smartnotice.dto.SupporterDTO;
 import sejong.smartnotice.domain.member.Supporter;
+import sejong.smartnotice.form.AdminModifyForm;
+import sejong.smartnotice.form.SupporterModifyForm;
 import sejong.smartnotice.service.SupporterService;
 
+import java.util.List;
+
 @Slf4j
-@RestController
+@Controller
 @RequestMapping("/supporter")
 @RequiredArgsConstructor
 public class SupporterController {
 
     private final SupporterService supporterService;
 
-    /**
-     * 보호자 회원가입
-     * http://localhost:8080/supporter/register?name=name&tel=tel&loginId=id&loginPw=pw
-     */
-    @PostMapping("/register")
-    public void register(
-            @ModelAttribute LoginDTO loginDTO,
-            @ModelAttribute SupporterDTO supporterDTO) {
-
-        supporterService.register(supporterDTO.getName(), supporterDTO.getTel(), loginDTO.getLoginId(), loginDTO.getLoginPw());
+    @GetMapping
+    public String getSupporterList(Model model, @RequestParam(required = false) String name) {
+        log.info("== 보호자 목록 조회 ==");
+        List<Supporter> supporterList = supporterService.findAll();
+        model.addAttribute("supporterList", supporterList);
+        return "supporter/list";
     }
 
-    /**
-     * 보호자랑 회원 연결
-     * http://localhost:8080/supporter/select/1?userId=1
-     * (추가 고려사항)
-     * 연결 조건 추가 --> 보호자가 생판 남이랑 막 연결되면 안됨.. 뭔가 인증이 필요
-     * 보호자가 뭘 어디까지 수 있나? - 단말기 상태조회
-     * 회원가입 하지 않은 보호자에게도 연락이 갈 수 있도록 하는것이 좋아보임
-     */
-    @PostMapping("/select/{id}")
-    public void selectUser(@PathVariable Long id, @RequestParam Long userId) {
-        Supporter supporter = supporterService.findSupporterById(id);
-        supporterService.connectWithUser(userId, supporter);
+    @GetMapping("/{id}")
+    public String getSupporter(@PathVariable Long id, Model model) {
+        log.info("== 보호자 상제 조회 ==");
+        Supporter supporter = supporterService.findById(id);
+        model.addAttribute("supporter", supporter);
+        return "supporter/detail";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String modifyForm(@PathVariable Long id, Model model) {
+        log.info("== 보호자 수정 ==");
+        Supporter supporter = supporterService.findById(id);
+        model.addAttribute("supporter", supporter);
+        return "supporter/modify";
+    }
+
+    @PutMapping("/{id}")
+    public String modify(@PathVariable Long id, @Validated @ModelAttribute("supporter") SupporterModifyForm form,
+                         BindingResult bindingResult) {
+        log.info("== 관리자 정보 수정 ==");
+        if(bindingResult.hasErrors()) {
+            log.warn("검증 오류 발생: {}", bindingResult);
+            return "supporter/modify";
+        }
+        supporterService.modifySupporterInfo(id, form.getName(), form.getTel());
+        return "redirect:/supporter";
+    }
+
+    @DeleteMapping("/{id}")
+    public String remove(@PathVariable Long id) {
+        log.info("== 보호자 삭제 ==");
+        supporterService.delete(id);
+
+        return "redirect:/supporter";
     }
 }

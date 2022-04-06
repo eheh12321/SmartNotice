@@ -22,7 +22,7 @@ class AdminServiceTest {
     @Test
     void 관리자등록() {
         // given
-        Admin admin = createAdmin("관리자", "010-1111-1111", "아이디", "비밀번호");
+        Admin admin = createAdmin("테스트관리자", "테스트관리자전화번호", "테스트관리자아이디", "테스트관리자비밀번호");
 
         // when
         em.flush();
@@ -30,16 +30,16 @@ class AdminServiceTest {
 
         // then
         Admin findAdmin = adminService.findById(admin.getId());
-        assertThat(findAdmin.getName()).isEqualTo("관리자");
+        assertThat(findAdmin.getName()).isEqualTo("테스트관리자");
     }
 
     @Test
     void 관리자수정() {
         // given
-        Admin admin = createAdmin("관리자", "010-1212-1212", "id", "pw");
+        Admin admin = createAdmin("테스트관리자", "테스트관리자전화번호", "테스트관리자아이디", "테스트관리자비밀번호");
 
         // when
-        adminService.modifyAdminInfo(admin.getId(), "수정된 관리자", "010-2121-2121");
+        adminService.modifyAdminInfo(admin.getId(), "수정된 관리자", "수정된 관리자전화번호");
 
         // then
         assertThat(admin.getName()).isEqualTo("수정된 관리자");
@@ -48,7 +48,7 @@ class AdminServiceTest {
     @Test
     void 관리자삭제() {
         // given
-        Admin admin = createAdmin("관리자", "010-1212-1212", "id", "pw");
+        Admin admin = createAdmin("테스트관리자", "테스트관리자전화번호", "테스트관리자아이디", "테스트관리자비밀번호");
 
         // when
         adminService.delete(admin.getId());
