@@ -30,6 +30,21 @@ public class HomeController {
     private final SupporterService supporterService;
     private final TownService townService;
 
+    @GetMapping("/login")
+    public String loginForm(String error, String logout, Model model) {
+        log.info("== 관제 사이트 로그인 == ");
+        log.info("error: {}", error);
+        log.info("logout: {}", logout);
+
+        if(error != null) {
+            model.addAttribute("error", "Check your Account");
+        }
+        if(logout != null) {
+            model.addAttribute("logout", "Logout");
+        }
+        return "login";
+    }
+
     @GetMapping("/register")
     public void register() { }
 
