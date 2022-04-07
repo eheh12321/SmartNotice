@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.member.Supporter;
@@ -50,6 +51,10 @@ public class SupporterController {
     public String modify(@PathVariable Long id, @Validated @ModelAttribute("supporter") SupporterModifyForm form,
                          BindingResult bindingResult) {
         log.info("== 관리자 정보 수정 ==");
+        Supporter findSupporter = supporterService.findByTel(form.getTel());
+        if(findSupporter != null && findSupporter.getId() != form.getId()) {
+            bindingResult.addError(new FieldError("supporter", "tel", form.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
+        }
         if(bindingResult.hasErrors()) {
             log.warn("검증 오류 발생: {}", bindingResult);
             return "supporter/modify";

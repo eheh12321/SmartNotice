@@ -7,25 +7,20 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class UserRegisterForm {
+public class UserModifyForm {
 
-    @NotBlank
-    private String loginId;
-
-    @NotBlank
-    private String loginPw;
+    private Long id;
 
     @NotBlank
     private String name;
 
     @NotBlank
-    private String tel;
-
-    @NotBlank
     private String address;
 
-    @NotNull
-    private Long townId;
+    @NotBlank
+    private String tel;
+
+    private String info;
 
     @NotNull
     @Range(min = 1, max = 150)

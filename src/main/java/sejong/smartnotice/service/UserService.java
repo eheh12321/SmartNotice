@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.device.Device;
 import sejong.smartnotice.domain.member.User;
-import sejong.smartnotice.dto.UserDTO;
 import sejong.smartnotice.repository.UserRepository;
 
 import java.util.List;
@@ -44,10 +43,10 @@ public class UserService {
     }
 
     // 주민 정보 수정
-    public void modifyUserInfo(Long userId, UserDTO userDTO) {
+    public void modifyUserInfo(Long userId, String name, String tel, String address, String info, int age) {
         log.info("== (서비스) 마을 주민 정보 수정 ==");
         User user = findById(userId);
-        user.modifyUserInfo(userDTO.getName(), userDTO.getTel(), userDTO.getAddress(), userDTO.getInfo(), userDTO.getAge());
+        user.modifyUserInfo(name, tel, address, info, age);
     }
 
     // 주민 마을 수정

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.member.Admin;
@@ -57,6 +58,10 @@ public class AdminController {
     public String modify(@PathVariable Long id, @Validated @ModelAttribute("admin") AdminModifyForm form,
                          BindingResult bindingResult) {
         log.info("== 관리자 정보 수정 ==");
+        Admin findAdmin = adminService.findByTel(form.getTel());
+        if(findAdmin != null && findAdmin.getId() != form.getId()) {
+            bindingResult.addError(new FieldError("admin", "tel", form.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
+        }
         if(bindingResult.hasErrors()) {
             log.warn("검증 오류 발생: {}", bindingResult);
             return "admin/modify";
