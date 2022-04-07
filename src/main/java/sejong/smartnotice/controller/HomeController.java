@@ -96,6 +96,12 @@ public class HomeController {
     @PostMapping("/register/supporter")
     public String registerSupporter(@Validated @ModelAttribute("supporter") SupporterRegisterForm form,
                                     BindingResult bindingResult) {
+        if(supporterService.findByLoginId(form.getLoginId()) != null) {
+            bindingResult.addError(new FieldError("supporter", "loginId", form.getLoginId(), false, null, null, "중복된 아이디가 존재합니다"));
+        }
+        if(supporterService.findByTel(form.getTel()) != null) {
+            bindingResult.addError(new FieldError("supporter", "tel", form.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
+        }
         if(bindingResult.hasErrors()) {
             log.warn("검증 오류 발생: {}", bindingResult);
             return "register/supporterRegister";
