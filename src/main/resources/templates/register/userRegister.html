@@ -40,9 +40,13 @@
             <div class="field-error" th:errors="*{address}">주소 입력 오류</div>
         </div>
         <div class="form-group mb-3">
-            <label for="townId">마을 선택</label>
-            <input type="text" id="townId" placeholder="townId"
-                   th:field="*{townId}" th:errorclass="field-error" class="form-control">
+            <div>마을 선택</div>
+            <select name="townId" class="form-select" th:errorclass="field-error">
+                <option selected th:value="null">마을을 선택해주세요</option>
+                <option th:each="town : ${townList}"
+                        th:value="${town.id}"
+                        th:text="${town.region.toString()} + ' ' + |${town.name}|">마을</option>
+            </select>
             <div class="field-error" th:errors="*{townId}">마을 입력 오류</div>
         </div>
         <div class="form-group mb-3">

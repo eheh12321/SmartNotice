@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.form.AdminRegisterForm;
 import sejong.smartnotice.dto.LoginDTO;
 import sejong.smartnotice.dto.UserDTO;
@@ -14,7 +15,10 @@ import sejong.smartnotice.form.SupporterRegisterForm;
 import sejong.smartnotice.form.UserRegisterForm;
 import sejong.smartnotice.service.AdminService;
 import sejong.smartnotice.service.SupporterService;
+import sejong.smartnotice.service.TownService;
 import sejong.smartnotice.service.UserService;
+
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -25,6 +29,7 @@ public class HomeController {
     private final AdminService adminService;
     private final UserService userService;
     private final SupporterService supporterService;
+    private final TownService townService;
 
     @GetMapping("/register")
     public void register() { }
@@ -50,16 +55,20 @@ public class HomeController {
 
     @GetMapping("/register/user")
     public String registerUserForm(Model model) {
+        List<Town> townList = townService.findAll();
         model.addAttribute("user", new UserRegisterForm());
+        model.addAttribute("townList", townList);
         return "register/userRegister";
     }
 
     // 마을 주민 회원가입
     @PostMapping("/register/user")
     public String registerUser(@Validated @ModelAttribute("user") UserRegisterForm form,
-            BindingResult bindingResult) {
+            BindingResult bindingResult, Model model) {
         if(bindingResult.hasErrors()) {
             log.warn("검증 오류 발생: {}", bindingResult);
+            List<Town> townList = townService.findAll();
+            model.addAttribute("townList", townList);
             return "register/userRegister";
         }
         userService.register(form.getName(), form.getTel(), form.getAddress(), form.getAge(),
