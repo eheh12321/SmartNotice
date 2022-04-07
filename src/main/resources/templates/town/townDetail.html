@@ -13,6 +13,9 @@
         <h1 th:text="|${town.id}번 마을 상세 페이지|">마을 상세 페이지</h1>
         <button class="btn btn-primary" type="button" onclick="location.href='/towns'">목록으로</button>
         <button class="btn btn-primary" type="button" th:onclick="|location.href='@{/towns/{id}/edit(id=${town.id})}'|">마을 정보 수정</button>
+        <button class="btn btn-danger" type="button"
+                style="float: right"
+                th:onclick="|location.href='@{/test/newUser/{id}(id=${town.id})}'|">주민 생성기 (테스트용)</button>
     </div>
 
     <form action="" method="post" id="deleteTownForm">
@@ -30,6 +33,7 @@
                 <th>나이</th>
                 <th>전화번호</th>
                 <th>주소</th>
+                <th>관리</th>
             </tr>
             </thead>
             <tbody>
