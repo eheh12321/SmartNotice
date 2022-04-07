@@ -25,13 +25,12 @@ public class UserService {
     private final DeviceService deviceService;
 
     // 신규 주민 등록
-    public Long register(UserDTO userDTO, LoginDTO loginDTO, Long townId) {
+    public Long register(String name, String tel, String address, int age, Long townId, String id, String pw) {
         // 1. 주민이 포함될 마을 조회
         Town town = townService.findById(townId);
 
         // 2. 마을주민 생성
-        User user = User.createUser(userDTO.getName(), userDTO.getTel(), userDTO.getAddress(), userDTO.getAge(), town,
-                loginDTO.getLoginId(), loginDTO.getLoginPw());
+        User user = User.createUser(name, tel, address, age, town, id, pw);
 
         userRepository.save(user);
         return user.getId();
