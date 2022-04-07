@@ -24,6 +24,7 @@ public class AdminService {
     
     // 회원가입
     public Long register(String name, String tel, String id, String pw, AdminType type) {
+        log.info("== (서비스) 관리자 등록 ==");
         Admin admin = Admin.createAdmin(name, tel, id, pw, type);
         adminRepository.save(admin);
         return admin.getId();
@@ -31,6 +32,7 @@ public class AdminService {
 
     // 관리자 정보 수정
     public Long modifyAdminInfo(Long id, String name, String tel) {
+        log.info("== (서비스) 관리자 정보 수정 ==");
         Admin admin = findById(id);
         admin.modifyAdminInfo(name, tel);
         return admin.getId();
@@ -38,12 +40,14 @@ public class AdminService {
 
     // 관리자 삭제
     public void delete(Long id) {
+        log.info("== (서비스) 관리자 삭제 ==");
         Admin admin = findById(id);
         adminRepository.delete(admin);
     }
 
     // 관리자 검색
     public Admin findById(Long id) {
+        log.info("== (서비스) 관리자 아이디 조회 ==");
         Optional<Admin> opt = adminRepository.findById(id);
         if(opt.isEmpty()) {
             log.warn("관리자가 존재하지 않습니다");
@@ -54,16 +58,19 @@ public class AdminService {
 
     // 관리자 전체 목록 조회
     public List<Admin> findAll() {
+        log.info("== (서비스) 관리자 전체 목록 조회 ==");
         return adminRepository.findAll();
     }
 
     // 관리자 이름 검색
     public List<Admin> findByName(String name) {
+        log.info("== (서비스) 관리자 이름 조회 ==");
         return adminRepository.findByNameContaining(name);
     }
 
     // 마을 관리 관리자 목록 조회
     public List<Admin> findByTown(Long townId) {
+        log.info("== (서비스) 관리자 마을 조회 ==");
         Town town = em.find(Town.class, townId);
         List<Admin_Town> atList = em.createQuery("select at from Admin_Town at where at.town=:town", Admin_Town.class)
                 .setParameter("town", town)
@@ -74,5 +81,15 @@ public class AdminService {
             adminList.add(at.getAdmin());
         }
         return adminList;
+    }
+
+    public Admin findByLoginId(String loginId) {
+        log.info("== (서비스) 관리자 로그인 아이디 조회 ==");
+        return adminRepository.findByLoginId(loginId);
+    }
+
+    public Admin findByTel(String tel) {
+        log.info("== (서비스) 관리자 전화번호 조회 ==");
+        return adminRepository.findByTel(tel);
     }
 }

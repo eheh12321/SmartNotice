@@ -18,6 +18,4 @@ public interface AdminRepository extends JpaRepository<Admin, Long> {
     Admin findByLoginId(String loginId);
 
     Admin findByTel(String tel);
-
-
 }

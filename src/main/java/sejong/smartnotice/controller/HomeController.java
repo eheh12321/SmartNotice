@@ -5,9 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.Town;
+import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.form.AdminRegisterForm;
 import sejong.smartnotice.dto.LoginDTO;
 import sejong.smartnotice.dto.UserDTO;
@@ -45,6 +47,12 @@ public class HomeController {
     @PostMapping("/register/admin")
     public String registerAdmin(@Validated @ModelAttribute("admin") AdminRegisterForm form,
                                 BindingResult bindingResult) {
+        if(adminService.findByLoginId(form.getLoginId()) != null) {
+            bindingResult.addError(new FieldError("admin", "loginId", form.getLoginId(), false, null, null, "중복된 아이디가 존재합니다"));
+        }
+        if(adminService.findByTel(form.getTel()) != null) {
+            bindingResult.addError(new FieldError("admin", "tel", form.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
+        }
         if(bindingResult.hasErrors()) {
             log.warn("검증 오류 발생: {}", bindingResult);
             return "register/adminRegister";
