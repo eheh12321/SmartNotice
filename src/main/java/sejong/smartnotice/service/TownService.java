@@ -46,8 +46,8 @@ public class TownService {
     public void delete(Long townId) {
         Town town = validateTownId(townId);
         if(!town.getUserList().isEmpty()) {
-            log.warn("마을 주민이 없어야 마을을 삭제할 수 있습니다");
-            throw new RuntimeException("에러");
+            log.warn("마을 삭제 실패");
+            throw new RuntimeException("마을에 속한 주민이 없어야 마을을 삭제할 수 있습니다");
         }
         em.remove(town);
     }
@@ -109,7 +109,7 @@ public class TownService {
         Optional<Town> opt = townRepository.findById(townId);
         if(opt.isEmpty()) {
             log.warn("마을이 존재하지 않습니다");
-            throw new RuntimeException("에러");
+            throw new RuntimeException("마을이 존재하지 않습니다");
         }
         return opt.get();
     }

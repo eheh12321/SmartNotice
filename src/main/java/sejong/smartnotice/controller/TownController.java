@@ -2,6 +2,8 @@ package sejong.smartnotice.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -78,12 +80,17 @@ public class TownController {
         townService.modifyTownInfo(id, name, regionCode);
         return "redirect:/towns";
     }
-    
+
     @DeleteMapping("/{id}")
-    public String remove(@PathVariable Long id) {
+    @ResponseBody
+    public ResponseEntity<String> remove(@PathVariable Long id) {
         log.info("== 마을 삭제 ==");
-        townService.delete(id);
-        return "redirect:/towns";
+        try {
+            townService.delete(id);
+            return ResponseEntity.status(HttpStatus.OK).body("삭제 완료");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("마을 주민이 없어야 마을을 삭제할 수 있습니다");
+        }
     }
 
     // 마을 관리자 목록 조회
