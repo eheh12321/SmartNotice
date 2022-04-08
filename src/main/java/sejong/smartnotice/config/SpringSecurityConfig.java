@@ -3,7 +3,6 @@ package sejong.smartnotice.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -26,6 +25,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.formLogin()
                 .loginPage("/login")
                 .defaultSuccessUrl("/");
+
+        http.logout()
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSION_ID");
     }
 
     @Bean

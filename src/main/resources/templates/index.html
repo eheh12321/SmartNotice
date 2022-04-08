@@ -11,10 +11,13 @@
 <div class="container">
     <h1>메인 페이지</h1>
     <hr>
+    <form action="/logout" method="post">
+        <button type="submit" class="btn btn-danger" style="float: right">로그아웃</button>
+    </form>
     <b>Authenticated username:</b>
-    <div sec:authentication="name"></div>
+    <span sec:authentication="name"></span> <br>
     <b>Authenticated user role:</b>
-    <div sec:authentication="principal.authorities"></div>
+    <span sec:authentication="principal.authorities"></span>
     <hr>
     <button type="button" class="btn btn-primary" onclick="location.href='/admin'">관리자 관리</button>
     <button type="button" class="btn btn-primary" onclick="location.href='/towns'">마을 관리</button>

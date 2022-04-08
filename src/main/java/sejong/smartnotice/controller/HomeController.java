@@ -44,6 +44,11 @@ public class HomeController {
         return "login";
     }
 
+    @PostMapping("/logout")
+    public void logout() {
+        log.info("== 로그아웃 ==");
+    }
+
     @GetMapping("/register")
     public void register() { }
 
