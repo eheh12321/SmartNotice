@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,8 +13,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import sejong.smartnotice.handler.AdminAuthenticationSuccessHandler;
+import sejong.smartnotice.handler.SupporterAuthenticationSuccessHandler;
 import sejong.smartnotice.handler.UserAuthenticationSuccessHandler;
 import sejong.smartnotice.service.AdminService;
+import sejong.smartnotice.service.SupporterService;
 import sejong.smartnotice.service.UserService;
 
 @EnableWebSecurity
@@ -33,7 +34,7 @@ public class MultipleSecurityConfig {
             http.csrf().disable().requestMatcher(new AntPathRequestMatcher("/u/**"))
                     .authorizeRequests()
                     .antMatchers("/u/login", "/u/register").permitAll()
-                    .anyRequest().authenticated();
+                    .anyRequest().hasRole("USER");
 
             http.formLogin()
                     .loginPage("/u/login")
@@ -62,6 +63,43 @@ public class MultipleSecurityConfig {
     @Order(2)
     @Configuration
     @RequiredArgsConstructor
+    static class SupporterSecurityConfig extends WebSecurityConfigurerAdapter {
+
+        private final SupporterService supporterService;
+
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            http.csrf().disable().requestMatcher(new AntPathRequestMatcher("/s/**"))
+                    .authorizeRequests()
+                    .antMatchers("/s/login", "/s/register").permitAll()
+                    .anyRequest().hasRole("SUPPORTER");
+
+            http.formLogin()
+                    .loginPage("/s/login")
+                    .loginProcessingUrl("/s/login")
+                    .successHandler(SupporterLoginSuccessHandler());
+
+            http.logout()
+                    .logoutUrl("/s/logout")
+                    .logoutSuccessUrl("/s/login?logout")
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSION_ID");
+        }
+
+        @Override
+        protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+            auth.userDetailsService(supporterService);
+        }
+
+        @Bean
+        public AuthenticationSuccessHandler SupporterLoginSuccessHandler() {
+            return new SupporterAuthenticationSuccessHandler();
+        }
+    }
+
+    @Order(3)
+    @Configuration
+    @RequiredArgsConstructor
     static class AdminSecurityConfig extends WebSecurityConfigurerAdapter {
 
         private final AdminService adminService;
@@ -72,7 +110,7 @@ public class MultipleSecurityConfig {
                     .authorizeRequests()
                     .antMatchers("/login", "/register/**").permitAll()
                     .antMatchers("/user/**").permitAll()
-                    .anyRequest().authenticated();
+                    .anyRequest().hasRole("ADMIN");
 
             http.formLogin()
                     .loginPage("/login")

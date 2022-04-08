@@ -43,14 +43,14 @@ public class HomeController {
     }
 
     @GetMapping("/register")
-    public String registerAdminForm(Model model) {
+    public String registerForm(Model model) {
         model.addAttribute("admin", new AdminRegisterForm());
         return "register";
     }
     
     // 관리자 회원가입
     @PostMapping("/register")
-    public String registerAdmin(@Validated @ModelAttribute("admin") AdminRegisterForm form,
+    public String register(@Validated @ModelAttribute("admin") AdminRegisterForm form,
                                 BindingResult bindingResult) {
         if(adminService.findByLoginId(form.getLoginId()) != null) {
             bindingResult.addError(new FieldError("admin", "loginId", form.getLoginId(), false, null, null, "중복된 아이디가 존재합니다"));
@@ -63,29 +63,6 @@ public class HomeController {
             return "register";
         }
         adminService.register(form.getName(), form.getTel(), form.getLoginId(), form.getLoginPw(), form.getType());
-        return "redirect:/";
-    }
-
-    @GetMapping("/register/supporter")
-    public String registerSupporterForm(Model model) {
-        model.addAttribute("supporter", new SupporterRegisterForm());
-        return "register/supporterRegister";
-    }
-
-    @PostMapping("/register/supporter")
-    public String registerSupporter(@Validated @ModelAttribute("supporter") SupporterRegisterForm form,
-                                    BindingResult bindingResult) {
-        if(supporterService.findByLoginId(form.getLoginId()) != null) {
-            bindingResult.addError(new FieldError("supporter", "loginId", form.getLoginId(), false, null, null, "중복된 아이디가 존재합니다"));
-        }
-        if(supporterService.findByTel(form.getTel()) != null) {
-            bindingResult.addError(new FieldError("supporter", "tel", form.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
-        }
-        if(bindingResult.hasErrors()) {
-            log.warn("검증 오류 발생: {}", bindingResult);
-            return "register/supporterRegister";
-        }
-        supporterService.register(form.getName(), form.getTel(), form.getLoginId(), form.getLoginPw(), form.getUserId());
         return "redirect:/";
     }
 }

@@ -2,6 +2,11 @@ package sejong.smartnotice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.member.Supporter;
@@ -15,7 +20,7 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class SupporterService {
+public class SupporterService implements UserDetailsService {
 
     private final UserService userService;
     private final SupporterRepository supporterRepository;
@@ -24,7 +29,10 @@ public class SupporterService {
     public Long register(String name, String tel, String loginId, String loginPw, Long userId) {
         log.info("== (서비스) 보호자 회원가입 ==");
         // 1. 보호자 등록
-        Supporter supporter = Supporter.createSupporter(name, tel, loginId, loginPw);
+        log.info("Before Encode: {}", loginPw);
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = passwordEncoder.encode(loginPw); // 비밀번호 암호화
+        Supporter supporter = Supporter.createSupporter(name, tel, loginId, encodedPassword);
         supporterRepository.save(supporter);
 
         // 2. 보호자와 주민 연결
@@ -48,7 +56,6 @@ public class SupporterService {
         supporter.modifySupporterInfo(name, tel);
         return supporter.getId();
     }
-
 
     // 보호자 조회
     public Supporter findById(Long supporterId) {
@@ -87,5 +94,14 @@ public class SupporterService {
             throw new RuntimeException("에러");
         }
         return opt.get();
+    }
+
+    //// 스프링 시큐리티
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Supporter supporter = findByLoginId(username);
+        if(supporter == null) throw new UsernameNotFoundException("등록되지 않은 사용자입니다");
+        return supporter;
     }
 }

@@ -53,7 +53,7 @@ public class UserPageController {
     }
 
     @GetMapping("/register")
-    public String registerUserForm(Model model) {
+    public String registerForm(Model model) {
         List<Town> townList = townService.findAll();
         model.addAttribute("user", new UserRegisterForm());
         model.addAttribute("townList", townList);
@@ -62,7 +62,7 @@ public class UserPageController {
 
     // 마을 주민 회원가입
     @PostMapping("/register")
-    public String registerUser(@Validated @ModelAttribute("user") UserRegisterForm form,
+    public String register(@Validated @ModelAttribute("user") UserRegisterForm form,
                                BindingResult bindingResult, Model model) {
         if(userService.findByLoginId(form.getLoginId()) != null) {
             bindingResult.addError(new FieldError("user", "loginId", form.getLoginId(), false, null, null, "중복된 아이디가 존재합니다"));
