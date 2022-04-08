@@ -93,7 +93,10 @@ public class Admin implements UserDetails {
     @Override // 사용자 권한 반환
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> roles = new HashSet<>();
-        roles.add(new SimpleGrantedAuthority(this.type.toString()));
+        if(type.equals(AdminType.SUPER)) {
+            roles.add(new SimpleGrantedAuthority("ROLE_SUPER"));
+        }
+        roles.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
         return roles;
     }
 
@@ -102,9 +105,9 @@ public class Admin implements UserDetails {
         return this.loginPw;
     }
 
-    @Override // 사용자 유니크 아이디 반환 (전화번호)
+    @Override // 사용자 유니크 아이디 반환
     public String getUsername() {
-        return this.tel;
+        return this.loginId;
     }
 
     @Override // 계정 만료 여부 반환

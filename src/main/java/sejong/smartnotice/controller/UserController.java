@@ -14,7 +14,6 @@ import sejong.smartnotice.form.UserModifyForm;
 import sejong.smartnotice.service.EmergencyAlertService;
 import sejong.smartnotice.service.UserService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Slf4j

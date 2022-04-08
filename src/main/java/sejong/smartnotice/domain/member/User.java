@@ -3,14 +3,15 @@ package sejong.smartnotice.domain.member;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import sejong.smartnotice.domain.announce.Announce;
 import sejong.smartnotice.domain.device.Device;
 import sejong.smartnotice.domain.Town;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.*;
@@ -21,7 +22,7 @@ import static javax.persistence.FetchType.*;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class User implements UserDetails {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -130,5 +131,44 @@ public class User {
                 ", info='" + info + '\'' +
                 ", age=" + age +
                 '}';
+    }
+
+    /////////// 스프링 시큐리티 설정
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Set<GrantedAuthority> roles = new HashSet<>();
+        roles.add(new SimpleGrantedAuthority("ROLE_USER"));
+        return roles;
+    }
+
+    @Override // 비밀번호 주세요
+    public String getPassword() {
+        return this.loginPw;
+    }
+
+    @Override // 사용자 유니크 아이디 반환
+    public String getUsername() {
+        return this.loginId;
+    }
+
+    @Override // 계정 만료 여부 반환
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override // 계정 잠금 여부 반환
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override // 크리덴셜 만료 여부 반환
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override // 계정 사용가능 여부 반환
+    public boolean isEnabled() {
+        return true;
     }
 }

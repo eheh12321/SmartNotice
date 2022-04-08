@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,15 +26,14 @@ import java.util.*;
 public class AdminService implements UserDetailsService {
 
     private final AdminRepository adminRepository;
-    private final PasswordEncoder passwordEncoder;
     private final EntityManager em;
 
     // 회원가입
     public Long register(String name, String tel, String id, String pw, AdminType type) {
         log.info("== (서비스) 관리자 등록 ==");
         log.info("Before Encode: {}", pw);
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = passwordEncoder.encode(pw); // 비밀번호 암호화
-        log.info("After Encode: {}", encodedPassword);
         Admin admin = Admin.createAdmin(name, tel, id, encodedPassword, type);
         adminRepository.save(admin);
         return admin.getId();
@@ -106,7 +106,7 @@ public class AdminService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Admin admin = findByTel(username);
+        Admin admin = findByLoginId(username);
         if(admin == null) throw new UsernameNotFoundException("등록되지 않은 사용자입니다");
         return admin;
     }

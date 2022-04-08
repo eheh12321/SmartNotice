@@ -31,7 +31,7 @@ public class HomeController {
     private final TownService townService;
 
     @GetMapping("/login")
-    public String loginForm(String error, String logout, Model model) {
+    public String adminLoginForm(String error, String logout, Model model) {
         log.info("== 관제 사이트 로그인 == ");
         log.info("error: {}", error);
         log.info("logout: {}", logout);
@@ -39,6 +39,7 @@ public class HomeController {
             model.addAttribute("error", "Check your Account");
         }
         if(logout != null) {
+            log.info("== 관리자 로그아웃 ==");
             model.addAttribute("logout", "Logout");
         }
         return "login";
@@ -46,7 +47,7 @@ public class HomeController {
 
     @PostMapping("/logout")
     public void logout() {
-        log.info("== 로그아웃 ==");
+        log.info("== 관리자 로그아웃 ==");
     }
 
     @GetMapping("/register")

@@ -2,6 +2,11 @@ package sejong.smartnotice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.Town;
@@ -16,7 +21,7 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final TownService townService;
@@ -25,11 +30,12 @@ public class UserService {
     // 신규 주민 등록
     public Long register(String name, String tel, String address, int age, Long townId, String id, String pw) {
         log.info("== (서비스) 마을 주민 등록 ==");
-        // 1. 주민이 포함될 마을 조회
-        Town town = townService.findById(townId);
-
-        // 2. 마을주민 생성
-        User user = User.createUser(name, tel, address, age, town, id, pw);
+        Town town = townService.findById(townId); // 주민이 포함될 마을 정보 조회
+        
+        log.info("Before Encode: {}", pw);
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = passwordEncoder.encode(pw); // 비밀번호 암호화
+        User user = User.createUser(name, tel, address, age, town, id, encodedPassword);
 
         userRepository.save(user);
         return user.getId();
@@ -99,5 +105,14 @@ public class UserService {
             throw new RuntimeException("에러");
         }
         return opt.get();
+    }
+
+    //// 스프링 시큐리티
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = findByLoginId(username);
+        if(user == null) throw new UsernameNotFoundException("등록되지 않은 사용자닙니다");
+        return user;
     }
 }
