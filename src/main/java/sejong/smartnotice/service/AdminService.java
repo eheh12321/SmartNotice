@@ -2,6 +2,11 @@ package sejong.smartnotice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.Admin_Town;
@@ -17,15 +22,19 @@ import java.util.*;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class AdminService {
+public class AdminService implements UserDetailsService {
 
     private final AdminRepository adminRepository;
+    private final PasswordEncoder passwordEncoder;
     private final EntityManager em;
-    
+
     // 회원가입
     public Long register(String name, String tel, String id, String pw, AdminType type) {
         log.info("== (서비스) 관리자 등록 ==");
-        Admin admin = Admin.createAdmin(name, tel, id, pw, type);
+        log.info("Before Encode: {}", pw);
+        String encodedPassword = passwordEncoder.encode(pw); // 비밀번호 암호화
+        log.info("After Encode: {}", encodedPassword);
+        Admin admin = Admin.createAdmin(name, tel, id, encodedPassword, type);
         adminRepository.save(admin);
         return admin.getId();
     }
@@ -49,7 +58,7 @@ public class AdminService {
     public Admin findById(Long id) {
         log.info("== (서비스) 관리자 아이디 조회 ==");
         Optional<Admin> opt = adminRepository.findById(id);
-        if(opt.isEmpty()) {
+        if (opt.isEmpty()) {
             log.warn("관리자가 존재하지 않습니다");
             throw new NullPointerException("관리자가 존재하지 않습니다.");
         }
@@ -91,5 +100,14 @@ public class AdminService {
     public Admin findByTel(String tel) {
         log.info("== (서비스) 관리자 전화번호 조회 ==");
         return adminRepository.findByTel(tel);
+    }
+
+    //// 스프링 시큐리티
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Admin admin = findByTel(username);
+        if(admin == null) throw new UsernameNotFoundException("등록되지 않은 사용자입니다");
+        return admin;
     }
 }

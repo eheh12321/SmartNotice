@@ -35,7 +35,6 @@ public class HomeController {
         log.info("== 관제 사이트 로그인 == ");
         log.info("error: {}", error);
         log.info("logout: {}", logout);
-
         if(error != null) {
             model.addAttribute("error", "Check your Account");
         }

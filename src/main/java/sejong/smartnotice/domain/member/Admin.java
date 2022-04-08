@@ -1,6 +1,10 @@
 package sejong.smartnotice.domain.member;
 
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.StringUtils;
 import sejong.smartnotice.domain.Admin_Town;
 import sejong.smartnotice.domain.Town;
 
@@ -16,7 +20,7 @@ import static javax.persistence.CascadeType.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "admin")
-public class Admin {
+public class Admin implements UserDetails {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "admin_id")
@@ -82,5 +86,44 @@ public class Admin {
     @Override
     public int hashCode() {
         return Objects.hash(getId());
+    }
+
+    ///////// 스프링 시큐리티 설정
+
+    @Override // 사용자 권한 반환
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Set<GrantedAuthority> roles = new HashSet<>();
+        roles.add(new SimpleGrantedAuthority(this.type.toString()));
+        return roles;
+    }
+
+    @Override // 비밀번호 주세요
+    public String getPassword() {
+        return this.loginPw;
+    }
+
+    @Override // 사용자 유니크 아이디 반환 (전화번호)
+    public String getUsername() {
+        return this.tel;
+    }
+
+    @Override // 계정 만료 여부 반환
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override // 계정 잠금 여부 반환
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override // 크리덴셜 만료 여부 반환
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override // 계정 사용가능 여부 반환
+    public boolean isEnabled() {
+        return true;
     }
 }
