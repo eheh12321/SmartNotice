@@ -8,16 +8,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.form.AdminRegisterForm;
 import sejong.smartnotice.form.SupporterRegisterForm;
-import sejong.smartnotice.form.UserRegisterForm;
 import sejong.smartnotice.service.AdminService;
 import sejong.smartnotice.service.SupporterService;
-import sejong.smartnotice.service.TownService;
-import sejong.smartnotice.service.UserService;
-
-import java.util.List;
 
 @Slf4j
 @Controller
@@ -26,9 +20,7 @@ import java.util.List;
 public class HomeController {
 
     private final AdminService adminService;
-    private final UserService userService;
     private final SupporterService supporterService;
-    private final TownService townService;
 
     @GetMapping("/login")
     public String adminLoginForm(String error, String logout, Model model) {
@@ -51,16 +43,13 @@ public class HomeController {
     }
 
     @GetMapping("/register")
-    public void register() { }
-
-    @GetMapping("/register/admin")
     public String registerAdminForm(Model model) {
         model.addAttribute("admin", new AdminRegisterForm());
-        return "register/adminRegister";
+        return "register";
     }
     
     // 관리자 회원가입
-    @PostMapping("/register/admin")
+    @PostMapping("/register")
     public String registerAdmin(@Validated @ModelAttribute("admin") AdminRegisterForm form,
                                 BindingResult bindingResult) {
         if(adminService.findByLoginId(form.getLoginId()) != null) {
@@ -71,39 +60,9 @@ public class HomeController {
         }
         if(bindingResult.hasErrors()) {
             log.warn("검증 오류 발생: {}", bindingResult);
-            return "register/adminRegister";
+            return "register";
         }
         adminService.register(form.getName(), form.getTel(), form.getLoginId(), form.getLoginPw(), form.getType());
-        return "redirect:/";
-    }
-
-    @GetMapping("/register/user")
-    public String registerUserForm(Model model) {
-        List<Town> townList = townService.findAll();
-        model.addAttribute("user", new UserRegisterForm());
-        model.addAttribute("townList", townList);
-        return "register/userRegister";
-    }
-
-    // 마을 주민 회원가입
-    @PostMapping("/register/user")
-    public String registerUser(@Validated @ModelAttribute("user") UserRegisterForm form,
-            BindingResult bindingResult, Model model) {
-        if(userService.findByLoginId(form.getLoginId()) != null) {
-            bindingResult.addError(new FieldError("user", "loginId", form.getLoginId(), false, null, null, "중복된 아이디가 존재합니다"));
-        }
-        if(userService.findByTel(form.getTel()) != null) {
-            bindingResult.addError(new FieldError("user", "tel", form.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
-        }
-        if(bindingResult.hasErrors()) {
-            log.warn("검증 오류 발생: {}", bindingResult);
-            List<Town> townList = townService.findAll();
-            model.addAttribute("townList", townList);
-            return "register/userRegister";
-        }
-        userService.register(form.getName(), form.getTel(), form.getAddress(), form.getAge(),
-                form.getTownId(), form.getLoginId(), form.getLoginPw());
-
         return "redirect:/";
     }
 
