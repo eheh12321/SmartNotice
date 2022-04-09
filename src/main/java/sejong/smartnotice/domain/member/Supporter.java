@@ -34,15 +34,15 @@ public class Supporter implements UserDetails {
 
     private String tel;
     private String name;
-    private String loginId;
-    private String loginPw;
 
-    public static Supporter createSupporter(String name, String tel, String loginId, String loginPw) {
+    @Embedded
+    Account account;
+
+    public static Supporter createSupporter(String name, String tel, Account account) {
         return Supporter.builder()
                 .name(name)
                 .tel(tel)
-                .loginId(loginId)
-                .loginPw(loginPw).build();
+                .account(account).build();
     }
 
     // 보호자와 마을주민 연결
@@ -81,12 +81,12 @@ public class Supporter implements UserDetails {
 
     @Override // 비밀번호 주세요
     public String getPassword() {
-        return this.loginPw;
+        return this.account.getLoginPw();
     }
 
     @Override // 사용자 유니크 아이디 반환
     public String getUsername() {
-        return this.loginId;
+        return this.account.getLoginId();
     }
 
     @Override // 계정 만료 여부 반환

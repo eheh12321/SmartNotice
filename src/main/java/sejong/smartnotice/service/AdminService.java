@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.Admin_Town;
 import sejong.smartnotice.domain.Town;
+import sejong.smartnotice.domain.member.Account;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.AdminType;
 import sejong.smartnotice.repository.AdminRepository;
@@ -34,7 +35,8 @@ public class AdminService implements UserDetailsService {
         log.info("Before Encode: {}", pw);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = passwordEncoder.encode(pw); // 비밀번호 암호화
-        Admin admin = Admin.createAdmin(name, tel, id, encodedPassword, type);
+        Account account = new Account(id, encodedPassword);
+        Admin admin = Admin.createAdmin(name, tel, account, type);
         adminRepository.save(admin);
         return admin.getId();
     }
@@ -94,7 +96,7 @@ public class AdminService implements UserDetailsService {
 
     public Admin findByLoginId(String loginId) {
         log.info("== (서비스) 관리자 로그인 아이디 조회 ==");
-        return adminRepository.findByLoginId(loginId);
+        return adminRepository.findByAccountLoginId(loginId);
     }
 
     public Admin findByTel(String tel) {

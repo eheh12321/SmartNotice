@@ -4,7 +4,6 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.util.StringUtils;
 import sejong.smartnotice.domain.Admin_Town;
 import sejong.smartnotice.domain.Town;
 
@@ -34,13 +33,8 @@ public class Admin implements UserDetails {
     @Column(nullable = false, unique = true)
     private String tel;
 
-    @NotBlank
-    @Column(nullable = false, unique = true)
-    private String loginId;
-
-    @NotBlank
-    @Column(nullable = false)
-    private String loginPw;
+    @Embedded
+    Account account;
 
     // Admin 커밋 시 자동으로 딸려감
     @OneToMany(mappedBy = "admin", cascade = ALL)
@@ -50,12 +44,11 @@ public class Admin implements UserDetails {
     private AdminType type; // 관리자 타입
 
     // 관리자 생성
-    public static Admin createAdmin(String name, String tel, String loginId, String loginPw, AdminType type) {
+    public static Admin createAdmin(String name, String tel, Account account, AdminType type) {
         return Admin.builder()
                 .name(name)
                 .tel(tel)
-                .loginId(loginId)
-                .loginPw(loginPw)
+                .account(account)
                 .type(type)
                 .atList(new ArrayList<>())
                 .build();
@@ -80,12 +73,12 @@ public class Admin implements UserDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Admin admin = (Admin) o;
-        return Objects.equals(getId(), admin.getId()) && Objects.equals(getLoginId(), admin.getLoginId());
+        return Objects.equals(getId(), admin.getId()) && Objects.equals(getName(), admin.getName()) && Objects.equals(getTel(), admin.getTel()) && Objects.equals(getAccount(), admin.getAccount()) && Objects.equals(getAtList(), admin.getAtList()) && getType() == admin.getType();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId());
+        return Objects.hash(getId(), getName(), getTel(), getAccount(), getAtList(), getType());
     }
 
     ///////// 스프링 시큐리티 설정
@@ -102,12 +95,12 @@ public class Admin implements UserDetails {
 
     @Override // 비밀번호 주세요
     public String getPassword() {
-        return this.loginPw;
+        return this.account.getLoginPw();
     }
 
     @Override // 사용자 유니크 아이디 반환
     public String getUsername() {
-        return this.loginId;
+        return this.account.getLoginId();
     }
 
     @Override // 계정 만료 여부 반환

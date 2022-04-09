@@ -7,7 +7,7 @@ import sejong.smartnotice.domain.member.Supporter;
 @Repository
 public interface SupporterRepository extends JpaRepository<Supporter, Long> {
 
-    Supporter findByLoginId(String loginId);
+    Supporter findByAccountLoginId(String loginId);
 
     Supporter findByTel(String tel);
 }

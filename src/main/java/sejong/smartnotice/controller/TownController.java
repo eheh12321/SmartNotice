@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.Region;
 import sejong.smartnotice.domain.Town;
+import sejong.smartnotice.domain.member.Account;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.AdminType;
 import sejong.smartnotice.domain.member.User;
@@ -124,7 +125,8 @@ public class TownController {
 
         if(userId != null && adminId == null) {
             User user = userService.findById(userId); // 주민 정보 조회
-            Long newAdminId = adminService.register(user.getName(), user.getTel(), user.getLoginId(), user.getLoginPw(), AdminType.ADMIN); // 주민 계정 정보로 관리자 계정 생성
+            Long newAdminId = adminService.register(user.getName(), user.getTel(),
+                    user.getAccount().getLoginId(), user.getAccount().getLoginPw(), AdminType.ADMIN); // 주민 계정 정보로 관리자 계정 생성
             user.modifyUserIsAdmin(); // 마을 주민이 마을 관리자라는 상태 표시
             townService.addTownAdmin(id, newAdminId); // 관리자와 마을 연결
         } else if (userId == null && adminId != null) {

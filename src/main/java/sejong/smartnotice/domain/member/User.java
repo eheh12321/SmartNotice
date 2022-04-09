@@ -34,11 +34,8 @@ public class User implements UserDetails {
     @Column(nullable = false, unique = true)
     private String tel;
 
-    @Column(nullable = false, unique = true)
-    private String loginId;
-
-    @Column(nullable = false)
-    private String loginPw;
+    @Embedded
+    Account account;
 
     @Column(length = 50)
     private String address;
@@ -62,14 +59,13 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Supporter> supporterList = new ArrayList<>();
 
-    public static User createUser(String name, String tel, String address, int age, Town town, String id, String pw) {
+    public static User createUser(String name, String tel, String address, int age, Town town, Account account) {
         return User.builder()
                 .name(name)
                 .tel(tel)
                 .address(address)
                 .age(age)
-                .loginId(id)
-                .loginPw(pw)
+                .account(account)
                 .supporterList(new ArrayList<>())
                 .town(town).build();
     }
@@ -125,8 +121,6 @@ public class User implements UserDetails {
         return "User{" +
                 "name='" + name + '\'' +
                 ", tel='" + tel + '\'' +
-                ", loginId='" + loginId + '\'' +
-                ", loginPw='" + loginPw + '\'' +
                 ", address='" + address + '\'' +
                 ", info='" + info + '\'' +
                 ", age=" + age +
@@ -144,12 +138,12 @@ public class User implements UserDetails {
 
     @Override // 비밀번호 주세요
     public String getPassword() {
-        return this.loginPw;
+        return this.account.getLoginPw();
     }
 
     @Override // 사용자 유니크 아이디 반환
     public String getUsername() {
-        return this.loginId;
+        return this.account.getLoginId();
     }
 
     @Override // 계정 만료 여부 반환

@@ -8,10 +8,15 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import sejong.smartnotice.form.AdminRegisterForm;
 import sejong.smartnotice.form.SupporterRegisterForm;
 import sejong.smartnotice.service.AdminService;
 import sejong.smartnotice.service.SupporterService;
+
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 
 @Slf4j
 @Controller
@@ -20,13 +25,15 @@ import sejong.smartnotice.service.SupporterService;
 public class HomeController {
 
     private final AdminService adminService;
-    private final SupporterService supporterService;
 
     @GetMapping("/login")
-    public String adminLoginForm(String error, String logout, Model model) {
+    public String adminLoginForm(String error, String logout, HttpServletRequest request, Model model) {
         log.info("== 관제 사이트 로그인 == ");
+        log.info("접속 시각: {}", LocalDateTime.now());
+        log.info("접속 IP: {}", getUserIp());
         log.info("error: {}", error);
         log.info("logout: {}", logout);
+
         if(error != null) {
             model.addAttribute("error", "Check your Account");
         }
@@ -64,5 +71,41 @@ public class HomeController {
         }
         adminService.register(form.getName(), form.getTel(), form.getLoginId(), form.getLoginPw(), form.getType());
         return "redirect:/";
+    }
+
+    public String getUserIp() {
+
+        String ip = null;
+        HttpServletRequest request =
+                ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+
+        ip = request.getHeader("X-Forwarded-For");
+
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_CLIENT_IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("X-Real-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("X-RealIP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("REMOTE_ADDR");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+
+        return ip;
     }
 }

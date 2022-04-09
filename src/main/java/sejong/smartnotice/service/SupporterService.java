@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sejong.smartnotice.domain.member.Account;
 import sejong.smartnotice.domain.member.Supporter;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.repository.SupporterRepository;
@@ -32,7 +33,8 @@ public class SupporterService implements UserDetailsService {
         log.info("Before Encode: {}", loginPw);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = passwordEncoder.encode(loginPw); // 비밀번호 암호화
-        Supporter supporter = Supporter.createSupporter(name, tel, loginId, encodedPassword);
+        Account account = new Account(loginId, encodedPassword);
+        Supporter supporter = Supporter.createSupporter(name, tel, account);
         supporterRepository.save(supporter);
 
         // 2. 보호자와 주민 연결
@@ -71,7 +73,7 @@ public class SupporterService implements UserDetailsService {
 
     public Supporter findByLoginId(String loginId) {
         log.info("== (서비스) 보호자 로그인 아이디로 조회 ==");
-        return supporterRepository.findByLoginId(loginId);
+        return supporterRepository.findByAccountLoginId(loginId);
     }
 
     public Supporter findByTel(String tel) {

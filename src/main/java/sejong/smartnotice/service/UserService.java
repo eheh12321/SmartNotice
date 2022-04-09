@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.device.Device;
+import sejong.smartnotice.domain.member.Account;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.repository.UserRepository;
 
@@ -35,7 +36,8 @@ public class UserService implements UserDetailsService {
         log.info("Before Encode: {}", pw);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = passwordEncoder.encode(pw); // 비밀번호 암호화
-        User user = User.createUser(name, tel, address, age, town, id, encodedPassword);
+        Account account = new Account(id, encodedPassword);
+        User user = User.createUser(name, tel, address, age, town, account);
 
         userRepository.save(user);
         return user.getId();
@@ -89,7 +91,7 @@ public class UserService implements UserDetailsService {
 
     public User findByLoginId(String loginId) {
         log.info("== (서비스) 마을 주민 로그인 아이디 조회 ==");
-        return userRepository.findByLoginId(loginId);
+        return userRepository.findByAccountLoginId(loginId);
     }
 
     public User findByTel(String tel) {
