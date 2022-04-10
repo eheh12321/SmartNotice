@@ -27,12 +27,13 @@ public class HomeController {
     private final AdminService adminService;
 
     @GetMapping("/login")
-    public String adminLoginForm(String error, String logout, HttpServletRequest request, Model model) {
+    public String adminLoginForm(String error, String logout, Model model) {
         log.info("== 관제 사이트 로그인 == ");
         log.info("접속 시각: {}", LocalDateTime.now());
         log.info("접속 IP: {}", getUserIp());
         log.info("error: {}", error);
         log.info("logout: {}", logout);
+        log.info("====================");
 
         if(error != null) {
             model.addAttribute("error", "Check your Account");
