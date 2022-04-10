@@ -125,6 +125,7 @@ public class TownController {
 
         if(userId != null && adminId == null) {
             User user = userService.findById(userId); // 주민 정보 조회
+            Account account = user.getAccount();
             Long newAdminId = adminService.register(user.getName(), user.getTel(),
                     user.getAccount().getLoginId(), user.getAccount().getLoginPw(), AdminType.ADMIN); // 주민 계정 정보로 관리자 계정 생성
             user.modifyUserIsAdmin(); // 마을 주민이 마을 관리자라는 상태 표시
