@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import sejong.smartnotice.form.SupporterRegisterForm;
+import sejong.smartnotice.dto.SupporterRegisterDTO;
 import sejong.smartnotice.service.SupporterService;
 
 @Slf4j
@@ -49,12 +49,12 @@ public class SupporterPageController {
 
     @GetMapping("/register")
     public String registerForm(Model model) {
-        model.addAttribute("supporter", new SupporterRegisterForm());
+        model.addAttribute("supporter", new SupporterRegisterDTO());
         return "s/register";
     }
 
     @PostMapping("/register")
-    public String register(@Validated @ModelAttribute("supporter") SupporterRegisterForm form,
+    public String register(@Validated @ModelAttribute("supporter") SupporterRegisterDTO form,
                                     BindingResult bindingResult) {
         if(supporterService.findByLoginId(form.getLoginId()) != null) {
             bindingResult.addError(new FieldError("supporter", "loginId", form.getLoginId(), false, null, null, "중복된 아이디가 존재합니다"));

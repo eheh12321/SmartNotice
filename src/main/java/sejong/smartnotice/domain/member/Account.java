@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -29,5 +30,10 @@ public class Account {
     // 추가적인 메소드가 들어갈 수 있다
     public void changePassword(String newEncodedPassword) {
         this.loginPw = newEncodedPassword;
+    }
+
+    public static Account createAccount(String id, String password, PasswordEncoder passwordEncoder) {
+        String encodedPassword = passwordEncoder.encode(password);
+        return new Account(id, encodedPassword);
     }
 }

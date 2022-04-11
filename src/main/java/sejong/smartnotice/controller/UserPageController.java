@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import sejong.smartnotice.domain.Town;
-import sejong.smartnotice.form.UserRegisterForm;
+import sejong.smartnotice.dto.UserRegisterDTO;
 import sejong.smartnotice.service.TownService;
 import sejong.smartnotice.service.UserService;
 
@@ -55,14 +55,14 @@ public class UserPageController {
     @GetMapping("/register")
     public String registerForm(Model model) {
         List<Town> townList = townService.findAll();
-        model.addAttribute("user", new UserRegisterForm());
+        model.addAttribute("user", new UserRegisterDTO());
         model.addAttribute("townList", townList);
         return "u/register";
     }
 
     // 마을 주민 회원가입
     @PostMapping("/register")
-    public String register(@Validated @ModelAttribute("user") UserRegisterForm form,
+    public String register(@Validated @ModelAttribute("user") UserRegisterDTO form,
                                BindingResult bindingResult, Model model) {
         if(userService.findByLoginId(form.getLoginId()) != null) {
             bindingResult.addError(new FieldError("user", "loginId", form.getLoginId(), false, null, null, "중복된 아이디가 존재합니다"));

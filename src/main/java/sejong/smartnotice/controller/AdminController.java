@@ -10,7 +10,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.member.Admin;
-import sejong.smartnotice.form.AdminModifyForm;
+import sejong.smartnotice.dto.AdminModifyDTO;
 import sejong.smartnotice.service.AdminService;
 
 import java.util.List;
@@ -55,18 +55,18 @@ public class AdminController {
     }
 
     @PutMapping("/{id}")
-    public String modify(@PathVariable Long id, @Validated @ModelAttribute("admin") AdminModifyForm form,
+    public String modify(@PathVariable Long id, @Validated @ModelAttribute("admin") AdminModifyDTO modifyDTO,
                          BindingResult bindingResult) {
         log.info("== 관리자 정보 수정 ==");
-        Admin findAdmin = adminService.findByTel(form.getTel());
-        if(findAdmin != null && findAdmin.getId() != form.getId()) {
-            bindingResult.addError(new FieldError("admin", "tel", form.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
+        Admin findAdmin = adminService.findByTel(modifyDTO.getTel());
+        if(findAdmin != null && findAdmin.getId() != modifyDTO.getId()) {
+            bindingResult.addError(new FieldError("admin", "tel", modifyDTO.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
         }
         if(bindingResult.hasErrors()) {
             log.warn("검증 오류 발생: {}", bindingResult);
             return "admin/modify";
         }
-        adminService.modifyAdminInfo(id, form.getName(), form.getTel());
+        adminService.modifyAdminInfo(modifyDTO);
         return "redirect:/admin";
     }
 

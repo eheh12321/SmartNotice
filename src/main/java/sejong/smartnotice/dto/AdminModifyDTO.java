@@ -1,12 +1,15 @@
-package sejong.smartnotice.form;
+package sejong.smartnotice.dto;
 
-import lombok.Data;
+import lombok.*;
 import sejong.smartnotice.domain.member.AdminType;
 
 import javax.validation.constraints.NotBlank;
 
-@Data
-public class AdminModifyForm {
+@Getter @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class AdminModifyDTO {
 
     private Long id;
 

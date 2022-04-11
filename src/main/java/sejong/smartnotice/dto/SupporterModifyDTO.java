@@ -1,12 +1,15 @@
-package sejong.smartnotice.form;
+package sejong.smartnotice.dto;
 
 import lombok.Data;
+import sejong.smartnotice.domain.member.User;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class SupporterRegisterForm {
+public class SupporterModifyDTO {
+
+    private Long id;
 
     @NotBlank
     private String name;
@@ -14,12 +17,6 @@ public class SupporterRegisterForm {
     @NotBlank
     private String tel;
 
-    @NotBlank
-    private String loginId;
-
-    @NotBlank
-    private String loginPw;
-
     @NotNull
-    private Long userId;
+    private User user;
 }

@@ -14,6 +14,7 @@ import sejong.smartnotice.domain.member.Account;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.AdminType;
 import sejong.smartnotice.domain.member.User;
+import sejong.smartnotice.dto.AdminRegisterDTO;
 import sejong.smartnotice.service.AdminService;
 import sejong.smartnotice.service.TownService;
 import sejong.smartnotice.service.UserService;
@@ -126,8 +127,8 @@ public class TownController {
         if(userId != null && adminId == null) {
             User user = userService.findById(userId); // 주민 정보 조회
             Account account = user.getAccount();
-            Long newAdminId = adminService.register(user.getName(), user.getTel(),
-                    user.getAccount().getLoginId(), user.getAccount().getLoginPw(), AdminType.ADMIN); // 주민 계정 정보로 관리자 계정 생성
+            AdminRegisterDTO registerDTO = new AdminRegisterDTO(user.getName(), user.getTel(), user.getAccount().getLoginId(), user.getAccount().getLoginPw(), AdminType.ADMIN);
+            Long newAdminId = adminService.register(registerDTO); // 주민 계정 정보로 관리자 계정 생성
             user.modifyUserIsAdmin(); // 마을 주민이 마을 관리자라는 상태 표시
             townService.addTownAdmin(id, newAdminId); // 관리자와 마을 연결
         } else if (userId == null && adminId != null) {

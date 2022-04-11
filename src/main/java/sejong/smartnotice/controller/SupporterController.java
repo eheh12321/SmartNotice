@@ -9,8 +9,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.member.Supporter;
-import sejong.smartnotice.form.AdminModifyForm;
-import sejong.smartnotice.form.SupporterModifyForm;
+import sejong.smartnotice.dto.SupporterModifyDTO;
 import sejong.smartnotice.service.SupporterService;
 
 import java.util.List;
@@ -48,7 +47,7 @@ public class SupporterController {
     }
 
     @PutMapping("/{id}")
-    public String modify(@PathVariable Long id, @Validated @ModelAttribute("supporter") SupporterModifyForm form,
+    public String modify(@PathVariable Long id, @Validated @ModelAttribute("supporter") SupporterModifyDTO form,
                          BindingResult bindingResult) {
         log.info("== 관리자 정보 수정 ==");
         Supporter findSupporter = supporterService.findByTel(form.getTel());

@@ -10,7 +10,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.member.User;
-import sejong.smartnotice.form.UserModifyForm;
+import sejong.smartnotice.dto.UserModifyDTO;
 import sejong.smartnotice.service.EmergencyAlertService;
 import sejong.smartnotice.service.UserService;
 
@@ -57,7 +57,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public String modify(@PathVariable Long id, @Validated @ModelAttribute("user") UserModifyForm form,
+    public String modify(@PathVariable Long id, @Validated @ModelAttribute("user") UserModifyDTO form,
                          BindingResult bindingResult) {
         log.info("== 마을 주민 정보 수정 ==");
         User findUser = userService.findByTel(form.getTel());

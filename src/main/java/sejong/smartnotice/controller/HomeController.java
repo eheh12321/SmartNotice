@@ -10,10 +10,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import sejong.smartnotice.form.AdminRegisterForm;
-import sejong.smartnotice.form.SupporterRegisterForm;
+import sejong.smartnotice.dto.AdminRegisterDTO;
 import sejong.smartnotice.service.AdminService;
-import sejong.smartnotice.service.SupporterService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -52,25 +50,26 @@ public class HomeController {
 
     @GetMapping("/register")
     public String registerForm(Model model) {
-        model.addAttribute("admin", new AdminRegisterForm());
+        model.addAttribute("admin", new AdminRegisterDTO());
         return "register";
     }
     
     // 관리자 회원가입
     @PostMapping("/register")
-    public String register(@Validated @ModelAttribute("admin") AdminRegisterForm form,
+    public String register(@Validated @ModelAttribute("admin") AdminRegisterDTO registerDTO,
                                 BindingResult bindingResult) {
-        if(adminService.findByLoginId(form.getLoginId()) != null) {
-            bindingResult.addError(new FieldError("admin", "loginId", form.getLoginId(), false, null, null, "중복된 아이디가 존재합니다"));
+        log.info("<<중복 검증>>");
+        if(adminService.findByLoginId(registerDTO.getLoginId()) != null) {
+            bindingResult.addError(new FieldError("admin", "loginId", registerDTO.getLoginId(), false, null, null, "중복된 아이디가 존재합니다"));
         }
-        if(adminService.findByTel(form.getTel()) != null) {
-            bindingResult.addError(new FieldError("admin", "tel", form.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
+        if(adminService.findByTel(registerDTO.getTel()) != null) {
+            bindingResult.addError(new FieldError("admin", "tel", registerDTO.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
         }
         if(bindingResult.hasErrors()) {
             log.warn("검증 오류 발생: {}", bindingResult);
             return "register";
         }
-        adminService.register(form.getName(), form.getTel(), form.getLoginId(), form.getLoginPw(), form.getType());
+        adminService.register(registerDTO);
         return "redirect:/";
     }
 

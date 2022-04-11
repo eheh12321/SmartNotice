@@ -19,7 +19,7 @@ public class AdminAuthenticationSuccessHandler implements AuthenticationSuccessH
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication auth) throws IOException {
-        log.info("== 마을 주민 로그인 성공! ==");
+        log.info("== 관리자 로그인 성공! ==");
         log.info("로그인 ID: {}", auth.getName());
         log.info("로그인 시각: {}", LocalDateTime.now());
         log.info("=========================");
