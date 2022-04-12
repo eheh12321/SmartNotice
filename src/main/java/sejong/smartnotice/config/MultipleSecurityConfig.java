@@ -11,11 +11,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import sejong.smartnotice.handler.AdminAuthenticationSuccessHandler;
 import sejong.smartnotice.handler.SupporterAuthenticationSuccessHandler;
 import sejong.smartnotice.handler.UserAuthenticationSuccessHandler;
+import sejong.smartnotice.handler.WebAccessDeniedHandler;
 import sejong.smartnotice.service.AdminService;
 import sejong.smartnotice.service.SupporterService;
 import sejong.smartnotice.service.UserService;
@@ -48,12 +50,6 @@ public class MultipleSecurityConfig {
                     .invalidateHttpSession(true)
                     .deleteCookies("JSESSION_ID");
 
-        }
-
-        @Override // 예외 경로 설정
-        public void configure(WebSecurity web) throws Exception {
-            web.ignoring()
-                    .antMatchers("/resources/**");
         }
 
         @Override
@@ -115,6 +111,7 @@ public class MultipleSecurityConfig {
         protected void configure(HttpSecurity http) throws Exception {
             http.csrf().disable().requestMatcher(new AntPathRequestMatcher("/**"))
                     .authorizeRequests()
+                    .antMatchers("/resources/**").permitAll()
                     .antMatchers("/login", "/register/**").permitAll()
                     .antMatchers("/user/**").permitAll()
                     .anyRequest().hasRole("ADMIN");
@@ -127,8 +124,10 @@ public class MultipleSecurityConfig {
             http.logout()
                     .invalidateHttpSession(true)
                     .deleteCookies("JSESSION_ID");
-        }
 
+            http.exceptionHandling()
+                    .accessDeniedHandler(accessDeniedHandler());
+        }
 
         @Override
         protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -138,6 +137,11 @@ public class MultipleSecurityConfig {
         @Bean
         public AuthenticationSuccessHandler AdminLoginSuccessHandler() {
             return new AdminAuthenticationSuccessHandler();
+        }
+
+        @Bean
+        public AccessDeniedHandler accessDeniedHandler() {
+            return new WebAccessDeniedHandler();
         }
     }
 
