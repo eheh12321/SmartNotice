@@ -32,7 +32,7 @@ public class Announce {
     private List<Announce_Town> atList = new ArrayList<>();
 
     @Column(nullable = false)
-    private String title; // 방송제목
+    private String text; // 방송내용
 
     @Column(nullable = false)
     private LocalDateTime time; // 방송시각
@@ -45,19 +45,18 @@ public class Announce {
     @Column(nullable = false)
     private AnnounceType type; // 음성 or 문자
 
-    // @ColumnDefault("[저장소 경로]")
-    private String store; // 파일 저장위치
+    private String directory; // 파일 저장위치
 
-    public static Announce makeAnnounce(Admin admin, String title, AnnounceCategory category, AnnounceType type, List<Town> townList) {
+    public static Announce makeAnnounce(Admin admin, String text, AnnounceCategory category, AnnounceType type, List<Town> townList, String directory) {
         // 1. 방송 생성
         Announce announce = Announce.builder()
                 .admin(admin)
-                .title(title)
+                .text(text)
                 .category(category)
                 .type(type)
                 .atList(new ArrayList<>())
                 .time(LocalDateTime.now())
-                .store("./저장소경로").build();
+                .directory(directory).build();
 
         // 2. 마을에 방송 전파
         for (Town town : townList) {

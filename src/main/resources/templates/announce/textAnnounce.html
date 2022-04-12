@@ -4,23 +4,39 @@
 <head>
     <title>마을 방송(문자) 페이지</title>
     <meta charset="UTF-8">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <body>
 <div class="container">
     <hr>
     <h1>마을 방송(문자) 페이지</h1>
+    <h4 th:text="${admin.getId()}">로그인 계정 정보</h4>
     <hr>
     <form method="post" action="/announces/text">
         <label for="text">내용</label>
         <input type="text" id="text" name="text" class="form-control" placeholder="방송 내용 입력 (500자 제한)">
         <hr>
+        <p>방송 대상 마을 선택</p>
+        <ul>
+            <li th:each="town : ${townList}">
+                <label th:text="*{town.name}">마을 이름</label>
+                <input type="checkbox" th:value="*{town.id}" name="townId">
+            </li>
+        </ul>
+        <input type="hidden" th:value="${admin.getId()}" name="adminId">
+        <input type="hidden" name="category" value="NORMAL">
+        <input type="hidden" name="type" value="TEXT">
+
         <button type="submit" class="btn btn-danger">방송하기</button>
         <button type="button" class="btn btn-warning">미리 듣기 (미구현)</button>
+        <hr>
     </form>
     <hr>
-    <button type="button" class="btn btn-primary" onclick="location.href='/'">메인 페이지로</button>
+    <button type="button" class="btn btn-primary" onclick="location.href='/announces'">목록 페이지로</button>
 </div>
 
 </body>

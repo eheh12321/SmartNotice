@@ -26,4 +26,9 @@ public class Announce_Town {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "announce_id", nullable = false)
     private Announce announce;
+
+    @Override
+    public String toString() {
+        return town.getName();
+    }
 }

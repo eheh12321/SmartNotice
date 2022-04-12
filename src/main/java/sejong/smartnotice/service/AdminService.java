@@ -119,6 +119,17 @@ public class AdminService implements UserDetailsService {
         return adminRepository.findByTel(tel);
     }
 
+    @Transactional(readOnly = true)
+    public List<Town> getAdminTownList(Admin admin) {
+        List<Admin_Town> atList = em.createQuery("select at from Admin_Town at where at.admin=:admin", Admin_Town.class)
+                .setParameter("admin", admin).getResultList();
+        List<Town> townList = new ArrayList<>();
+        for (Admin_Town at : atList) {
+            townList.add(at.getTown());
+        }
+        return townList;
+    }
+
     private Admin validateUserId(Long id) {
         log.info("== 관리자 아이디 검증 ==");
         Optional<Admin> opt = adminRepository.findById(id);

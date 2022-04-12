@@ -97,7 +97,7 @@ public class User implements UserDetails {
     /// 방송 수신 테스트용 (실제로는 임베디드 단에서 구현) ///
     public void receiveAnnounce(Announce announce) {
         log.warn("=======방송이 도착했습니다=========");
-        log.warn("방송명: {}", announce.getTitle());
+        log.warn("방송내용: {}", announce.getText());
         log.warn("방송타입: {}", announce.getType());
         log.warn("방송을 받은 사람: {}", this.getName());
         log.warn("===============================");
