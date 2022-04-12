@@ -40,8 +40,8 @@ public class AnnounceService {
         if(announceDTO.getText().length() > 500) { // 제한
             throw new IllegalStateException("500자를 초과할 수 없습니다");
         }
-
-        ByteString AudioFile = synthesizeText(announceDTO.getText(), UUID.randomUUID().toString(), getDirectory());
+        String fileName = UUID.randomUUID().toString();
+        synthesizeText(announceDTO.getText(), fileName, getDirectory());
 
         // 1. 방송 대상 마을 추출
         List<Town> townList = new ArrayList<>();
@@ -52,7 +52,7 @@ public class AnnounceService {
 
         // 2. 방송 생성
         Admin admin = adminService.findById(announceDTO.getAdminId());
-        Announce announce = Announce.makeAnnounce(admin, announceDTO.getText(), AnnounceCategory.NORMAL, AnnounceType.TEXT, townList, getDirectory());
+        Announce announce = Announce.makeAnnounce(admin, announceDTO.getText(), AnnounceCategory.NORMAL, AnnounceType.TEXT, townList, getDirectory(), fileName);
         announceRepository.save(announce);
 
         return announce.getId();
@@ -87,7 +87,7 @@ public class AnnounceService {
             ByteString audioContents = response.getAudioContent();
 
             // Write the response to the output file.
-            try (OutputStream out = new FileOutputStream(directory + "\\" + fileName + ".mp3")) {
+            try (OutputStream out = new FileOutputStream("src\\main\\resources\\static\\announce\\" + directory + "\\" + fileName + ".mp3")) {
                 out.write(audioContents.toByteArray());
                 return audioContents;
             }
@@ -100,7 +100,7 @@ public class AnnounceService {
         Date date = new Date();
         String str = sdf.format(date);
 
-        String directory =  "storage" + "\\" + str.replace("-", File.separator); // ex) 2022\03\08
+        String directory = str.replace("-", File.separator); // ex) 2022\03\08
 
         File uploadPath = new File(directory);
         if(!uploadPath.exists()) {

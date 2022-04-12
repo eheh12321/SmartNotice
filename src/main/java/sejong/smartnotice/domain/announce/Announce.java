@@ -46,8 +46,11 @@ public class Announce {
     private AnnounceType type; // 음성 or 문자
 
     private String directory; // 파일 저장위치
+    
+    private String fileName; // 파일 이름
 
-    public static Announce makeAnnounce(Admin admin, String text, AnnounceCategory category, AnnounceType type, List<Town> townList, String directory) {
+    public static Announce makeAnnounce(Admin admin, String text, AnnounceCategory category, AnnounceType type,
+                                        List<Town> townList, String directory, String fileName) {
         // 1. 방송 생성
         Announce announce = Announce.builder()
                 .admin(admin)
@@ -56,7 +59,8 @@ public class Announce {
                 .type(type)
                 .atList(new ArrayList<>())
                 .time(LocalDateTime.now())
-                .directory(directory).build();
+                .directory(directory)
+                .fileName(fileName).build();
 
         // 2. 마을에 방송 전파
         for (Town town : townList) {

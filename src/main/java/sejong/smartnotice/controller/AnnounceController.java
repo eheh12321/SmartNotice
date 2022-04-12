@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -46,5 +45,12 @@ public class AnnounceController {
         return "redirect:/announces";
     }
 
-
+    @GetMapping("/{id}")
+    public String getAnnounce(@PathVariable Long id, Model model) {
+        Announce announce = announceService.findAnnounceById(id);
+        String filePath = "\\resources\\announce\\" + announce.getDirectory() + "\\" + announce.getFileName() + ".mp3";
+        log.info(filePath);
+        model.addAttribute("filePath", filePath);
+        return "announce/getAnnounce";
+    }
 }
