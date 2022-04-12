@@ -37,5 +37,6 @@ out/
 .vscode/
 
 ###
-새 폴더/
+custom/
+storage/
 /src/main/resources/application.properties
