@@ -109,7 +109,7 @@ public class TownService {
         Optional<Town> opt = townRepository.findById(townId);
         if(opt.isEmpty()) {
             log.warn("마을이 존재하지 않습니다");
-            throw new RuntimeException("마을이 존재하지 않습니다");
+            throw new NullPointerException("마을이 존재하지 않습니다");
         }
         return opt.get();
     }

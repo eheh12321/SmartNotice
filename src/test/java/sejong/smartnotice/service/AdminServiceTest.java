@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.member.Account;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.AdminType;
@@ -21,7 +20,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-@Transactional
 @ExtendWith(MockitoExtension.class)
 class AdminServiceTest {
 
@@ -57,6 +55,19 @@ class AdminServiceTest {
     }
 
     @Test
+    void 관리자_회원가입_실패_중복() {
+        // given
+        when(adminRepository.existsAdminByTelOrAccountLoginId(any(), any())).thenReturn(true);
+        AdminRegisterDTO registerDTO = new AdminRegisterDTO();
+
+        // then
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+            // when
+            adminService.register(registerDTO);
+        });
+    }
+
+    @Test
     void 관리자_정보수정() {
         // given
         Admin admin = createAdmin("수정된 관리자", "010-9999-9999", "id", "pw");
@@ -73,8 +84,26 @@ class AdminServiceTest {
 
         // then
         Admin findAdmin = adminRepository.findById(adminId).get();
-
         assertThat(findAdmin.getTel()).isEqualTo(modifyDTO.getTel());
+    }
+
+    @Test
+    void 관리자_정보수정_실패_중복() {
+        // given
+        Admin admin = createAdmin("관리자", "010-1234-1234", "id", "pw");
+        when(adminRepository.findByTel(any())).thenReturn(admin);
+
+        AdminModifyDTO modifyDTO = AdminModifyDTO.builder()
+                .id(1L)
+                .name("수정된 관리자")
+                .tel("010-1234-1234")
+                .type(AdminType.ADMIN).build();
+
+        // then
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+            // when
+            adminService.modifyAdminInfo(modifyDTO);
+        });
     }
 
     @Test
@@ -95,40 +124,14 @@ class AdminServiceTest {
     }
 
     @Test
-    void 관리자_회원가입_중복() {
+    void 관리자_삭제_실패() {
         // given
-        when(adminRepository.existsAdminByTelOrAccountLoginId(any(), any())).thenReturn(true);
-
-        AdminRegisterDTO registerDTO = AdminRegisterDTO.builder()
-                .name("관리자")
-                .tel("010-1234-1234")
-                .loginId("id")
-                .loginPw("pw")
-                .type(AdminType.ADMIN).build();
-        // when
+        when(adminRepository.findById(any())).thenReturn(Optional.empty());
 
         // then
-        Assertions.assertThrows(IllegalStateException.class, () -> {
-            adminService.register(registerDTO);
-        });
-    }
-
-    @Test
-    void 관리자_정보수정_중복() {
-        // given
-        Admin admin = createAdmin("관리자", "010-1234-1234", "id", "pw");
-        when(adminRepository.findByTel(any())).thenReturn(admin);
-
-        AdminModifyDTO modifyDTO = AdminModifyDTO.builder()
-                .id(1L)
-                .name("수정된 관리자")
-                .tel("010-1234-1234")
-                .type(AdminType.ADMIN).build();
-        // when
-
-        // then
-        Assertions.assertThrows(IllegalStateException.class, () -> {
-            adminService.modifyAdminInfo(modifyDTO);
+        Assertions.assertThrows(NullPointerException.class, () -> {
+            // when
+            adminService.delete(1L);
         });
     }
 

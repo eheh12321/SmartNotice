@@ -62,13 +62,13 @@ public class UserPageController {
 
     // 마을 주민 회원가입
     @PostMapping("/register")
-    public String register(@Validated @ModelAttribute("user") UserRegisterDTO form,
+    public String register(@Validated @ModelAttribute("user") UserRegisterDTO registerDTO,
                                BindingResult bindingResult, Model model) {
-        if(userService.findByLoginId(form.getLoginId()) != null) {
-            bindingResult.addError(new FieldError("user", "loginId", form.getLoginId(), false, null, null, "중복된 아이디가 존재합니다"));
+        if(userService.findByLoginId(registerDTO.getLoginId()) != null) {
+            bindingResult.addError(new FieldError("user", "loginId", registerDTO.getLoginId(), false, null, null, "중복된 아이디가 존재합니다"));
         }
-        if(userService.findByTel(form.getTel()) != null) {
-            bindingResult.addError(new FieldError("user", "tel", form.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
+        if(userService.findByTel(registerDTO.getTel()) != null) {
+            bindingResult.addError(new FieldError("user", "tel", registerDTO.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
         }
         if(bindingResult.hasErrors()) {
             log.warn("검증 오류 발생: {}", bindingResult);
@@ -76,8 +76,7 @@ public class UserPageController {
             model.addAttribute("townList", townList);
             return "u/register";
         }
-        userService.register(form.getName(), form.getTel(), form.getAddress(), form.getAge(),
-                form.getTownId(), form.getLoginId(), form.getLoginPw());
+        userService.register(registerDTO);
 
         return "redirect:/u";
     }

@@ -57,19 +57,18 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public String modify(@PathVariable Long id, @Validated @ModelAttribute("user") UserModifyDTO form,
+    public String modify(@PathVariable Long id, @Validated @ModelAttribute("user") UserModifyDTO modifyDTO,
                          BindingResult bindingResult) {
         log.info("== 마을 주민 정보 수정 ==");
-        User findUser = userService.findByTel(form.getTel());
-        if(findUser != null && findUser.getId() != form.getId()) {
-            bindingResult.addError(new FieldError("user", "tel", form.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
+        User findUser = userService.findByTel(modifyDTO.getTel());
+        if(findUser != null && findUser.getId() != modifyDTO.getId()) {
+            bindingResult.addError(new FieldError("user", "tel", modifyDTO.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
         }
         if(bindingResult.hasErrors()) {
             log.warn("검증 오류 발생: {}", bindingResult);
             return "user/modify";
         }
-        userService.modifyUserInfo(id, form.getName(), form.getTel(), form.getAddress(),
-                form.getInfo(), form.getAge());
+        userService.modifyUserInfo(modifyDTO);
 
         return "redirect:/";
     }

@@ -1,12 +1,15 @@
 package sejong.smartnotice.dto;
 
-import lombok.Data;
+import lombok.*;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-@Data
+@Getter @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserModifyDTO {
 
     private Long id;

@@ -1,19 +1,16 @@
 package sejong.smartnotice.dto;
 
-import lombok.Data;
+import lombok.*;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-@Data
+@Getter @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserRegisterDTO {
-
-    @NotBlank
-    private String loginId;
-
-    @NotBlank
-    private String loginPw;
 
     @NotBlank
     private String name;
@@ -30,4 +27,10 @@ public class UserRegisterDTO {
     @NotNull
     @Range(min = 1, max = 150)
     private Integer age;
+
+    @NotBlank
+    private String loginId;
+
+    @NotBlank
+    private String loginPw;
 }

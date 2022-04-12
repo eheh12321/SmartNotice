@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import sejong.smartnotice.dto.UserRegisterDTO;
 import sejong.smartnotice.service.UserService;
 
 import java.time.LocalDateTime;
@@ -19,8 +20,9 @@ public class TestController {
     @GetMapping("/newUser/{townId}")
     public String createTestUser(@PathVariable Long townId) {
         for(int i = 1; i <= 10; i++) {
-            userService.register("이름" + i, LocalDateTime.now().toString(), "주소" + i,
-                    i, townId, LocalDateTime.now().toString(), "pw");
+            UserRegisterDTO registerDTO = new UserRegisterDTO("이름" + i, LocalDateTime.now().toString(), "주소" + i,
+                    townId, i, LocalDateTime.now().toString(), "pw");
+            userService.register(registerDTO);
         }
         return "redirect:/towns/{townId}";
     }

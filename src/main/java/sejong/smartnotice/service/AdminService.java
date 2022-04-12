@@ -51,6 +51,7 @@ public class AdminService implements UserDetailsService {
     public Long modifyAdminInfo(AdminModifyDTO modifyDTO) {
         log.info("== 관리자 정보 수정 ==");
         if(findByTel(modifyDTO.getTel()) != null) { // 전화번호 중복 검증
+            log.warn("중복된 전화번호가 존재합니다");
             throw new IllegalStateException("중복된 전화번호가 존재합니다");
         }
         Admin admin = findById(modifyDTO.getId());
@@ -68,15 +69,9 @@ public class AdminService implements UserDetailsService {
     // 관리자 검색
     public Admin findById(Long id) {
         log.info("== 관리자 아이디 조회 ==");
-        Optional<Admin> opt = adminRepository.findById(id);
-        if (opt.isEmpty()) {
-            log.warn("관리자가 존재하지 않습니다");
-            throw new NullPointerException("관리자가 존재하지 않습니다.");
-        }
-        return opt.get();
+        // 아이디 검증 이후 반환
+        return validateUserId(id);
     }
-
-    // 관리자 전체 목록 조회
 
     /**
      * @Transactional readOnly 설정 시 이점 (읽기 전용 모드)
@@ -124,9 +119,21 @@ public class AdminService implements UserDetailsService {
         return adminRepository.findByTel(tel);
     }
 
+    private Admin validateUserId(Long id) {
+        log.info("== 관리자 아이디 검증 ==");
+        Optional<Admin> opt = adminRepository.findById(id);
+        if (opt.isEmpty()) {
+            log.warn("관리자가 존재하지 않습니다");
+            throw new NullPointerException("관리자가 존재하지 않습니다.");
+        }
+        return opt.get();
+    }
+
     // 관리자 중복 검증
     private void validateDuplicateAdmin(String tel, String loginId) {
+        log.info("== 관리자 중복 검증 ==");
         if (adminRepository.existsAdminByTelOrAccountLoginId(tel, loginId)) {
+            log.warn("이미 존재하는 회원입니다");
             throw new IllegalStateException("이미 존재하는 회원입니다");
         }
     }
