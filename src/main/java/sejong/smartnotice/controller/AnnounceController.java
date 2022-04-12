@@ -10,9 +10,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 @Slf4j
@@ -21,15 +24,23 @@ import java.util.UUID;
 @RequestMapping("/announces")
 public class AnnounceController {
 
-    @GetMapping
+    @GetMapping("/text")
     public String getTextAnnounceForm() {
+        log.info("방송 저장 경로: {}",  getDirectory());
         return "announce/textAnnounce";
     }
 
-    @PostMapping
+    @PostMapping("/text")
     public String getTextAnnounce(@RequestParam String text) throws Exception {
-        synthesizeText(text, UUID.randomUUID().toString(), "storage");
-        return "redirect:/announces";
+        log.info("== 문자 방송 ==");
+        log.info("방송 시각: {}", LocalDateTime.now());
+        log.info("문자 길이: {}", text.length());
+        log.info("==================");
+        if(text.length() > 500) { // 제한
+            return "redirect:/announces/text";
+        }
+        synthesizeText(text, UUID.randomUUID().toString(), getDirectory());
+        return "redirect:/announces/text";
     }
 
     // 문자 -> 음성파일 변환
@@ -65,5 +76,20 @@ public class AnnounceController {
                 return audioContents;
             }
         }
+    }
+
+    // 날짜에 따른 업로드 파일 경로 생성 (연/월/일)
+    private String getDirectory() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        String str = sdf.format(date);
+
+        String directory =  "storage" + "\\" + str.replace("-", File.separator); // ex) 2022\03\08
+        
+        File uploadPath = new File(directory);
+        if(!uploadPath.exists()) {
+            uploadPath.mkdirs(); // 디렉토리가 존재하지 않는다면 새로 생성
+        }
+        return directory;
     }
 }
