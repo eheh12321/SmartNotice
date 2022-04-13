@@ -14,6 +14,7 @@ import sejong.smartnotice.service.AdminService;
 import sejong.smartnotice.service.AnnounceService;
 
 import javax.validation.Valid;
+import java.io.File;
 import java.util.List;
 
 @Slf4j
@@ -48,9 +49,12 @@ public class AnnounceController {
     @GetMapping("/{id}")
     public String getAnnounce(@PathVariable Long id, Model model) {
         Announce announce = announceService.findAnnounceById(id);
-        String filePath = "\\resources\\announce\\" + announce.getDirectory() + "\\" + announce.getFileName() + ".mp3";
-        log.info(filePath);
-        model.addAttribute("filePath", filePath);
+
+        String fullPath = File.separator + "resources" + File.separator + "announce" + File.separator +
+                announce.getDirectory() + File.separator + announce.getFileName() + ".mp3";
+        log.info("방송 탐색 경로: {}", fullPath);
+
+        model.addAttribute("filePath", fullPath);
         return "announce/getAnnounce";
     }
 }

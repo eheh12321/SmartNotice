@@ -4,6 +4,7 @@ import com.google.cloud.texttospeech.v1.*;
 import com.google.protobuf.ByteString;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.announce.Announce;
@@ -30,6 +31,8 @@ public class AnnounceService {
     private final AdminService adminService;
     private final TownService townService;
     private final AnnounceRepository announceRepository;
+
+    private static final String FILE_DIR = "src-main-resources-static-announce-";
 
     public Long makeTextAnnounce(AnnounceDTO announceDTO) throws Exception {
         log.info("== 문자 방송 ==");
@@ -87,7 +90,13 @@ public class AnnounceService {
             ByteString audioContents = response.getAudioContent();
 
             // Write the response to the output file.
-            try (OutputStream out = new FileOutputStream("src\\main\\resources\\static\\announce\\" + directory + "\\" + fileName + ".mp3")) {
+            String fullPath = FILE_DIR.replace("-", File.separator) + directory + File.separator;
+            File path = new File(fullPath);
+            if(!path.exists()) {
+                path.mkdirs(); // 디렉토리가 존재하지 않는다면 새로 생성
+            }
+            log.info("저장 경로: {}", fullPath);
+            try (OutputStream out = new FileOutputStream(fullPath + fileName + ".mp3")) {
                 out.write(audioContents.toByteArray());
                 return audioContents;
             }
@@ -100,13 +109,7 @@ public class AnnounceService {
         Date date = new Date();
         String str = sdf.format(date);
 
-        String directory = str.replace("-", File.separator); // ex) 2022\03\08
-
-        File uploadPath = new File(directory);
-        if(!uploadPath.exists()) {
-            uploadPath.mkdirs(); // 디렉토리가 존재하지 않는다면 새로 생성
-        }
-        return directory;
+        return str.replace("-", File.separator); // ex) 2022\03\08
     }
 
     public Announce findAnnounceById(Long id) {
