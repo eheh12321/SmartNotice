@@ -59,15 +59,6 @@ public class Admin implements UserDetails {
         this.tel = tel;
     }
 
-    // 관리자 마을 목록 반환 (Admin_Town 엔티티 다루기 복잡하니까 변하게 사용하도록)
-    public List<Town> getTownList() {
-        List<Town> townList = new ArrayList<>();
-        for (Admin_Town at : atList) {
-            townList.add(at.getTown());
-        }
-        return townList;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

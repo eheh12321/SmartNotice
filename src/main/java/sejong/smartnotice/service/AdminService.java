@@ -2,7 +2,6 @@ package sejong.smartnotice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,7 +13,6 @@ import sejong.smartnotice.domain.Admin_Town;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.member.Account;
 import sejong.smartnotice.domain.member.Admin;
-import sejong.smartnotice.domain.member.AdminType;
 import sejong.smartnotice.dto.AdminModifyDTO;
 import sejong.smartnotice.dto.AdminRegisterDTO;
 import sejong.smartnotice.repository.AdminRepository;
@@ -30,6 +28,7 @@ public class AdminService implements UserDetailsService {
 
     private final AdminRepository adminRepository;
     private final EntityManager em;
+    private static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
     // 회원가입
     public Long register(AdminRegisterDTO registerDTO) {
@@ -38,7 +37,7 @@ public class AdminService implements UserDetailsService {
         validateDuplicateAdmin(registerDTO.getTel(), registerDTO.getLoginId());
 
         // 비밀번호 암호화
-        Account account = Account.createAccount(registerDTO.getLoginId(), registerDTO.getLoginPw(), new BCryptPasswordEncoder());
+        Account account = Account.createAccount(registerDTO.getLoginId(), registerDTO.getLoginPw(), PASSWORD_ENCODER);
 
         // 계정 생성 및 저장
         Admin admin = Admin.createAdmin(registerDTO.getName(), registerDTO.getTel(), account, registerDTO.getType());
@@ -74,7 +73,7 @@ public class AdminService implements UserDetailsService {
     }
 
     /**
-     * @Transactional readOnly 설정 시 이점 (읽기 전용 모드)
+     * Transactional readOnly 설정 시 이점 (읽기 전용 모드)
      * Flush Mode를 MANUAL로 설정, 트랜잭션 커밋 시에도 flush 되지 않음 (강제 flush는 가능)
      * -> C/U/D 작업 X. 변경감지(Dirty Checking) X, 스냅샷 X -> 성능 향상
      */
@@ -91,22 +90,6 @@ public class AdminService implements UserDetailsService {
         return adminRepository.findByNameContaining(name);
     }
 
-    // 마을 관리 관리자 목록 조회
-    @Transactional(readOnly = true)
-    public List<Admin> findByTown(Long townId) {
-        log.info("== 관리자 마을 조회 ==");
-        Town town = em.find(Town.class, townId);
-        List<Admin_Town> atList = em.createQuery("select at from Admin_Town at where at.town=:town", Admin_Town.class)
-                .setParameter("town", town)
-                .getResultList();
-
-        List<Admin> adminList = new ArrayList<>();
-        for (Admin_Town at : atList) {
-            adminList.add(at.getAdmin());
-        }
-        return adminList;
-    }
-
     @Transactional(readOnly = true)
     public Admin findByLoginId(String loginId) {
         log.info("== 관리자 로그인 아이디 조회 ==");
@@ -120,7 +103,8 @@ public class AdminService implements UserDetailsService {
     }
 
     @Transactional(readOnly = true)
-    public List<Town> getAdminTownList(Admin admin) {
+    public List<Town> getTownList(Admin admin) {
+        log.info("== 관리자 관리 마을 목록 조회 ==");
         List<Admin_Town> atList = em.createQuery("select at from Admin_Town at where at.admin=:admin", Admin_Town.class)
                 .setParameter("admin", admin).getResultList();
         List<Town> townList = new ArrayList<>();

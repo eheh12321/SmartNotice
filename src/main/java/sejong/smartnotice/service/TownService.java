@@ -79,9 +79,9 @@ public class TownService {
         List<Admin_Town> newAtList = atList.stream().filter(at -> {
             if (at.getAdmin() == admin) {
                 log.info("관리자 확인, {}", admin.getName());
-                at.getAdmin().getTownList().remove(at);
+                at.getAdmin().getAtList().remove(at);
                 em.remove(at);
-                log.info("남은 관리마을: {}", admin.getTownList().toString());
+                log.info("남은 관리마을: {}", admin.getAtList().toString());
                 return false;
             } else return true;
         }).collect(Collectors.toList());

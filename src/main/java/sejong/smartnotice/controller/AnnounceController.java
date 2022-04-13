@@ -36,7 +36,7 @@ public class AnnounceController {
     @GetMapping("/text")
     public String getTextAnnounceForm(@AuthenticationPrincipal Admin admin, Model model) {
         model.addAttribute("admin", admin);
-        model.addAttribute("townList", adminService.getAdminTownList(admin));
+        model.addAttribute("townList", adminService.getTownList(admin));
         return "announce/textAnnounce";
     }
 
