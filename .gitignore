@@ -38,5 +38,5 @@ out/
 
 ###
 custom/
-/src/main/resources/static/announce
+storage/
 /src/main/resources/application.properties

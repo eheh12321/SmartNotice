@@ -16,6 +16,18 @@
     <h1>마을 방송(문자) 페이지</h1>
     <h4 th:text="${admin.getId()}">로그인 계정 정보</h4>
     <hr>
+    <div id="authInfo">
+        <form action="/logout" method="post">
+            <button type="submit" class="btn btn-danger" style="float: right">로그아웃</button>
+        </form>
+        <b>Authenticated username: </b>
+        <span sec:authentication="name"></span> <br>
+        <b>Authenticated user role: </b>
+        <span sec:authentication="principal.authorities"></span> <br>
+        <b>페이지 접근가능 권한: </b>
+        <span>ADMIN</span>
+    </div>
+    <hr>
     <form method="post" action="/announces/text">
         <label for="text">내용</label>
         <input type="text" id="text" name="text" class="form-control" placeholder="방송 내용 입력 (500자 제한)">
@@ -30,7 +42,7 @@
         <input type="hidden" th:value="${admin.getId()}" name="adminId">
         <input type="hidden" name="category" value="NORMAL">
         <input type="hidden" name="type" value="TEXT">
-
+        <hr>
         <button type="submit" class="btn btn-danger">방송하기</button>
         <button type="button" class="btn btn-warning">미리 듣기 (미구현)</button>
         <hr>

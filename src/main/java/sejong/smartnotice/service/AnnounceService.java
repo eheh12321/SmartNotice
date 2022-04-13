@@ -32,8 +32,6 @@ public class AnnounceService {
     private final TownService townService;
     private final AnnounceRepository announceRepository;
 
-    private static final String FILE_DIR = "src-main-resources-static-announce-";
-
     public Long makeTextAnnounce(AnnounceDTO announceDTO) throws Exception {
         log.info("== 문자 방송 ==");
         log.info("방송 시각: {}", LocalDateTime.now());
@@ -90,7 +88,7 @@ public class AnnounceService {
             ByteString audioContents = response.getAudioContent();
 
             // Write the response to the output file.
-            String fullPath = FILE_DIR.replace("-", File.separator) + directory + File.separator;
+            String fullPath = "storage" + File.separator + directory + File.separator;
             File path = new File(fullPath);
             if(!path.exists()) {
                 path.mkdirs(); // 디렉토리가 존재하지 않는다면 새로 생성

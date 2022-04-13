@@ -50,8 +50,7 @@ public class AnnounceController {
     public String getAnnounce(@PathVariable Long id, Model model) {
         Announce announce = announceService.findAnnounceById(id);
 
-        String fullPath = File.separator + "resources" + File.separator + "announce" + File.separator +
-                announce.getDirectory() + File.separator + announce.getFileName() + ".mp3";
+        String fullPath = File.separator + "storage" + File.separator + announce.getDirectory() + File.separator + announce.getFileName() + ".mp3";
         log.info("방송 탐색 경로: {}", fullPath);
 
         model.addAttribute("filePath", fullPath);
