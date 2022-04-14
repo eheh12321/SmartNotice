@@ -110,7 +110,7 @@ public class MultipleSecurityConfig {
         protected void configure(HttpSecurity http) throws Exception {
             http.csrf().disable().requestMatcher(new AntPathRequestMatcher("/**"))
                     .authorizeRequests()
-                    .antMatchers("/resources/**").permitAll()
+                    .antMatchers("/resources/**", "/test*").permitAll()
                     .antMatchers("/login", "/register/**").permitAll()
                     .antMatchers("/user/**").permitAll()
                     .anyRequest().hasRole("ADMIN");

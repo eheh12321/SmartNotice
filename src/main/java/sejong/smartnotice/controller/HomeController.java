@@ -24,6 +24,16 @@ public class HomeController {
 
     private final AdminService adminService;
 
+    @GetMapping("/test-login")
+    public String testLoginPage() {
+        return "auth-login";
+    }
+
+    @GetMapping("/test-index")
+    public String testIndexPage() {
+        return "test";
+    }
+
     @GetMapping("/login")
     public String adminLoginForm(String error, String logout, Model model) {
         log.info("== 관제 사이트 로그인 == ");
