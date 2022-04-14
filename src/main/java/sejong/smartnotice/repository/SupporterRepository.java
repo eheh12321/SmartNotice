@@ -10,4 +10,6 @@ public interface SupporterRepository extends JpaRepository<Supporter, Long> {
     Supporter findByAccountLoginId(String loginId);
 
     Supporter findByTel(String tel);
+
+    boolean existsSupporterByAccountLoginIdOrTel(String loginId, String tel);
 }

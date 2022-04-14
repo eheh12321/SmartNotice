@@ -1,12 +1,15 @@
 package sejong.smartnotice.dto;
 
-import lombok.Data;
+import lombok.*;
 import sejong.smartnotice.domain.member.User;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-@Data
+@Getter @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class SupporterModifyDTO {
 
     private Long id;
@@ -16,7 +19,4 @@ public class SupporterModifyDTO {
 
     @NotBlank
     private String tel;
-
-    @NotNull
-    private User user;
 }

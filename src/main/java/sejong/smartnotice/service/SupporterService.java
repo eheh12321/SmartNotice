@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.member.Account;
 import sejong.smartnotice.domain.member.Supporter;
 import sejong.smartnotice.domain.member.User;
+import sejong.smartnotice.dto.SupporterModifyDTO;
+import sejong.smartnotice.dto.SupporterRegisterDTO;
 import sejong.smartnotice.repository.SupporterRepository;
 
 import java.util.List;
@@ -25,77 +27,101 @@ public class SupporterService implements UserDetailsService {
 
     private final UserService userService;
     private final SupporterRepository supporterRepository;
+    private static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
     // 회원가입
-    public Long register(String name, String tel, String loginId, String loginPw, Long userId) {
-        log.info("== (서비스) 보호자 회원가입 ==");
-        // 1. 보호자 등록
-        log.info("Before Encode: {}", loginPw);
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String encodedPassword = passwordEncoder.encode(loginPw); // 비밀번호 암호화
-        Account account = new Account(loginId, encodedPassword);
-        Supporter supporter = Supporter.createSupporter(name, tel, account);
+    public Long register(SupporterRegisterDTO registerDTO) {
+        log.info("== 보호자 회원가입 ==");
+        // 1. 중복 검증
+        validateDuplicateSupporter(registerDTO.getTel(), registerDTO.getLoginId());
+
+        // 2. 비밀번호 암호화
+        Account account = Account.createAccount(registerDTO.getLoginId(), registerDTO.getLoginPw(), PASSWORD_ENCODER);
+
+        // 3. 보호자 등록
+        Supporter supporter = Supporter.createSupporter(registerDTO.getName(), registerDTO.getTel(), account);
         supporterRepository.save(supporter);
 
-        // 2. 보호자와 주민 연결
-        connectWithUser(userId, supporter);
+        // 4. 보호자와 주민 연결
+        connectWithUser(registerDTO.getUserId(), supporter);
         return supporter.getId();
     }
 
     // 보호자랑 회원 연결
+    @Transactional(readOnly = true)
     public Long connectWithUser(Long userId, Supporter supporter) {
-        log.info("== (서비스) 보호자와 마을 주민 연결 ==");
+        log.info("== 보호자와 마을 주민 연결 ==");
+        // 1. 주민 찾기 (없으면 NPE)
         User user = userService.findById(userId);
-        // + 뭔가 검증 로직을 거쳐야함
+        
+        // 2. 보호자랑 양방향 연결
         supporter.connectUser(user);
         return user.getId();
     }
 
     // 보호자 정보 수정
-    public Long modifySupporterInfo(Long id, String name, String tel) {
-        log.info("== (서비스) 보호자 정보 수정 ==");
-        Supporter supporter = findById(id);
-        supporter.modifySupporterInfo(name, tel);
+    public Long modifySupporterInfo(SupporterModifyDTO modifyDTO) {
+        log.info("== 보호자 정보 수정 ==");
+        if(findByTel(modifyDTO.getTel()) != null) { // 전화번호 중복 검증
+            log.warn("중복된 전화번호가 존재합니다");
+            throw new IllegalStateException("중복된 전화번호가 존재합니다");
+        }
+        // 보호자 찾기
+        Supporter supporter = findById(modifyDTO.getId());
+        
+        // 보호자 정보 변경
+        supporter.modifySupporterInfo(modifyDTO.getName(), modifyDTO.getTel());
         return supporter.getId();
-    }
-
-    // 보호자 조회
-    public Supporter findById(Long supporterId) {
-        log.info("== (서비스) 보호자 아이디로 조회 ==");
-        return validateSupporterId(supporterId);
-    }
-
-    // 보호자 목록 조회
-    public List<Supporter> findAll() {
-        log.info("== (서비스) 보호자 전체 조회 ==");
-        return supporterRepository.findAll();
-    }
-
-    public Supporter findByLoginId(String loginId) {
-        log.info("== (서비스) 보호자 로그인 아이디로 조회 ==");
-        return supporterRepository.findByAccountLoginId(loginId);
-    }
-
-    public Supporter findByTel(String tel) {
-        log.info("== (서비스) 보호자 전화번호로 조회 ==");
-        return supporterRepository.findByTel(tel);
     }
 
     // 보호자 삭제
     public void delete(Long supporterId) {
-        log.info("== (서비스) 보호자 삭제 ==");
+        log.info("== 보호자 삭제 ==");
         Supporter supporter = validateSupporterId(supporterId);
         supporterRepository.delete(supporter);
     }
 
+    // 보호자 조회
+    public Supporter findById(Long supporterId) {
+        log.info("== 보호자 아이디 조회 ==");
+        return validateSupporterId(supporterId);
+    }
+
+    // 보호자 목록 조회
+    @Transactional(readOnly = true)
+    public List<Supporter> findAll() {
+        log.info("== 보호자 전체 조회 ==");
+        return supporterRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Supporter findByLoginId(String loginId) {
+        log.info("== 보호자 로그인 아이디로 조회 ==");
+        return supporterRepository.findByAccountLoginId(loginId);
+    }
+
+    @Transactional(readOnly = true)
+    public Supporter findByTel(String tel) {
+        log.info("== 보호자 전화번호로 조회 ==");
+        return supporterRepository.findByTel(tel);
+    }
+
     private Supporter validateSupporterId(Long supporterId) {
-        log.info("== (서비스) 보호자 아이디 검증 ==");
+        log.info("== 보호자 아이디 검증 ==");
         Optional<Supporter> opt = supporterRepository.findById(supporterId);
         if(opt.isEmpty()) {
             log.warn("보호자가 존재하지 않습니다");
-            throw new RuntimeException("에러");
+            throw new NullPointerException("보호자가 존재하지 않습니다");
         }
         return opt.get();
+    }
+
+    private void validateDuplicateSupporter(String tel, String loginId) {
+        log.info("== 보호자 중복 검증 ==");
+        if(supporterRepository.existsSupporterByAccountLoginIdOrTel(loginId, tel)) {
+            log.warn("이미 존재하는 회원입니다");
+            throw new IllegalStateException("이미 존재하는 회원입니다");
+        }
     }
 
     //// 스프링 시큐리티

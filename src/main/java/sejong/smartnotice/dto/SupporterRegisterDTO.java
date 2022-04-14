@@ -1,11 +1,14 @@
 package sejong.smartnotice.dto;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-@Data
+@Getter @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class SupporterRegisterDTO {
 
     @NotBlank

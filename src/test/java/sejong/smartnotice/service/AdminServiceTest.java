@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -72,14 +73,10 @@ class AdminServiceTest {
         // given
         when(adminRepository.existsAdminByTelOrAccountLoginId(any(), any())).thenReturn(true);
         AdminRegisterDTO registerDTO = AdminRegisterDTO.builder()
-                .name("관리자")
-                .tel("010-1234-1234")
-                .loginId("id")
-                .loginPw("pw")
-                .type(AdminType.ADMIN).build();
+                .name("중복된 관리자").build();
 
         // then
-        Assertions.assertThrows(IllegalStateException.class, () -> {
+        assertThrows(IllegalStateException.class, () -> {
             // when
             adminService.register(registerDTO);
         });
@@ -118,7 +115,7 @@ class AdminServiceTest {
                 .type(AdminType.ADMIN).build();
 
         // then
-        Assertions.assertThrows(IllegalStateException.class, () -> {
+        assertThrows(IllegalStateException.class, () -> {
             // when
             adminService.modifyAdminInfo(modifyDTO);
         });
@@ -136,7 +133,7 @@ class AdminServiceTest {
         adminService.delete(1L);
 
         // then
-        Assertions.assertThrows(NullPointerException.class, () -> {
+        assertThrows(NullPointerException.class, () -> {
             adminRepository.existsAdminByTelOrAccountLoginId("010-1234-1234", "id");
         });
     }
@@ -147,7 +144,7 @@ class AdminServiceTest {
         when(adminRepository.findById(any())).thenReturn(Optional.empty());
 
         // then
-        Assertions.assertThrows(NullPointerException.class, () -> {
+        assertThrows(NullPointerException.class, () -> {
             // when
             adminService.delete(1L);
         });
@@ -176,6 +173,9 @@ class AdminServiceTest {
 
         // then
         assertThat(townList.size()).isEqualTo(3);
+        assertThat(townList.contains(town1)).isTrue();
+        assertThat(townList.contains(town2)).isTrue();
+        assertThat(townList.contains(town3)).isTrue();
     }
 
     private Admin createAdmin(String name, String tel, String id, String pw) {

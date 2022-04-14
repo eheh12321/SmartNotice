@@ -47,18 +47,18 @@ public class SupporterController {
     }
 
     @PutMapping("/{id}")
-    public String modify(@PathVariable Long id, @Validated @ModelAttribute("supporter") SupporterModifyDTO form,
+    public String modify(@PathVariable Long id, @Validated @ModelAttribute("supporter") SupporterModifyDTO modifyDTO,
                          BindingResult bindingResult) {
         log.info("== 관리자 정보 수정 ==");
-        Supporter findSupporter = supporterService.findByTel(form.getTel());
-        if(findSupporter != null && findSupporter.getId() != form.getId()) {
-            bindingResult.addError(new FieldError("supporter", "tel", form.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
+        Supporter findSupporter = supporterService.findByTel(modifyDTO.getTel());
+        if(findSupporter != null && findSupporter.getId() != modifyDTO.getId()) {
+            bindingResult.addError(new FieldError("supporter", "tel", modifyDTO.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
         }
         if(bindingResult.hasErrors()) {
             log.warn("검증 오류 발생: {}", bindingResult);
             return "supporter/modify";
         }
-        supporterService.modifySupporterInfo(id, form.getName(), form.getTel());
+        supporterService.modifySupporterInfo(modifyDTO);
         return "redirect:/supporters";
     }
 

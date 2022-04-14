@@ -54,19 +54,19 @@ public class SupporterPageController {
     }
 
     @PostMapping("/register")
-    public String register(@Validated @ModelAttribute("supporter") SupporterRegisterDTO form,
+    public String register(@Validated @ModelAttribute("supporter") SupporterRegisterDTO registerDTO,
                                     BindingResult bindingResult) {
-        if(supporterService.findByLoginId(form.getLoginId()) != null) {
-            bindingResult.addError(new FieldError("supporter", "loginId", form.getLoginId(), false, null, null, "중복된 아이디가 존재합니다"));
+        if(supporterService.findByLoginId(registerDTO.getLoginId()) != null) {
+            bindingResult.addError(new FieldError("supporter", "loginId", registerDTO.getLoginId(), false, null, null, "중복된 아이디가 존재합니다"));
         }
-        if(supporterService.findByTel(form.getTel()) != null) {
-            bindingResult.addError(new FieldError("supporter", "tel", form.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
+        if(supporterService.findByTel(registerDTO.getTel()) != null) {
+            bindingResult.addError(new FieldError("supporter", "tel", registerDTO.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
         }
         if(bindingResult.hasErrors()) {
             log.warn("검증 오류 발생: {}", bindingResult);
             return "s/register";
         }
-        supporterService.register(form.getName(), form.getTel(), form.getLoginId(), form.getLoginPw(), form.getUserId());
+        supporterService.register(registerDTO);
         return "redirect:/s";
     }
 }

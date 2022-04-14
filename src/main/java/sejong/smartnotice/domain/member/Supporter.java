@@ -33,6 +33,7 @@ public class Supporter implements UserDetails {
     private User user;
 
     private String tel;
+
     private String name;
 
     @Embedded
@@ -47,10 +48,9 @@ public class Supporter implements UserDetails {
 
     // 보호자와 마을주민 연결
     public void connectUser(User user) {
-        log.info("== 보호자와 마을주민 연결 ==");
-        log.info("유저: {}", user.getName());
+        log.info("마을 주민: {}", user.getName());
         log.info("보호자: {}", this.getName());
-        this.user = user;
+        this.user = user; // 양방향 연결
         if(!user.getSupporterList().contains(this)) {
             user.getSupporterList().add(this);
         }
