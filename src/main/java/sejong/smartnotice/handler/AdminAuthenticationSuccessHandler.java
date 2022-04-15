@@ -27,6 +27,7 @@ public class AdminAuthenticationSuccessHandler implements AuthenticationSuccessH
         SavedRequest savedRequest = requestCache.getRequest(request, response);
 
         if(savedRequest != null) {
+            log.info("이전 경로로 리다이렉트");
             String targetURL = savedRequest.getRedirectUrl();
             response.sendRedirect(targetURL);
         } else {
