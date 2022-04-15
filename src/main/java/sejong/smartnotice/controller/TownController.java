@@ -7,6 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.Region;
 import sejong.smartnotice.domain.Town;
@@ -15,10 +18,12 @@ import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.AdminType;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.dto.AdminRegisterDTO;
+import sejong.smartnotice.dto.TownRegisterDTO;
 import sejong.smartnotice.service.AdminService;
 import sejong.smartnotice.service.TownService;
 import sejong.smartnotice.service.UserService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -45,17 +50,37 @@ public class TownController {
     }
 
     @GetMapping("/new")
-    public String registerTown(Model model) {
+    public String registerTown(String error, Model model) {
+        if(error != null) {
+            model.addAttribute("error", "동일한 지역에 중복된 마을이 존재합니다");
+        }
         List<Region> regionList = townService.findAllRegion();
         model.addAttribute("regionList", regionList);
+        model.addAttribute("town", new TownRegisterDTO());
         return "town/register";
     }
 
     @PostMapping
-    public String register(String name, Long regionCode) {
+    public String register(@Validated @ModelAttribute("town") TownRegisterDTO registerDTO,
+                           BindingResult bindingResult, Model model) {
         log.info("== 마을 등록 ==");
-        townService.register(name, regionCode);
-        return "redirect:/towns";
+        if(registerDTO.getRegionCode() == 1L) {
+            bindingResult.addError(new FieldError("town", "regionCode","마을을 선택해주세요"));
+        }
+        if(bindingResult.hasErrors()) {
+            log.warn("검증 오류 발생: {}", bindingResult);
+
+            // 지역 목록 다시 뽑아서 모델에 같이 넘긴다 (마땅한 방법이 없네..)
+            List<Region> regionList = townService.findAllRegion();
+            model.addAttribute("regionList", regionList);
+            return "town/register";
+        }
+        try {
+            townService.register(registerDTO);
+            return "redirect:/towns";
+        } catch (IllegalStateException e) {
+            return "redirect:/towns/new?error";
+        }
     }
 
     @GetMapping("/{id}")

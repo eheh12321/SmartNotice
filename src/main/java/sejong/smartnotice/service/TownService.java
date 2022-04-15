@@ -8,6 +8,7 @@ import sejong.smartnotice.domain.Admin_Town;
 import sejong.smartnotice.domain.Region;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.member.Admin;
+import sejong.smartnotice.dto.TownRegisterDTO;
 import sejong.smartnotice.repository.TownRepository;
 
 import javax.persistence.EntityManager;
@@ -26,24 +27,24 @@ public class TownService {
     private final EntityManager em;
 
     // 신규 마을 등록
-    public Long register(String townName, Long regionCode) {
-        Region region = em.find(Region.class, regionCode); // 지역코드 조회
-        Town town = Town.createTown(townName, region);
+    public Long register(TownRegisterDTO registerDTO) {
+        log.info("== 마을 등록 ==");
+        // 1. 지역 조회
+        Region region = findRegion(registerDTO.getRegionCode());
 
+        // 2. 중복 검증
+        validateDuplicateTown(registerDTO.getName(), region);
+
+        // 3. 마을 생성
+        Town town = Town.createTown(registerDTO.getName(), region);
         townRepository.save(town);
-        return town.getId();
-    }
 
-    // 신규 지역 등록 (할 일은 없는데 테스트용)
-    public Long registerRegion(Long regionCode,String mainRegion, String subRegion) {
-        // 대충 검증 코드
-        Region region = Region.createRegion(regionCode, mainRegion, subRegion);
-        em.persist(region);
-        return region.getRegionCode();
+        return town.getId();
     }
 
     // 마을 삭제
     public void delete(Long townId) {
+        log.info("== 마을 삭제 ==");
         Town town = validateTownId(townId);
         if(!town.getUserList().isEmpty()) {
             log.warn("마을 삭제 실패");
@@ -94,7 +95,7 @@ public class TownService {
         return townRepository.findAll();
     }
 
-    // 마을 조회 (단순 위임 및 예외처리)
+    // 마을 조회
     public Town findById(Long townId) {
         return validateTownId(townId);
     }
@@ -106,12 +107,31 @@ public class TownService {
 
     // 마을ID 검증
     private Town validateTownId(Long townId) {
+        log.info("== 마을 아이디 검증 ==");
         Optional<Town> opt = townRepository.findById(townId);
         if(opt.isEmpty()) {
             log.warn("마을이 존재하지 않습니다");
             throw new NullPointerException("마을이 존재하지 않습니다");
         }
         return opt.get();
+    }
+
+    // 마을 중복 검증
+    private void validateDuplicateTown(String townName, Region region) {
+        log.info("== 마을 중복 검증 ==");
+        if(townRepository.existsByRegionAndName(region, townName)) {
+            log.warn("같은 지역에 동일한 마을이 존재합니다");
+            throw new IllegalStateException("같은 지역에 동일한 마을이 존재합니다");
+        }
+    }
+
+    public Region findRegion(Long regionCode) {
+        Region region = em.find(Region.class, regionCode);
+        if(region == null) {
+            log.warn("지역이 존재하지 않습니다");
+            throw new NullPointerException("지역이 존재하지 않습니다");
+        }
+        return region;
     }
 
     // 지역 목록 반환

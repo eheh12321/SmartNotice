@@ -21,11 +21,6 @@ public class Region {
     @Column(name = "sub_region")
     private String subRegion; // 시, 군, 구
 
-    // 테스트용..
-    public static Region createRegion(Long regionCode, String mainRegion, String subRegion) {
-        return new Region(regionCode, mainRegion, subRegion);
-    }
-
     @Override
     public String toString() {
         return mainRegion + " " + subRegion;
