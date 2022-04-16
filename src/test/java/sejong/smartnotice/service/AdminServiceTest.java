@@ -105,8 +105,19 @@ class AdminServiceTest {
     @Test
     void 관리자_정보수정_실패_중복() {
         // given
-        Admin admin = createAdmin("관리자", "010-1234-1234", "id", "pw");
-        when(adminRepository.findByTel(any())).thenReturn(admin);
+        Admin admin = Admin.builder()
+                .id(1L)
+                .name("관리자")
+                .tel("010-0000-0000")
+                .account(new Account("id", "pw")).build();
+        when(adminRepository.findById(any())).thenReturn(Optional.of(admin));
+
+        Admin duplicateTelAdmin = Admin.builder()
+                .id(5L)
+                .name("다른 관리자")
+                .tel("010-1234-1234")
+                .account(new Account("id", "pw")).build();
+        when(adminRepository.findByTel(any())).thenReturn(duplicateTelAdmin);
 
         AdminModifyDTO modifyDTO = AdminModifyDTO.builder()
                 .id(1L)

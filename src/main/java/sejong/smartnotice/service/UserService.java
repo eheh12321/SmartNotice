@@ -60,11 +60,17 @@ public class UserService implements UserDetailsService {
     // 주민 정보 수정
     public Long modifyUserInfo(UserModifyDTO modifyDTO) {
         log.info("== 마을 주민 정보 수정 ==");
-        if(findByTel(modifyDTO.getTel()) != null) { // 전화번호 중복 검증
+        // 1. 주민 조회
+        User user = findById(modifyDTO.getId());
+
+        // 2. 전화번호 중복 검증 (전화번호가 이미 존재하고, 동일 인물이 아닌 경우)
+        User findUser = findByTel(modifyDTO.getTel());
+        if(findUser != null && !findUser.getId().equals(user.getId())) {
             log.warn("중복된 전화번호가 존재합니다");
             throw new IllegalStateException("중복된 전화번호가 존재합니다");
         }
-        User user = findById(modifyDTO.getId());
+
+        // 3. 정보 수정
         user.modifyUserInfo(modifyDTO.getName(), modifyDTO.getTel(), modifyDTO.getAddress(),
                 modifyDTO.getInfo(), modifyDTO.getAge());
 

@@ -115,11 +115,18 @@ class UserServiceTest {
     @Test
     void 주민_정보수정_실패_중복() {
         // given
-        Town town = createTown("마을");
-        User user = createUser("주민", "010-1234-1234", "주소", 25, town, "id", "pw");
-        when(userRepository.findByTel(any())).thenReturn(user);
+        User user = User.builder()
+                .id(1L)
+                .tel("010-0000-0000").build();
+        when(userRepository.findById(any())).thenReturn(Optional.of(user));
+
+        User duplicateUser = User.builder()
+                .id(3L)
+                .tel("010-1234-1234").build();
+        when(userRepository.findByTel(any())).thenReturn(duplicateUser);
 
         UserModifyDTO modifyDTO = UserModifyDTO.builder()
+                .id(1L)
                 .tel("010-1234-1234").build();
 
         // then

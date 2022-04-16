@@ -8,6 +8,7 @@ import sejong.smartnotice.domain.Admin_Town;
 import sejong.smartnotice.domain.Region;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.member.Admin;
+import sejong.smartnotice.dto.TownModifyDTO;
 import sejong.smartnotice.dto.TownRegisterDTO;
 import sejong.smartnotice.repository.TownRepository;
 
@@ -54,10 +55,23 @@ public class TownService {
     }
 
     // 마을 정보 수정
-    public Long modifyTownInfo(Long id, String name, Long regionCode) {
-        Town town = findById(id);
-        Region region = em.find(Region.class, regionCode);
-        town.modifyTownInfo(name, region);
+    public Long modifyTownInfo(TownModifyDTO modifyDTO) {
+        // 1. 마을 조회 및 검증
+        Town town = findById(modifyDTO.getId());
+
+        // 2. 지역 조회 및 검증
+        Region region = findRegion(modifyDTO.getRegionCode());
+
+        // 2-1. 바뀐 정보가 없으면 아무것도 하지 않음
+        if(town.getName().equals(modifyDTO.getName()) && town.getRegion().equals(region)) {
+            return town.getId();
+        }
+
+        // 3. 중복 검증
+        validateDuplicateTown(modifyDTO.getName(), region);
+
+        // 4. 마을 정보 수정
+        town.modifyTownInfo(modifyDTO.getName(), region);
         return town.getId();
     }
 
@@ -90,19 +104,38 @@ public class TownService {
         town.removeTownAdmin(newAtList);
     }
 
-    // 마을 목록 조회
-    public List<Town> findAll() {
-        return townRepository.findAll();
-    }
-
     // 마을 조회
     public Town findById(Long townId) {
         return validateTownId(townId);
     }
 
+    // 마을 목록 조회
+    @Transactional(readOnly = true)
+    public List<Town> findAll() {
+        return townRepository.findAll();
+    }
+
     // 마을 이름 검색
+    @Transactional(readOnly = true)
     public List<Town> findByName(String name) {
         return townRepository.findByNameContaining(name);
+    }
+
+    @Transactional(readOnly = true)
+    public Region findRegion(Long regionCode) {
+        Region region = em.find(Region.class, regionCode);
+        if(region == null) {
+            log.warn("지역이 존재하지 않습니다");
+            throw new NullPointerException("지역이 존재하지 않습니다");
+        }
+        return region;
+    }
+
+    // 지역 목록 반환
+    @Transactional(readOnly = true)
+    public List<Region> findAllRegion() {
+        return em.createQuery("select r from Region r", Region.class)
+                .getResultList();
     }
 
     // 마을ID 검증
@@ -123,20 +156,5 @@ public class TownService {
             log.warn("같은 지역에 동일한 마을이 존재합니다");
             throw new IllegalStateException("같은 지역에 동일한 마을이 존재합니다");
         }
-    }
-
-    public Region findRegion(Long regionCode) {
-        Region region = em.find(Region.class, regionCode);
-        if(region == null) {
-            log.warn("지역이 존재하지 않습니다");
-            throw new NullPointerException("지역이 존재하지 않습니다");
-        }
-        return region;
-    }
-
-    // 지역 목록 반환
-    public List<Region> findAllRegion() {
-        return em.createQuery("select r from Region r", Region.class)
-                .getResultList();
     }
 }

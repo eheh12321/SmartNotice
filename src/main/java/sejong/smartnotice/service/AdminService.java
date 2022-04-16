@@ -49,11 +49,17 @@ public class AdminService implements UserDetailsService {
     // 관리자 정보 수정
     public Long modifyAdminInfo(AdminModifyDTO modifyDTO) {
         log.info("== 관리자 정보 수정 ==");
-        if(findByTel(modifyDTO.getTel()) != null) { // 전화번호 중복 검증
+        // 1. 관리자 조회
+        Admin admin = findById(modifyDTO.getId());
+        
+        // 2. 전화번호 중복 검증 (전화번호가 이미 존재하고, 동일 인물이 아닌 경우)
+        Admin findAdmin = findByTel(modifyDTO.getTel());
+        if(findAdmin != null && !findAdmin.getId().equals(admin.getId())) {
             log.warn("중복된 전화번호가 존재합니다");
             throw new IllegalStateException("중복된 전화번호가 존재합니다");
         }
-        Admin admin = findById(modifyDTO.getId());
+        
+        // 3. 정보 수정
         admin.modifyAdminInfo(modifyDTO.getName(), modifyDTO.getTel());
         return admin.getId();
     }
@@ -69,7 +75,7 @@ public class AdminService implements UserDetailsService {
     public Admin findById(Long id) {
         log.info("== 관리자 아이디 조회 ==");
         // 아이디 검증 이후 반환
-        return validateUserId(id);
+        return validateAdminId(id);
     }
 
     /**
@@ -114,7 +120,7 @@ public class AdminService implements UserDetailsService {
         return townList;
     }
 
-    private Admin validateUserId(Long id) {
+    private Admin validateAdminId(Long id) {
         log.info("== 관리자 아이디 검증 ==");
         Optional<Admin> opt = adminRepository.findById(id);
         if (opt.isEmpty()) {

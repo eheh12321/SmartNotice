@@ -11,7 +11,6 @@ import sejong.smartnotice.dto.TownRegisterDTO;
 import sejong.smartnotice.repository.TownRepository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 
 import java.util.Optional;
 
@@ -28,9 +27,6 @@ class TownServiceTest {
 
     @Mock
     private EntityManager em;
-
-    @Mock
-    private Query query;
 
     @InjectMocks
     private TownService townService;
@@ -76,7 +72,19 @@ class TownServiceTest {
         });
     }
 
+    @Test
+    void 마을_생성_실패_지역없음() {
+        // given
+        when(em.find(eq(Region.class), any())).thenReturn(null);
+        TownRegisterDTO registerDTO = TownRegisterDTO.builder()
+                .name("마을")
+                .regionCode(1L).build();
 
+        // then
+        assertThrows(NullPointerException.class, () -> {
+            townService.register(registerDTO);
+        });
+    }
 
 
     private Town createTown(String townName, Region region) {

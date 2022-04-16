@@ -18,6 +18,7 @@ import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.AdminType;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.dto.AdminRegisterDTO;
+import sejong.smartnotice.dto.TownModifyDTO;
 import sejong.smartnotice.dto.TownRegisterDTO;
 import sejong.smartnotice.service.AdminService;
 import sejong.smartnotice.service.TownService;
@@ -92,20 +93,38 @@ public class TownController {
     }
 
     @GetMapping("/{id}/edit")
-    public String modify(@PathVariable Long id, Model model) {
+    public String modify(@PathVariable Long id, String error, Model model) {
         log.info("== 마을 수정 ==");
+        if(error != null) {
+            model.addAttribute("error", "동일한 지역에 중복된 마을이 존재합니다");
+        }
         Town town = townService.findById(id);
         List<Region> regionList = townService.findAllRegion();
-        model.addAttribute("town", town);
+        model.addAttribute("town", new TownModifyDTO(town.getId(), town.getName(), town.getRegion().getRegionCode()));
         model.addAttribute("regionList", regionList);
         return "town/modify";
     }
 
     @PutMapping("/{id}")
-    public String modify(@PathVariable Long id, @RequestParam String name, @RequestParam Long regionCode) {
+    public String modify(@Validated @ModelAttribute("town") TownModifyDTO modifyDTO,
+                         BindingResult bindingResult, Model model) {
         log.info("== 마을 수정 ==");
-        townService.modifyTownInfo(id, name, regionCode);
-        return "redirect:/towns";
+        if(modifyDTO.getRegionCode() == 1L) {
+            bindingResult.addError(new FieldError("town", "regionCode","마을을 선택해주세요"));
+        }
+        if(bindingResult.hasErrors()) {
+            log.warn("검증 오류 발생: {}", bindingResult);
+            // 마을 목록 다시 집어넣기
+            List<Region> regionList = townService.findAllRegion();
+            model.addAttribute("regionList", regionList);
+            return "town/modify";
+        }
+        try {
+            townService.modifyTownInfo(modifyDTO);
+            return "redirect:/towns";
+        } catch (IllegalStateException e) {
+            return "redirect:/towns/{id}/edit?error";
+        }
     }
 
     @DeleteMapping("/{id}")
