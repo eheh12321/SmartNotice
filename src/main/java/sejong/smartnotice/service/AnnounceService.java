@@ -53,7 +53,7 @@ public class AnnounceService {
 
         // 2. 방송 생성
         Admin admin = adminService.findById(announceDTO.getAdminId());
-        Announce announce = Announce.makeAnnounce(admin, announceDTO.getText(), AnnounceCategory.NORMAL, AnnounceType.TEXT, townList, getDirectory(), fileName);
+        Announce announce = Announce.makeAnnounce(admin.getName(), announceDTO.getText(), AnnounceCategory.NORMAL, AnnounceType.TEXT, townList, getDirectory(), fileName);
         announceRepository.save(announce);
 
         return announce.getId();

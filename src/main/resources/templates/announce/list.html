@@ -64,7 +64,7 @@
             <tbody>
             <tr th:each="announce : ${announceList}">
                 <td th:text="${announce.getId()}"></td>
-                <td th:text="${announce.getAdmin().getName()}"></td>
+                <td th:text="${announce.getProducer()}"></td>
                 <td th:text="${announce.getCategory()}"></td>
                 <td th:text="${announce.getType()}"></td>
                 <td th:text="${announce.getText()}"></td>

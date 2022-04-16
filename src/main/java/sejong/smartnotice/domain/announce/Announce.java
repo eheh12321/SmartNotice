@@ -24,12 +24,11 @@ public class Announce {
     @Column(name = "announce_id", nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "admin_id", nullable = false)
-    private Admin admin;
-
     @OneToMany(mappedBy = "announce", cascade = CascadeType.ALL)
     private List<Announce_Town> atList = new ArrayList<>();
+    
+    @Column(nullable = false)
+    private String producer; // 방송한 사람
 
     @Column(nullable = false)
     private String text; // 방송내용
@@ -49,11 +48,11 @@ public class Announce {
     
     private String fileName; // 파일 이름
 
-    public static Announce makeAnnounce(Admin admin, String text, AnnounceCategory category, AnnounceType type,
+    public static Announce makeAnnounce(String producer, String text, AnnounceCategory category, AnnounceType type,
                                         List<Town> townList, String directory, String fileName) {
         // 1. 방송 생성
         Announce announce = Announce.builder()
-                .admin(admin)
+                .producer(producer)
                 .text(text)
                 .category(category)
                 .type(type)
