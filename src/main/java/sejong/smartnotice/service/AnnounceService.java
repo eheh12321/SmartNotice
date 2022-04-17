@@ -4,7 +4,6 @@ import com.google.cloud.texttospeech.v1.*;
 import com.google.protobuf.ByteString;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.announce.Announce;
@@ -17,7 +16,9 @@ import sejong.smartnotice.repository.AnnounceRepository;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -32,6 +33,7 @@ public class AnnounceService {
     private final TownService townService;
     private final AnnounceRepository announceRepository;
 
+    // 문자 방송
     public Long makeTextAnnounce(AnnounceDTO announceDTO) throws Exception {
         log.info("== 문자 방송 ==");
         log.info("방송 시각: {}", LocalDateTime.now());
@@ -59,9 +61,42 @@ public class AnnounceService {
         return announce.getId();
     }
 
+    public void delete(Long announceId) {
+        log.info("== 방송 삭제 ==");
+        // 1. 방송 조회
+        Announce announce = findById(announceId);
+
+        // 2. 방송 파일 삭제
+        File savedFile = new File("." + announce.getFullPath());
+        boolean isDelete = savedFile.delete();
+
+        // 3. DB 삭제
+        if(isDelete) {
+            announceRepository.delete(announce);
+        } else {
+            log.warn("방송 삭제에 실패했습니다");
+            throw new IllegalStateException("방송 삭제에 실패했습니다");
+        }
+    }
+
+    public Announce findById(Long id) {
+        log.info("== 방송 아이디 조회 ==");
+        Optional<Announce> opt = announceRepository.findById(id);
+        if(opt.isEmpty()) {
+            log.warn("방송이 존재하지 않습니다");
+            throw new RuntimeException("에러");
+        }
+        return opt.get();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Announce> findAllAnnounce() {
+        log.info("== 방송 전체 목록 조회 ==");
+        return announceRepository.findAll();
+    }
 
     // 문자 -> 음성파일 변환
-    public static ByteString synthesizeText(String text, String fileName, String directory) throws Exception {
+    private static ByteString synthesizeText(String text, String fileName, String directory) throws Exception {
         // Instantiates a client
         try (TextToSpeechClient textToSpeechClient = TextToSpeechClient.create()) {
             // Set the text input to be synthesized
@@ -110,16 +145,4 @@ public class AnnounceService {
         return str.replace("-", File.separator); // ex) 2022\03\08
     }
 
-    public Announce findAnnounceById(Long id) {
-        Optional<Announce> opt = announceRepository.findById(id);
-        if(opt.isEmpty()) {
-            log.warn("방송이 존재하지 않습니다");
-            throw new RuntimeException("에러");
-        }
-        return opt.get();
-    }
-
-    public List<Announce> findAllAnnounce() {
-        return announceRepository.findAll();
-    }
 }

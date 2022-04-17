@@ -46,13 +46,20 @@ public class AnnounceController {
         return "redirect:/announces";
     }
 
+    @DeleteMapping("/{id}")
+    public String remove(@PathVariable Long id) {
+        announceService.delete(id);
+        return "redirect:/announces";
+    }
+
     @GetMapping("/{id}")
     public String getAnnounce(@PathVariable Long id, Model model) {
-        Announce announce = announceService.findAnnounceById(id);
+        Announce announce = announceService.findById(id);
 
-        String fullPath = File.separator + "storage" + File.separator + announce.getDirectory() + File.separator + announce.getFileName() + ".mp3";
+        String fullPath = announce.getFullPath();
         log.info("방송 탐색 경로: {}", fullPath);
 
+        model.addAttribute("announce", announce);
         model.addAttribute("filePath", fullPath);
         return "announce/getAnnounce";
     }

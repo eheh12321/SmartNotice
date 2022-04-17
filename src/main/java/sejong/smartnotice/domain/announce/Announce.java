@@ -8,6 +8,7 @@ import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.User;
 
 import javax.persistence.*;
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +48,11 @@ public class Announce {
     private String directory; // 파일 저장위치
     
     private String fileName; // 파일 이름
+
+    // 파일 저장 경로 리턴
+    public String getFullPath() {
+        return File.separator + "storage" + File.separator + directory + File.separator + fileName + ".mp3";
+    }
 
     public static Announce makeAnnounce(String producer, String text, AnnounceCategory category, AnnounceType type,
                                         List<Town> townList, String directory, String fileName) {
