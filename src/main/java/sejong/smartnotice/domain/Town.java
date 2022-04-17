@@ -30,16 +30,18 @@ public class Town {
     private Region region; // 소속 지역코드
 
     @OneToMany(mappedBy = "town")
-    private List<User> userList = new ArrayList<>(); // 소속 마을 주민 목록
+    private List<User> userList; // 소속 마을 주민 목록
 
     @OneToMany(mappedBy = "town", cascade = CascadeType.ALL)
-    private List<Admin_Town> atList = new ArrayList<>(); // 소속 관리자 목록
+    private List<Admin_Town> atList; // 소속 관리자 목록
 
     // 마을 생성
     public static Town createTown(String name, Region region) {
         return Town.builder()
                 .name(name)
-                .region(region).build();
+                .region(region)
+                .userList(new ArrayList<>())
+                .atList(new ArrayList<>()).build();
     }
 
     // 마을 정보 수정
@@ -58,8 +60,10 @@ public class Town {
     }
 
     // 마을 관리자 삭제
-    public void removeTownAdmin(List<Admin_Town> atList) {
-        this.atList = atList;
+    public void removeTownAdmin(Admin_Town at) {
+        // 양방향 삭제
+        atList.remove(at);
+        at.getAdmin().getAtList().remove(at);
     }
 
     @Override

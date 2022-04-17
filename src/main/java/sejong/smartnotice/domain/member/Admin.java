@@ -72,6 +72,14 @@ public class Admin implements UserDetails {
         return Objects.hash(getId(), getName(), getTel(), getAccount(), getAtList(), getType());
     }
 
+    @Override
+    public String toString() {
+        return "Admin{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
     ///////// 스프링 시큐리티 설정
 
     @Override // 사용자 권한 반환

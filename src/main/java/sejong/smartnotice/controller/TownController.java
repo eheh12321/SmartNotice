@@ -26,6 +26,7 @@ import sejong.smartnotice.service.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -154,7 +155,7 @@ public class TownController {
         log.info("== 마을 관리자 신규 등록 ==");
         Town town = townService.findById(id);
         List<User> userList = town.getUserList();
-        List<Admin> adminList = adminService.findAll();
+        List<Admin> adminList = adminService.findNotTownAdmin(town);
 
         model.addAttribute("userList", userList);
         model.addAttribute("adminList", adminList);
