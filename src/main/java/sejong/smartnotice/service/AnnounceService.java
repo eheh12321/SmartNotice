@@ -8,17 +8,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.announce.Announce;
 import sejong.smartnotice.domain.Town;
-import sejong.smartnotice.domain.announce.AnnounceCategory;
 import sejong.smartnotice.domain.announce.AnnounceType;
 import sejong.smartnotice.domain.member.Admin;
-import sejong.smartnotice.dto.AnnounceDTO;
+import sejong.smartnotice.dto.AnnounceOutputDTO;
+import sejong.smartnotice.dto.AnnounceRegisterDTO;
 import sejong.smartnotice.repository.AnnounceRepository;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -34,31 +32,46 @@ public class AnnounceService {
     private final AnnounceRepository announceRepository;
 
     // 문자 방송
-    public Long makeTextAnnounce(AnnounceDTO announceDTO) throws Exception {
-        log.info("== 문자 방송 ==");
-        log.info("방송 시각: {}", LocalDateTime.now());
-        log.info("방송 내용: {}", announceDTO.getText());
-        log.info("문자 길이: {}", announceDTO.getText().length());
-        log.info("==================");
-        if(announceDTO.getText().length() > 500) { // 제한
-            throw new IllegalStateException("500자를 초과할 수 없습니다");
-        }
-        String fileName = UUID.randomUUID().toString();
-        synthesizeText(announceDTO.getText(), fileName, getDirectory());
+    public Long registerTextAnnounce(AnnounceRegisterDTO announceRegisterDTO) {
+        log.info("== 문자 방송 등록 ==");
+        // 1. 방송 파일 저장
+        AnnounceOutputDTO outputDTO = makeTextAnnounce(announceRegisterDTO.getText());
 
-        // 1. 방송 대상 마을 추출
+        // 2. 방송 대상 마을 추출
         List<Town> townList = new ArrayList<>();
-        for (Long tid : announceDTO.getTownId()) {
+        for (Long tid : announceRegisterDTO.getTownId()) {
             Town town = townService.findById(tid);
             townList.add(town);
         }
 
-        // 2. 방송 생성
-        Admin admin = adminService.findById(announceDTO.getAdminId());
-        Announce announce = Announce.makeAnnounce(admin.getName(), announceDTO.getText(), announceDTO.getCategory(), AnnounceType.TEXT, townList, getDirectory(), fileName);
+        // 3. 방송 생성
+        Admin admin = adminService.findById(announceRegisterDTO.getAdminId());
+        Announce announce = Announce.makeAnnounce(admin.getName(), announceRegisterDTO.getText(), announceRegisterDTO.getCategory(),
+                AnnounceType.TEXT, townList, outputDTO.getPath(), outputDTO.getFileName());
         announceRepository.save(announce);
 
         return announce.getId();
+    }
+    
+    // 방송 파일 생성
+    public AnnounceOutputDTO makeTextAnnounce(String text) {
+        log.info("== 문자 방송 생성 (API 통신) ==");
+        log.info("방송 시각: {}", LocalDateTime.now());
+        log.info("방송 내용: {}", text);
+        log.info("문자 길이: {}", text.length());
+        log.info("==================");
+        if(text.length() > 500) { // 제한
+            throw new IllegalStateException("500자를 초과할 수 없습니다");
+        }
+        String fileName = UUID.randomUUID().toString();
+        String path = getDirectory();
+        try {
+            synthesizeText(text, fileName, path);
+        } catch (Exception e) {
+            log.warn("방송 파일 생성 실패");
+            return null;
+        }
+        return new AnnounceOutputDTO(fileName, path);
     }
 
     public void delete(Long announceId) {
@@ -129,6 +142,7 @@ public class AnnounceService {
                 path.mkdirs(); // 디렉토리가 존재하지 않는다면 새로 생성
             }
             log.info("저장 경로: {}", fullPath);
+            log.info("파일명: {}", fileName);
             try (OutputStream out = new FileOutputStream(fullPath + fileName + ".mp3")) {
                 out.write(audioContents.toByteArray());
                 return audioContents;

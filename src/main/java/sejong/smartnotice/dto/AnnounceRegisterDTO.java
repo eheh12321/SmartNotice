@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AnnounceDTO {
+public class AnnounceRegisterDTO {
 
     @NotNull
     private Long adminId;
