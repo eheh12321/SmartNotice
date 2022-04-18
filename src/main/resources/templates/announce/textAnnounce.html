@@ -32,6 +32,20 @@
         <label for="text">내용</label>
         <input type="text" id="text" name="text" class="form-control" placeholder="방송 내용 입력 (500자 제한)">
         <hr>
+        <p>재난 유무 선택</p>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="category" id="radio1" value="NORMAL" checked>
+            <label class="form-check-label" for="radio1">
+                일반
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="category" id="radio2" value="DISASTER">
+            <label class="form-check-label" for="radio2" style="color: red">
+                재난
+            </label>
+        </div>
+        <hr>
         <p>방송 대상 마을 선택</p>
         <ul>
             <li th:each="town : ${townList}">
