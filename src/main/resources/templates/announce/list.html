@@ -59,7 +59,6 @@
                 <th>방송 타입</th>
                 <th>방송 내용</th>
                 <th>방송 시각</th>
-                <th>방송 대상</th>
                 <th>저장 경로</th>
                 <th>관리</th>
             </tr>
@@ -72,7 +71,6 @@
                 <td th:text="${announce.getType()}"></td>
                 <td th:text="${announce.getText()}"></td>
                 <td th:text="${announce.getTime()}"></td>
-                <td th:text="${announce.getAtList()}"></td>
                 <td th:text="${announce.getDirectory()}"></td>
                 <td>
                     <a href="#" th:href="@{/announces/{id} (id=${announce.getId})}"

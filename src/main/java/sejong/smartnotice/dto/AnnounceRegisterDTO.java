@@ -28,4 +28,10 @@ public class AnnounceRegisterDTO {
 
     @NotNull
     private List<Long> townId;
+
+    private boolean created;
+
+    private String path;
+
+    private String fileName;
 }

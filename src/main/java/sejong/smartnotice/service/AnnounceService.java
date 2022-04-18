@@ -32,22 +32,34 @@ public class AnnounceService {
     private final AnnounceRepository announceRepository;
 
     // 문자 방송
-    public Long registerTextAnnounce(AnnounceRegisterDTO announceRegisterDTO) {
+    public Long registerTextAnnounce(AnnounceRegisterDTO registerDTO) {
         log.info("== 문자 방송 등록 ==");
         // 1. 방송 파일 저장
-        AnnounceOutputDTO outputDTO = makeTextAnnounce(announceRegisterDTO.getText());
+        String path, fileName;
 
+        // 1-1. 방송 새로 생성
+        if(!registerDTO.isCreated()) {
+            log.info("<새로 생성>");
+            AnnounceOutputDTO outputDTO = makeTextAnnounce(registerDTO.getText());
+            path = outputDTO.getPath();
+            fileName = outputDTO.getFileName();
+        } else { // 1-2. 기존 파일 이용
+            log.info("<기존 파일 이용>");
+            path = registerDTO.getPath();
+            fileName = registerDTO.getFileName();
+        }
+        
         // 2. 방송 대상 마을 추출
         List<Town> townList = new ArrayList<>();
-        for (Long tid : announceRegisterDTO.getTownId()) {
+        for (Long tid : registerDTO.getTownId()) {
             Town town = townService.findById(tid);
             townList.add(town);
         }
 
         // 3. 방송 생성
-        Admin admin = adminService.findById(announceRegisterDTO.getAdminId());
-        Announce announce = Announce.makeAnnounce(admin.getName(), announceRegisterDTO.getText(), announceRegisterDTO.getCategory(),
-                AnnounceType.TEXT, townList, outputDTO.getPath(), outputDTO.getFileName());
+        Admin admin = adminService.findById(registerDTO.getAdminId());
+        Announce announce = Announce.makeAnnounce(admin.getName(), registerDTO.getText(), registerDTO.getCategory(),
+                AnnounceType.TEXT, townList, path, fileName);
         announceRepository.save(announce);
 
         return announce.getId();
