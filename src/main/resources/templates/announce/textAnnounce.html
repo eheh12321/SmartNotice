@@ -97,6 +97,7 @@
         var test2 = $('#test2');
         var test3 = $('#test3');
         var isCreated = false; // 미리듣기를 통해 방송 파일이 생성 되었는지?
+        var inputText;
         var path;
         var fileName;
 
@@ -104,7 +105,7 @@
             e.preventDefault();
             console.log("미리듣기 click");
 
-            var inputText = document.getElementById("inputText").value;
+            inputText = document.getElementById("inputText").value;
             test1.html("입력 내용: " + inputText);
 
             if(inputText.length == 0) {
@@ -137,6 +138,17 @@
         $('#makeAnnounce').on("click", function (e) {
             e.preventDefault();
             console.log("방송하기 click");
+
+            inputText = document.getElementById("inputText").value;
+            var len = $("input[name='townId']:checked").length;
+            if(inputText.length == 0) {
+                alert("내용을 입력해주세요");
+                return;
+            }
+            if(len == 0) {
+                alert("방송할 마을을 선택해주세요");
+                return;
+            }
             if(isCreated) {
                 alert("미리듣기로 생성된 기존 파일 사용");
                 formObj.append($('<input/>', {type:'hidden', name:'path', value:path}));
