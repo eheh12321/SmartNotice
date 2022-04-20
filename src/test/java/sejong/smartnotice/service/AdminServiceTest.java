@@ -91,8 +91,7 @@ class AdminServiceTest {
         AdminModifyDTO modifyDTO = AdminModifyDTO.builder()
                 .id(1L)
                 .name("수정된 관리자")
-                .tel("010-9999-9999")
-                .type(AdminType.ADMIN).build();
+                .tel("010-9999-9999").build();
 
         // when
         Long adminId = adminService.modifyAdminInfo(modifyDTO);
@@ -122,8 +121,7 @@ class AdminServiceTest {
         AdminModifyDTO modifyDTO = AdminModifyDTO.builder()
                 .id(1L)
                 .name("수정된 관리자")
-                .tel("010-1234-1234")
-                .type(AdminType.ADMIN).build();
+                .tel("010-1234-1234").build();
 
         // then
         assertThrows(IllegalStateException.class, () -> {
