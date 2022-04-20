@@ -142,7 +142,7 @@ public class AnnounceService {
     }
 
     private static boolean saveAudioContents(byte[] audioContents, String fileName, String directory) {
-        String path = "storage" + File.separator + directory + File.separator + fileName + ".mp3";
+        String path = directory + File.separator + fileName + ".mp3";
         try (OutputStream out = new FileOutputStream(path)) {
             out.write(audioContents);
             log.info("파일 저장에 성공했습니다: {}", path);
@@ -157,7 +157,8 @@ public class AnnounceService {
     private String getDirectory() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date();
-        String str = sdf.format(date).replace("-", File.separator); // ex) 2022\03\08;
+        String str = "storage" + File.separator
+                + sdf.format(date).replace("-", File.separator); // ex) 2022\03\08;
 
         File file = new File(str);
         if(!file.exists()) {

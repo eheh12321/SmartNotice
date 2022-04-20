@@ -51,7 +51,7 @@ public class Announce {
 
     // 파일 저장 경로 리턴
     public String getFullPath() {
-        return File.separator + "storage" + File.separator + directory + File.separator + fileName + ".mp3";
+        return File.separator + directory + File.separator + fileName + ".mp3";
     }
 
     public static Announce makeAnnounce(String producer, String text, AnnounceCategory category, AnnounceType type,
