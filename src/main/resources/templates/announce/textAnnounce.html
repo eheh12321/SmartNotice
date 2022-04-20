@@ -78,6 +78,8 @@
         <hr>
         <button type="submit" class="btn btn-danger" id="makeAnnounce">방송하기</button>
         <button type="button" class="btn btn-warning" id="testAnnounce">미리 듣기</button>
+        <br>
+        <audio src="/" controls>플레이어</audio>
         <hr>
     </form>
     <p>자바스크립트 테스트</p>
@@ -111,6 +113,10 @@
             if(inputText.length == 0) {
                 alert("내용을 입력해주세요");
             } else {
+                if(isCreated) {
+                    alert("기존 파일 삭제 이후 진행");
+
+                }
                 $.ajax({
                     type:"POST",
                     url:"/announces/text/api",

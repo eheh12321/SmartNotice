@@ -13,4 +13,6 @@ public class AnnounceOutputDTO {
     private String fileName;
 
     private String path;
+
+    private byte[] audioContents;
 }

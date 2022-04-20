@@ -18,6 +18,4 @@ public class AdminModifyDTO {
 
     @NotBlank
     private String tel;
-
-    private AdminType type;
 }

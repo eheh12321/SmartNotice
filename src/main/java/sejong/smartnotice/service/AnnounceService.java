@@ -35,20 +35,12 @@ public class AnnounceService {
     public Long registerTextAnnounce(AnnounceRegisterDTO registerDTO) {
         log.info("== 문자 방송 등록 ==");
         // 1. 방송 파일 저장
-        String path, fileName;
+        AnnounceOutputDTO outputDTO = makeTextAnnounce(registerDTO.getText());
+        String path = outputDTO.getPath();
+        String fileName = outputDTO.getFileName();
 
-        // 1-1. 방송 새로 생성
-        if(!registerDTO.isCreated()) {
-            log.info("<새로 생성>");
-            AnnounceOutputDTO outputDTO = makeTextAnnounce(registerDTO.getText());
-            path = outputDTO.getPath();
-            fileName = outputDTO.getFileName();
-        } else { // 1-2. 기존 파일 이용
-            log.info("<기존 파일 이용>");
-            path = registerDTO.getPath();
-            fileName = registerDTO.getFileName();
-        }
-        
+        saveAudioContents(outputDTO.getAudioContents(), fileName, path); // 저장
+
         // 2. 방송 대상 마을 추출
         List<Town> townList = new ArrayList<>();
         for (Long tid : registerDTO.getTownId()) {
@@ -76,14 +68,14 @@ public class AnnounceService {
             throw new IllegalStateException("500자를 초과할 수 없습니다");
         }
         String fileName = UUID.randomUUID().toString();
-        String path = getDirectory();
+        String path = getDirectory(); // 폴더 생성
         try {
-            synthesizeText(text, fileName, path);
+            byte[] audioContents = synthesizeText(text); // API 통신
+            return new AnnounceOutputDTO(fileName, path, audioContents);
         } catch (Exception e) {
             log.warn("방송 파일 생성 실패");
             return null;
         }
-        return new AnnounceOutputDTO(fileName, path);
     }
 
     public void delete(Long announceId) {
@@ -121,7 +113,7 @@ public class AnnounceService {
     }
 
     // 문자 -> 음성파일 변환
-    private static ByteString synthesizeText(String text, String fileName, String directory) throws Exception {
+    private static byte[] synthesizeText(String text) throws Exception {
         // Instantiates a client
         try (TextToSpeechClient textToSpeechClient = TextToSpeechClient.create()) {
             // Set the text input to be synthesized
@@ -145,20 +137,19 @@ public class AnnounceService {
                     textToSpeechClient.synthesizeSpeech(input, voice, audioConfig);
 
             // Get the audio contents from the response
-            ByteString audioContents = response.getAudioContent();
+            return response.getAudioContent().toByteArray();
+        }
+    }
 
-            // Write the response to the output file.
-            String fullPath = "storage" + File.separator + directory + File.separator;
-            File path = new File(fullPath);
-            if(!path.exists()) {
-                path.mkdirs(); // 디렉토리가 존재하지 않는다면 새로 생성
-            }
-            log.info("저장 경로: {}", fullPath);
-            log.info("파일명: {}", fileName);
-            try (OutputStream out = new FileOutputStream(fullPath + fileName + ".mp3")) {
-                out.write(audioContents.toByteArray());
-                return audioContents;
-            }
+    private static boolean saveAudioContents(byte[] audioContents, String fileName, String directory) {
+        String path = "storage" + File.separator + directory + File.separator + fileName + ".mp3";
+        try (OutputStream out = new FileOutputStream(path)) {
+            out.write(audioContents);
+            log.info("파일 저장에 성공했습니다: {}", path);
+            return true;
+        } catch (Exception e) {
+            log.warn("파일 저장에 실패하였습니다");
+            return false;
         }
     }
 
@@ -166,9 +157,13 @@ public class AnnounceService {
     private String getDirectory() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date();
-        String str = sdf.format(date);
+        String str = sdf.format(date).replace("-", File.separator); // ex) 2022\03\08;
 
-        return str.replace("-", File.separator); // ex) 2022\03\08
+        File file = new File(str);
+        if(!file.exists()) {
+            file.mkdirs(); // 디렉토리가 존재하지 않는다면 새로 생성
+        }
+        return str;
     }
 
 }
