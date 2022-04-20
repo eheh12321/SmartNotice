@@ -78,30 +78,18 @@
         <hr>
         <button type="submit" class="btn btn-danger" id="makeAnnounce">방송하기</button>
         <button type="button" class="btn btn-warning" id="testAnnounce">미리 듣기</button>
-        <br>
-        <audio src="/" controls>플레이어</audio>
         <hr>
     </form>
     <p>자바스크립트 테스트</p>
     <p id="test1"></p>
-    <p id="test2"></p>
-    <p id="test3"></p>
-    <div id="audioPlayer">
-    </div>
-    <hr>
     <hr>
     <button type="button" class="btn btn-primary" onclick="location.href='/announces'">목록 페이지로</button>
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
-        var player = $('#audioPlayer');
+        var lastData;
+        var lastInputText;
         var test1 = $('#test1');
-        var test2 = $('#test2');
-        var test3 = $('#test3');
-        var isCreated = false; // 미리듣기를 통해 방송 파일이 생성 되었는지?
-        var inputText;
-        var path;
-        var fileName;
 
         $('#testAnnounce').on("click", function (e) {
             e.preventDefault();
@@ -113,10 +101,6 @@
             if(inputText.length == 0) {
                 alert("내용을 입력해주세요");
             } else {
-                if(isCreated) {
-                    alert("기존 파일 삭제 이후 진행");
-
-                }
                 $.ajax({
                     type:"POST",
                     url:"/announces/text/api",
@@ -124,17 +108,19 @@
                     dataType:"json",
                     success: function (result) {
                         alert("방송 생성 성공");
-                        fileName = result.fileName;
-                        path = result.path;
-                        test2.html("파일명: " + fileName + ".mp3");
-                        test3.html("저장 경로: \\storage\\ " + path);
-                        var fullPath = "\\storage\\" + path + "\\" +  fileName + ".mp3";
-                        var tt = "<audio src='" + fullPath + "' controls autoplay>방송</audio>";
-                        player.html(tt);
-                        isCreated = true; // 방송파일 생성
+
+                        lastInputText = inputText; // 저장용
+                        console.log(lastInputText);
+                        lastData = result.audioContents;
+                        console.log(lastData);
+
+                        let snd = new Audio("data:audio/mp3;base64," + result.audioContents);
+                        snd.play();
+
                     },
                     error: function (xhr) {
                         alert("방송 생성 실패");
+
                     }
                 });
             }
@@ -155,18 +141,24 @@
                 alert("방송할 마을을 선택해주세요");
                 return;
             }
-            if(isCreated) {
-                alert("미리듣기로 생성된 기존 파일 사용");
-                formObj.append($('<input/>', {type:'hidden', name:'path', value:path}));
-                formObj.append($('<input/>', {type:'hidden', name:'fileName', value:fileName}));
-                formObj.append($('<input/>', {type:'hidden', name:'created', value:true}));
-                formObj.submit();
-            } else {
-                alert("새 방송파일 생성");
-                formObj.submit();
+            console.log(lastInputText);
+            if(lastInputText != null && inputText == lastInputText) {
+                alert("기존 파일 이용!: " + lastInputText);
+                formObj.append($('<input/>', {type:'hidden', name:'data', value:lastData}));
             }
+            formObj.submit();
         })
     });
+
+    function stringToUint(string) {
+        var charList = string.split('');
+        var uintArray = [];
+        for (var i = 0; i < charList.length; i++) {
+            uintArray.push(charList[i].charCodeAt(0));
+        }
+        console.log(uintArray);
+        return new Uint8Array(uintArray);
+    }
 </script>
 </body>
 </html>

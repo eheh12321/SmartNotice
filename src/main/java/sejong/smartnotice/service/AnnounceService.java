@@ -17,6 +17,7 @@ import sejong.smartnotice.repository.AnnounceRepository;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -35,12 +36,18 @@ public class AnnounceService {
     public Long registerTextAnnounce(AnnounceRegisterDTO registerDTO) {
         log.info("== 문자 방송 등록 ==");
         // 1. 방송 파일 저장
-        AnnounceOutputDTO outputDTO = makeTextAnnounce(registerDTO.getText());
-        String path = outputDTO.getPath();
-        String fileName = outputDTO.getFileName();
+        String fileName = UUID.randomUUID().toString();
+        String path = getDirectory(); // 폴더 생성
 
-        saveAudioContents(outputDTO.getAudioContents(), fileName, path); // 저장
-
+        if(registerDTO.getData() != null) {
+            log.info("기존 파일 이용");
+            byte[] audioContents = Base64.getDecoder().decode(registerDTO.getData());
+            saveAudioContents(audioContents, fileName, path);
+        } else {
+            log.info("새로 생성");
+            AnnounceOutputDTO outputDTO = makeTextAnnounce(registerDTO.getText());
+            saveAudioContents(outputDTO.getAudioContents(), fileName, path); // 저장
+        }
         // 2. 방송 대상 마을 추출
         List<Town> townList = new ArrayList<>();
         for (Long tid : registerDTO.getTownId()) {
@@ -67,11 +74,9 @@ public class AnnounceService {
         if(text.length() > 500) { // 제한
             throw new IllegalStateException("500자를 초과할 수 없습니다");
         }
-        String fileName = UUID.randomUUID().toString();
-        String path = getDirectory(); // 폴더 생성
         try {
             byte[] audioContents = synthesizeText(text); // API 통신
-            return new AnnounceOutputDTO(fileName, path, audioContents);
+            return new AnnounceOutputDTO(audioContents);
         } catch (Exception e) {
             log.warn("방송 파일 생성 실패");
             return null;

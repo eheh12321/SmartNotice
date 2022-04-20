@@ -9,10 +9,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AnnounceOutputDTO {
-
-    private String fileName;
-
-    private String path;
-
     private byte[] audioContents;
 }
