@@ -53,6 +53,13 @@ public class AnnounceController {
         return ResponseEntity.ok().body(outputDTO);
     }
 
+    @GetMapping("/voice")
+    public String getVoiceAnnounceForm(@AuthenticationPrincipal Admin admin, Model model) {
+        model.addAttribute("admin", admin);
+        model.addAttribute("townList", adminService.getTownList(admin));
+        return "announce/voiceAnnounce";
+    }
+
     @DeleteMapping("/{id}")
     public String remove(@PathVariable Long id) {
         announceService.delete(id);

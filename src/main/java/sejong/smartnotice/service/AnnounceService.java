@@ -17,7 +17,6 @@ import sejong.smartnotice.repository.AnnounceRepository;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
