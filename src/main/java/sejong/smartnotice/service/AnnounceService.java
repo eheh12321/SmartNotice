@@ -69,7 +69,7 @@ public class AnnounceService {
         return announce.getId();
     }
     
-    // 방송 파일 생성
+    // 문자방송 파일 생성
     public AnnounceOutputDTO makeTextAnnounce(String text) {
         log.info("== 문자 방송 생성 (API 통신) ==");
         log.info("방송 시각: {}", LocalDateTime.now());

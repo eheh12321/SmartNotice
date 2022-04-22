@@ -120,7 +120,6 @@
                     },
                     error: function (xhr) {
                         alert("방송 생성 실패");
-
                     }
                 });
             }
@@ -137,16 +136,18 @@
                 alert("내용을 입력해주세요");
                 return;
             }
+            formObj.append($('<input/>', {type:'hidden', name:'contents', value:inputText}));
             if(len == 0) {
                 alert("방송할 마을을 선택해주세요");
                 return;
             }
             console.log(lastInputText);
             if(lastInputText != null && inputText == lastInputText) {
-                alert("기존 파일 이용!: " + lastInputText);
                 formObj.append($('<input/>', {type:'hidden', name:'data', value:lastData}));
             }
-            formObj.submit();
+            if(confirm("방송?")) {
+                formObj.submit();
+            }
         })
     });
 
