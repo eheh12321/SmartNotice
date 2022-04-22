@@ -17,9 +17,6 @@ public class AnnounceRegisterDTO {
     @NotNull
     private Long adminId;
 
-    @NotBlank
-    private String text;
-
     @NotNull
     private AnnounceCategory category;
 
@@ -29,9 +26,8 @@ public class AnnounceRegisterDTO {
     @NotNull
     private List<Long> townId;
 
-    private String path;
+    @NotNull
+    private String data; // mp3 stream
 
-    private String fileName;
-
-    private String data;
+    private String contents; // 문자방송 전용
 }

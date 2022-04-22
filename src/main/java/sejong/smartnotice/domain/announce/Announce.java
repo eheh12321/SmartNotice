@@ -32,9 +32,6 @@ public class Announce {
     private String producer; // 방송한 사람
 
     @Column(nullable = false)
-    private String text; // 방송내용
-
-    @Column(nullable = false)
     private LocalDateTime time; // 방송시각
 
     @Enumerated(EnumType.STRING)
@@ -49,17 +46,20 @@ public class Announce {
     
     private String fileName; // 파일 이름
 
+    @Column(nullable = false)
+    private String contents; // 문자방송 내용
+    
     // 파일 저장 경로 리턴
     public String getFullPath() {
         return File.separator + directory + File.separator + fileName + ".mp3";
     }
 
-    public static Announce makeAnnounce(String producer, String text, AnnounceCategory category, AnnounceType type,
+    public static Announce makeAnnounce(String producer, String contents, AnnounceCategory category, AnnounceType type,
                                         List<Town> townList, String directory, String fileName) {
         // 1. 방송 생성
         Announce announce = Announce.builder()
                 .producer(producer)
-                .text(text)
+                .contents(contents)
                 .category(category)
                 .type(type)
                 .atList(new ArrayList<>())

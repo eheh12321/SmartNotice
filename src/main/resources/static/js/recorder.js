@@ -7,6 +7,8 @@ const soundClips = document.querySelector('.sound-clips');
 const canvas = document.querySelector('.visualizer');
 const mainSection = document.querySelector('.main-controls');
 const testPlay = document.querySelector("#testAnnounce");
+const save = document.querySelector("#makeAnnounce");
+const formObj = document.querySelector("form[role='form']");
 
 // disable stop button while not recording
 
@@ -24,6 +26,8 @@ if (navigator.mediaDevices.getUserMedia) {
 
     const constraints = { audio: true };
     let chunks = [];
+    let audioContents;
+    let blob;
 
     let onSuccess = function(stream) {
         const mediaRecorder = new MediaRecorder(stream);
@@ -54,8 +58,6 @@ if (navigator.mediaDevices.getUserMedia) {
         }
 
         testPlay.onclick = function(e) {
-            console.log("data available after MediaRecorder.stop() called.");
-
             soundClips.innerHTML = "";
 
             const clipName = uuidv4() + ".mp3";
@@ -73,11 +75,37 @@ if (navigator.mediaDevices.getUserMedia) {
             soundClips.appendChild(clipContainer);
 
             audio.controls = true;
-            const blob = new Blob(chunks, { 'type' : 'audio/mp3;' });
+            blob = new Blob(chunks, { 'type' : 'audio/mp3;' });
             chunks = [];
             const audioURL = window.URL.createObjectURL(blob);
+            console.log(blob);
+            console.log(audioURL);
             audio.src = audioURL;
             console.log("recorder stopped");
+        }
+
+        save.onclick = function (e) {
+            e.preventDefault();
+            if(blob == null) {
+                blob = new Blob(chunks, { 'type' : 'audio/mp3;' });
+                chunks = [];
+            }
+            console.log(blob);
+            console.log(blobToBase64(blob));
+
+            blobToBase64(blob).then(result => {
+                console.log(result.toString().replace("data:audio/mp3;;base64,", ''));
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'data';
+                input.value = result.toString().replace("data:audio/mp3;;base64,", '');
+                formObj.appendChild(input);
+
+                if(confirm("방송?")) {
+                    formObj.submit();
+                }
+            });
+
         }
 
         mediaRecorder.ondataavailable = function(e) {
@@ -100,6 +128,13 @@ function uuidv4() {
     );
 }
 
+function blobToBase64(blob) {
+    return new Promise((resolve, _) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(blob);
+    });
+}
 function visualize(stream) {
     if(!audioCtx) {
         audioCtx = new AudioContext();

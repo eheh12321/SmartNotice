@@ -42,8 +42,8 @@ public class AnnounceController {
     }
 
     @PostMapping("/text")
-    public String getTextAnnounce(@Valid @ModelAttribute AnnounceRegisterDTO announceRegisterDTO, BindingResult bindingResult) throws Exception {
-        announceService.registerTextAnnounce(announceRegisterDTO);
+    public String getTextAnnounce(@Valid @ModelAttribute AnnounceRegisterDTO announceRegisterDTO, BindingResult bindingResult) {
+        announceService.registerAnnounce(announceRegisterDTO);
         return "redirect:/announces";
     }
 
@@ -58,6 +58,12 @@ public class AnnounceController {
         model.addAttribute("admin", admin);
         model.addAttribute("townList", adminService.getTownList(admin));
         return "announce/voiceAnnounce";
+    }
+
+    @PostMapping("/voice")
+    public String getVoiceAnnounce(@Valid @ModelAttribute AnnounceRegisterDTO registerDTO, BindingResult bindingResult) {
+        announceService.registerAnnounce(registerDTO);
+        return "redirect:/announces";
     }
 
     @DeleteMapping("/{id}")

@@ -87,7 +87,8 @@
         </ul>
         <input type="hidden" th:value="${admin.getId()}" name="adminId">
         <input type="hidden" name="category" value="NORMAL">
-        <input type="hidden" name="type" value="TEXT">
+        <input type="hidden" name="type" value="VOICE">
+        <input type="hidden" name="contents" value="[음성 방송입니다]">
         <hr>
         <button type="submit" class="btn btn-danger" id="makeAnnounce">방송하기</button>
         <button type="button" class="btn btn-warning" id="testAnnounce">미리 듣기</button>

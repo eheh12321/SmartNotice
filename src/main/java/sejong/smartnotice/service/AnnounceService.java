@@ -31,22 +31,28 @@ public class AnnounceService {
     private final TownService townService;
     private final AnnounceRepository announceRepository;
 
-    // 문자 방송
-    public Long registerTextAnnounce(AnnounceRegisterDTO registerDTO) {
+    public Long registerAnnounce(AnnounceRegisterDTO registerDTO) {
         log.info("== 문자 방송 등록 ==");
         // 1. 방송 파일 저장
         String fileName = UUID.randomUUID().toString();
         String path = getDirectory(); // 폴더 생성
 
-        if(registerDTO.getData() != null) {
-            log.info("기존 파일 이용");
+        // == 문자 방송인 경우 ==
+        if(registerDTO.getType().equals(AnnounceType.TEXT)) {
+            if(registerDTO.getData() != null) {
+                log.info("기존 파일 이용");
+                byte[] audioContents = Base64.getDecoder().decode(registerDTO.getData());
+                saveAudioContents(audioContents, fileName, path);
+            } else {
+                log.info("새로 생성");
+                AnnounceOutputDTO outputDTO = makeTextAnnounce(registerDTO.getContents());
+                saveAudioContents(outputDTO.getAudioContents(), fileName, path); // 저장
+            }
+        } else { // == 음성 방송인 경우 ==
             byte[] audioContents = Base64.getDecoder().decode(registerDTO.getData());
             saveAudioContents(audioContents, fileName, path);
-        } else {
-            log.info("새로 생성");
-            AnnounceOutputDTO outputDTO = makeTextAnnounce(registerDTO.getText());
-            saveAudioContents(outputDTO.getAudioContents(), fileName, path); // 저장
         }
+
         // 2. 방송 대상 마을 추출
         List<Town> townList = new ArrayList<>();
         for (Long tid : registerDTO.getTownId()) {
@@ -56,8 +62,8 @@ public class AnnounceService {
 
         // 3. 방송 생성
         Admin admin = adminService.findById(registerDTO.getAdminId());
-        Announce announce = Announce.makeAnnounce(admin.getName(), registerDTO.getText(), registerDTO.getCategory(),
-                AnnounceType.TEXT, townList, path, fileName);
+        Announce announce = Announce.makeAnnounce(admin.getName(), registerDTO.getContents(), registerDTO.getCategory(),
+                registerDTO.getType(), townList, path, fileName);
         announceRepository.save(announce);
 
         return announce.getId();
