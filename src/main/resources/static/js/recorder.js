@@ -26,7 +26,6 @@ if (navigator.mediaDevices.getUserMedia) {
 
     const constraints = { audio: true };
     let chunks = [];
-    let audioContents;
     let blob;
 
     let onSuccess = function(stream) {
@@ -86,6 +85,13 @@ if (navigator.mediaDevices.getUserMedia) {
 
         save.onclick = function (e) {
             e.preventDefault();
+
+            let townIdList = document.querySelectorAll("input[name='townId']:checked");
+            if(townIdList.length == 0) {
+                alert("마을을 선택해주세용");
+                return;
+            }
+
             if(blob == null) {
                 blob = new Blob(chunks, { 'type' : 'audio/mp3;' });
                 chunks = [];
@@ -105,7 +111,6 @@ if (navigator.mediaDevices.getUserMedia) {
                     formObj.submit();
                 }
             });
-
         }
 
         mediaRecorder.ondataavailable = function(e) {
