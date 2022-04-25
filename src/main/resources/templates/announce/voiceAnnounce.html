@@ -26,6 +26,8 @@
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="/resources/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
 
+    <!--AJAX-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
 <div class="container">
@@ -46,22 +48,43 @@
     </div>
     <hr>
     <form method="post" action="/announces/voice" role="form">
-        <div class="recorder">
-            <header>
-                <h1 id="recorderTitle">녹음기</h1>
-            </header>
-            <hr>
-            <section class="main-controls">
-                <canvas class="visualizer" height="60px"></canvas>
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <p class="font-weight-bold text-primary" id="recorderTitle"
+                   style="font-size: 1.5em; margin-bottom: 0;">음성 파일 업로드</p>
                 <hr>
-                <div id="buttons">
-                    <button class="btn btn-success" id="record">Record</button>
-                    <button class="btn btn-danger" id="stop">Stop</button>
+            </div>
+            <div class="card-body">
+                <section class="main-controls">
+                    <canvas class="visualizer" height="60px"></canvas>
+                    <hr>
+                    <div id="buttons">
+                        <button class="btn btn-success" id="record">Record</button>
+                        <button class="btn btn-danger" id="stop">Stop</button>
+                    </div>
+                </section>
+                <hr>
+                <section class="sound-clips">
+                </section>
+                <hr>
+                <button type="button" class="btn btn-warning" id="testAnnounce">미리 듣기</button>
+            </div>
+        </div>
+        <hr>
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <p class="font-weight-bold text-primary" style="font-size: 1.5em; margin-bottom: 0;">음성 파일 업로드</p>
+            </div>
+            <div class="card-body">
+                <div class="form-group uploadDiv">
+                    <input class="btn btn-primary" type="file" name="uploadFile" id="files">
                 </div>
-            </section>
-            <hr>
-            <section class="sound-clips">
-            </section>
+                <div class="uploadResult">
+
+                </div>
+                <hr>
+                <button type="button" class="btn btn-warning" id="uploadPreview">들어보기</button>
+            </div>
         </div>
         <hr>
         <p>재난 유무 선택</p>
@@ -91,11 +114,127 @@
         <input type="hidden" name="contents" value="[음성 방송입니다]">
         <hr>
         <button type="submit" class="btn btn-danger" id="makeAnnounce">방송하기</button>
-        <button type="button" class="btn btn-warning" id="testAnnounce">미리 듣기</button>
         <hr>
     </form>
     <button type="button" class="btn btn-primary" onclick="location.href='/announces'">목록 페이지로</button>
 </div>
+<script type="text/javascript">
+    $(document).ready(function (e) {
+        let audioContents;
+        /**
+         * 파일 용량 및 확장자 검사
+         */
+        var regex = new RegExp("(.*?)\.(mp3)$");
+        var maxSize = 1048576;
+        function checkExtension(fileName, fileSize) {
+            if (fileSize > maxSize) {
+                alert("파일 사이즈 초과");
+                return false;
+            }
+            if (!regex.test(fileName)) {
+                alert("mp3 확장자만 업로드 할 수 있습니다.");
+                return false;
+            }
+            return true;
+        }
+
+        /**
+         * 업로드된 파일 미리듣기
+         */
+        function showUploadResult(uploadFile) {
+            console.log(uploadFile);
+            if (!uploadFile) {
+                return;
+            }
+            playFile(uploadFile, 1);
+        }
+
+        /**
+         * 미리듣기 버튼
+         */
+        $("#uploadPreview").on("click", function (e) {
+            console.log("첨부파일 미리듣기 클릭");
+            let inputFile = $("input[name='uploadFile']");
+            let file = inputFile[0].files;
+            console.log(file[0]);
+            console.log(file[0].name);
+            console.log(file[0].size);
+            if(!checkExtension(file[0].name, file[0].size)) return false;
+            showUploadResult(file[0]);
+        });
+
+        document.getElementById('files').addEventListener('change', handleFileSelect, false);
+        function handleFileSelect(evt) {
+            var files = evt.target.files; // FileList object
+            playFile(files[0], 0);
+        }
+
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        var context = new window.AudioContext();
+        var source;
+
+        /**
+         * 파일 재생
+         */
+        function playSound(arraybuffer) {
+            context.decodeAudioData(arraybuffer, function (buf) {
+                source = context.createBufferSource();
+                source.connect(context.destination);
+                source.buffer = buf;
+                source.start(0);
+            });
+        }
+
+        function playFile(file, flag) {
+            var freader = new FileReader();
+            freader.onload = function (e) {
+                console.log(e.target.result);
+                audioContents = _arrayBufferToBase64(e.target.result);
+                if(flag === 1) {
+                    playSound(e.target.result);
+                }
+            };
+            freader.readAsArrayBuffer(file);
+        }
+
+        /**
+         * 방송 저장
+         */
+        var formObj = $("form[role='form']");
+        $("#makeAnnounce").on("click", function (e) {
+            e.preventDefault();
+            console.log(audioContents);
+            let townIdList = document.querySelectorAll("input[name='townId']:checked");
+            if(townIdList.length == 0) {
+                alert("마을을 선택해주세용");
+                return false;
+            }
+
+            if(confirm("방송?")) {
+                formObj.append($('<input/>', {type:'hidden', name:'data', value:audioContents}));
+                formObj.submit();
+            }
+        });
+    });
+
+    function blobToBase64(blob) {
+        return new Promise((resolve, _) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.readAsDataURL(blob);
+        });
+    }
+
+    function _arrayBufferToBase64( buffer ) {
+        var binary = '';
+        var bytes = new Uint8Array(buffer);
+        var len = bytes.byteLength;
+        for (var i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return window.btoa(binary);
+    }
+</script>
 <!--녹음기-->
 <script type="text/javascript" src="/resources/js/recorder.js"></script>
 </body>

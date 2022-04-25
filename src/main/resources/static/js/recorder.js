@@ -83,35 +83,25 @@ if (navigator.mediaDevices.getUserMedia) {
             console.log("recorder stopped");
         }
 
-        save.onclick = function (e) {
-            e.preventDefault();
-
-            let townIdList = document.querySelectorAll("input[name='townId']:checked");
-            if(townIdList.length == 0) {
-                alert("마을을 선택해주세용");
-                return;
-            }
-
-            if(blob == null) {
-                blob = new Blob(chunks, { 'type' : 'audio/mp3;' });
-                chunks = [];
-            }
-            console.log(blob);
-            console.log(blobToBase64(blob));
-
-            blobToBase64(blob).then(result => {
-                console.log(result.toString().replace("data:audio/mp3;;base64,", ''));
-                var input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'data';
-                input.value = result.toString().replace("data:audio/mp3;;base64,", '');
-                formObj.appendChild(input);
-
-                if(confirm("방송?")) {
-                    formObj.submit();
-                }
-            });
-        }
+        // save.onclick = function (e) {
+        //
+        //     if(blob == null) {
+        //         blob = new Blob(chunks, { 'type' : 'audio/mp3;' });
+        //         chunks = [];
+        //     }
+        //     console.log(blob);
+        //     console.log(blobToBase64(blob));
+        //
+        //     blobToBase64(blob).then(result => {
+        //         console.log(result.toString().replace("data:audio/mp3;;base64,", ''));
+        //         var input = document.createElement('input');
+        //         input.type = 'hidden';
+        //         input.name = 'data';
+        //         input.value = result.toString().replace("data:audio/mp3;;base64,", '');
+        //         formObj.appendChild(input);
+        //
+        //     });
+        // }
 
         mediaRecorder.ondataavailable = function(e) {
             chunks.push(e.data);
@@ -133,13 +123,6 @@ function uuidv4() {
     );
 }
 
-function blobToBase64(blob) {
-    return new Promise((resolve, _) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.readAsDataURL(blob);
-    });
-}
 function visualize(stream) {
     if(!audioCtx) {
         audioCtx = new AudioContext();
