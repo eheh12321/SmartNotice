@@ -129,23 +129,23 @@
         $('#makeAnnounce').on("click", function (e) {
             e.preventDefault();
             console.log("방송하기 click");
-
             inputText = document.getElementById("inputText").value;
             var len = $("input[name='townId']:checked").length;
             if(inputText.length == 0) {
                 alert("내용을 입력해주세요");
                 return;
             }
-            formObj.append($('<input/>', {type:'hidden', name:'contents', value:inputText}));
             if(len == 0) {
                 alert("방송할 마을을 선택해주세요");
                 return;
             }
-            console.log(lastInputText);
-            if(lastInputText != null && inputText == lastInputText) {
-                formObj.append($('<input/>', {type:'hidden', name:'data', value:lastData}));
-            }
-            if(confirm("방송?")) {
+
+            if(confirm("문자 방송 하시겠습니까?")) {
+                console.log(lastInputText);
+                formObj.append($('<input/>', {type:'hidden', name:'contents', value:inputText}));
+                if(lastInputText != null && inputText == lastInputText) {
+                    formObj.append($('<input/>', {type:'hidden', name:'data', value:lastData}));
+                }
                 formObj.submit();
             }
         })
