@@ -1,5 +1,8 @@
 package sejong.smartnotice.service;
 
+import com.google.api.gax.core.CredentialsProvider;
+import com.google.api.gax.core.FixedCredentialsProvider;
+import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.texttospeech.v1.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,9 +16,7 @@ import sejong.smartnotice.dto.AnnounceOutputDTO;
 import sejong.smartnotice.dto.AnnounceRegisterDTO;
 import sejong.smartnotice.repository.AnnounceRepository;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -84,6 +85,7 @@ public class AnnounceService {
             return new AnnounceOutputDTO(audioContents);
         } catch (Exception e) {
             log.warn("방송 파일 생성 실패");
+            e.printStackTrace();
             return null;
         }
     }
@@ -125,7 +127,12 @@ public class AnnounceService {
     // 문자 -> 음성파일 변환
     private static byte[] synthesizeText(String text) throws Exception {
         // Instantiates a client
-        try (TextToSpeechClient textToSpeechClient = TextToSpeechClient.create()) {
+        String jsonPath = "custom/tactile-depot-347005-5be01ad6f1cb.json";
+        CredentialsProvider credentialsProvider = FixedCredentialsProvider.create(ServiceAccountCredentials.fromStream(new FileInputStream(jsonPath)));
+        TextToSpeechSettings settings = TextToSpeechSettings.newBuilder().setCredentialsProvider(credentialsProvider).build();
+        log.info(settings.toString());
+
+        try (TextToSpeechClient textToSpeechClient = TextToSpeechClient.create(settings)) {
             // Set the text input to be synthesized
             SynthesisInput input = SynthesisInput.newBuilder().setText(text).build();
 
