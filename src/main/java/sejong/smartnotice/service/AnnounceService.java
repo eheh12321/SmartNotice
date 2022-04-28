@@ -1,7 +1,6 @@
 package sejong.smartnotice.service;
 
 import com.google.cloud.texttospeech.v1.*;
-import com.google.protobuf.ByteString;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -81,6 +80,7 @@ public class AnnounceService {
         }
         try {
             byte[] audioContents = synthesizeText(text); // API 통신
+            log.info("성공!");
             return new AnnounceOutputDTO(audioContents);
         } catch (Exception e) {
             log.warn("방송 파일 생성 실패");
