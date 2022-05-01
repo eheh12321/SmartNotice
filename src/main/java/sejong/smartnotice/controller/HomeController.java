@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import sejong.smartnotice.dto.AdminRegisterDTO;
+import sejong.smartnotice.dto.MqttInboundDTO;
 import sejong.smartnotice.service.AdminService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -23,6 +25,7 @@ import java.time.LocalDateTime;
 public class HomeController {
 
     private final AdminService adminService;
+    private final List<MqttInboundDTO> mqttInboundDTOList;
 
     @GetMapping("/test-login")
     public String testLoginPage() {
@@ -32,6 +35,12 @@ public class HomeController {
     @GetMapping("/test-index")
     public String testIndexPage() {
         return "test";
+    }
+
+    @GetMapping("/test-mqtt")
+    public String testMqttPage(Model model) {
+        model.addAttribute("messageList", mqttInboundDTOList);
+        return "mqtt";
     }
 
     @GetMapping("/login")

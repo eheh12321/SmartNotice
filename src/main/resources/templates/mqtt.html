@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <title>MQTT TEST</title>
+    <meta charset="UTF-8"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/resources/img/favicon/favicon.ico" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+            rel="stylesheet"/>
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" href="/resources/vendor/fonts/boxicons.css" />
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="/resources/vendor/css/core.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="/resources/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="/resources/css/demo.css" />
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="/resources/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+    <style>
+        .a {color: red}
+    </style>
+</head>
+
+<body>
+<div class="container-fluid">
+    <div>
+        <h1>MQTT Inbound TEST</h1>
+        <p>mosquitto_pub -h 3.34.185.128 -p 1883 -t [토픽] -m "[메시지]"</p>
+        <p>Sub Topic: "topic1", "topic2", "topic3"</p>
+        <hr>
+        <table class="table table-responsive table-hover">
+            <thead>
+            <tr>
+                <th>Topic</th>
+                <th>Message</th>
+                <th>수신시각</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="message : ${messageList}">
+                <td th:text="${message.getTopic()}">0</td>
+                <td th:text="${message.getMessage()}">1</td>
+                <td th:text="${message.getInboundDateTime()}">2</td>
+            </tr>
+            </tbody>
+        </table>
+        <hr>
+    </div>
+</div>
+</body>
+</html>
