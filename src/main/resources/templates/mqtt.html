@@ -50,11 +50,11 @@
             </thead>
             <tbody>
             <tr th:each="message : ${messageList}">
-                <td th:text="${message.getTopic()}">0</td>
-                <td th:text="${message.getMessage()}">1</td>
-                <td th:text="${message.getTitle()}">1</td>
-                <td th:text="${message.getContent()}">1</td>
-                <td th:text="${message.getInboundDateTime()}">2</td>
+                <td th:text="${message.getTopic()}"></td>
+                <td th:text="${message.getMessage()}"></td>
+                <td th:text="${message.getTitle()}"></td>
+                <td th:text="${message.getContent()}"></td>
+                <td th:text="${message.getInboundDateTime()}"></td>
             </tr>
             </tbody>
         </table>
@@ -64,9 +64,6 @@
         <p>mosquitto_sub -h 3.34.185.128 -p 1883 -t #</p>
         <p>파싱 가능 JSON: {"title":"title", "content":"content"}</p>
         <form method="post">
-            <label for="ipAddress">전송 대상 IP 주소 (동작 안함..)</label>
-            <input class="form-control" type="text" id="ipAddress" name="ipAddress" th:value="${ipAddress}">
-            <br>
             <label for="topic">토픽</label>
             <input class="form-control" type="text" id="topic" name="topic" value="topic1">
             <br>

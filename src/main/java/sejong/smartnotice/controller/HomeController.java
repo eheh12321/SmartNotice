@@ -48,7 +48,7 @@ public class HomeController {
     }
 
     @PostMapping("/test-mqtt")
-    public String testMqttOutbound(@RequestParam String ipAddress, @RequestParam String content, @RequestParam String topic) {
+    public String testMqttOutbound(@RequestParam String content, @RequestParam String topic) {
         myGateway.sendToMqtt(content, topic);
         return "redirect:/test-mqtt";
     }
