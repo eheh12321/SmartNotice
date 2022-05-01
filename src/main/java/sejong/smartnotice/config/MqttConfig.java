@@ -1,5 +1,7 @@
 package sejong.smartnotice.config;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +15,7 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
 import sejong.smartnotice.dto.MqttInboundDTO;
+import sejong.smartnotice.dto.MqttInboundJson;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -47,9 +50,23 @@ public class MqttConfig {
             public void handleMessage(Message<?> message) throws MessagingException {
                 log.info("Headers: {}, message: {}, receiveTime: {}",
                         message.getHeaders(), message.getPayload(), LocalDateTime.now());
-                MqttInboundDTO inboundDTO = new MqttInboundDTO(
-                        message.getHeaders().get("mqtt_receivedTopic").toString(), message.getPayload().toString(), LocalDateTime.now());
-                mqttInboundDTOList().add(inboundDTO);
+
+                // JSON Parsing
+                ObjectMapper objectMapper = new ObjectMapper();
+                try {
+                    MqttInboundJson json = objectMapper.readValue(message.getPayload().toString(), MqttInboundJson.class);
+                    log.info("title: {}, content: {}", json.getTitle(), json.getContent());
+
+                    MqttInboundDTO inboundDTO = new MqttInboundDTO(
+                            message.getHeaders().get("mqtt_receivedTopic").toString(), message.getPayload().toString(),
+                            json.getTitle(), json.getContent(), LocalDateTime.now());
+                    mqttInboundDTOList().add(inboundDTO);
+
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+
+
             }
         };
     }

@@ -10,5 +10,7 @@ import java.time.LocalDateTime;
 public class MqttInboundDTO {
     private String topic;
     private String message;
+    private String title;
+    private String content;
     private LocalDateTime inboundDateTime;
 }
