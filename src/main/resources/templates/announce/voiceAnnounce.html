@@ -83,6 +83,7 @@
             </div>
             <div class="card-body">
                 <section class="main-controls">
+                    <h3 id="timerText"><time>00:00:00</time></h3>
                     <canvas class="visualizer" height="60px"></canvas>
                     <hr>
                     <div id="buttons">
@@ -129,6 +130,13 @@
     const save = document.querySelector("#AnnounceByRecord");
     const formObj = document.querySelector("form[role='form']");
 
+    // 타이머
+    var timerText = document.querySelector("#timerText");
+    var sec = 0;
+    var min = 0;
+    var hrs = 0;
+    var t;
+
     let audioCtx;
     const canvasCtx = canvas.getContext("2d");
     let context
@@ -167,6 +175,11 @@
                 stop.disabled = false;
                 record.disabled = true;
                 header.textContent = "녹음 진행중";
+
+                // 타이머 초기화 이후 시작
+                timerText.textContent = "00:00:00";
+                sec = 0; min = 0; hrs = 0;
+                t = setTimeout(add, 1000);
             }
 
             stop.onclick = function() {
@@ -179,6 +192,9 @@
                 stop.disabled = true;
                 record.disabled = false;
                 header.textContent = "녹음기";
+
+                // 타이머 종료
+                clearTimeout(t);
             }
 
             testPlay.onclick = function(e) {
@@ -393,6 +409,30 @@
         return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
             (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
         );
+    }
+
+    function tick(){
+        sec++;
+        if (sec >= 60) {
+            sec = 0;
+            min++;
+            if (min >= 60) {
+                min = 0;
+                hrs++;
+            }
+        }
+    }
+
+    function add() {
+        tick();
+        timerText.textContent = (hrs > 9 ? hrs : "0" + hrs)
+            + ":" + (min > 9 ? min : "0" + min)
+            + ":" + (sec > 9 ? sec : "0" + sec);
+        timer();
+    }
+
+    function timer() {
+        t = setTimeout(add, 1000);
     }
 
     window.onresize = function() {
