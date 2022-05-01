@@ -2,6 +2,7 @@ package sejong.smartnotice.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -10,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import sejong.smartnotice.config.MqttConfig;
 import sejong.smartnotice.dto.AdminRegisterDTO;
 import sejong.smartnotice.dto.MqttInboundDTO;
 import sejong.smartnotice.service.AdminService;
@@ -26,6 +28,7 @@ public class HomeController {
 
     private final AdminService adminService;
     private final List<MqttInboundDTO> mqttInboundDTOList;
+    private final MqttConfig.MyGateway myGateway;
 
     @GetMapping("/test-login")
     public String testLoginPage() {
@@ -39,8 +42,15 @@ public class HomeController {
 
     @GetMapping("/test-mqtt")
     public String testMqttPage(Model model) {
+        model.addAttribute("ipAddress", getUserIp());
         model.addAttribute("messageList", mqttInboundDTOList);
         return "mqtt";
+    }
+
+    @PostMapping("/test-mqtt")
+    public String testMqttOutbound(@RequestParam String ipAddress, @RequestParam String content, @RequestParam String topic) {
+        myGateway.sendToMqtt(content, topic);
+        return "redirect:/test-mqtt";
     }
 
     @GetMapping("/login")
