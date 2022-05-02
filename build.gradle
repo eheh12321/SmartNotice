@@ -29,7 +29,6 @@ dependencies {
 	// MQTT Integration
 	implementation("org.springframework.boot:spring-boot-starter-integration")
 	implementation("org.springframework.integration:spring-integration-mqtt")
-	implementation("org.springframework.integration:spring-integration-jmx")
 
 	// TTS API
 	implementation platform('com.google.cloud:libraries-bom:25.1.0')

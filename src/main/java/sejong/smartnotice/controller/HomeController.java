@@ -49,6 +49,7 @@ public class HomeController {
 
     @PostMapping("/test-mqtt")
     public String testMqttOutbound(@RequestParam String content, @RequestParam String topic) {
+        log.info("메시지 발신: {}", getUserIp());
         myGateway.sendToMqtt(content, topic);
         return "redirect:/test-mqtt";
     }

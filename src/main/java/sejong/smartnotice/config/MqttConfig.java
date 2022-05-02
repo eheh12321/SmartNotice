@@ -31,7 +31,6 @@ import java.util.List;
 
 @Slf4j
 @Configuration
-@IntegrationComponentScan
 public class MqttConfig {
 
     @Bean
@@ -74,8 +73,6 @@ public class MqttConfig {
                 } catch (JsonProcessingException e) {
                     log.error("JSON 파싱 실패!");
                 }
-
-
             }
         };
     }
