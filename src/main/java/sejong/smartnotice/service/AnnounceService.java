@@ -44,32 +44,34 @@ public class AnnounceService {
         // 1. 방송 파일 저장
         String fileName = UUID.randomUUID().toString();
         String path = getDirectory(); // 폴더 생성
+        byte[] audioContents;
 
         // == 문자 방송인 경우 ==
         if(registerDTO.getType().equals(AnnounceType.TEXT)) {
             if(registerDTO.getData() != null) {
                 log.info("기존 파일 이용");
-                byte[] audioContents = Base64.getDecoder().decode(registerDTO.getData());
+                audioContents = Base64.getDecoder().decode(registerDTO.getData());
                 saveAudioContents(audioContents, fileName, path);
             } else {
                 log.info("새로 생성");
                 AnnounceOutputDTO outputDTO = makeTextAnnounce(registerDTO.getContents());
-                saveAudioContents(outputDTO.getAudioContents(), fileName, path); // 저장
-
-                // JSON 변환 및 MQTT 전송
-                try {
-                    ObjectMapper mapper = new ObjectMapper();
-                    MqttAnnounceJson json = new MqttAnnounceJson(registerDTO.getContents(), admin.getName(),
-                            registerDTO.getType().toString(), registerDTO.getCategory().toString(), Arrays.toString(outputDTO.getAudioContents()));
-                    String jsonInString = mapper.writeValueAsString(json);
-                    myGateway.sendToMqtt(jsonInString, "announce");
-                } catch (Exception e) {
-                    log.error("JSON 파싱 실패!!");
-                }
+                audioContents = outputDTO.getAudioContents();
+                saveAudioContents(audioContents, fileName, path); // 저장
             }
         } else { // == 음성 방송인 경우 ==
-            byte[] audioContents = Base64.getDecoder().decode(registerDTO.getData());
+            audioContents = Base64.getDecoder().decode(registerDTO.getData());
             saveAudioContents(audioContents, fileName, path);
+        }
+
+        // JSON 변환 및 MQTT 전송
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            MqttAnnounceJson json = new MqttAnnounceJson(registerDTO.getContents(), admin.getName(),
+                    registerDTO.getType().toString(), registerDTO.getCategory().toString(), Arrays.toString(audioContents));
+            String jsonInString = mapper.writeValueAsString(json);
+            myGateway.sendToMqtt(jsonInString, "announce");
+        } catch (Exception e) {
+            log.error("JSON 파싱 실패!!");
         }
 
         // 2. 방송 대상 마을 추출
