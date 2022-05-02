@@ -1,5 +1,6 @@
 package sejong.smartnotice.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.ServiceAccountCredentials;
@@ -8,12 +9,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sejong.smartnotice.config.MqttConfig;
 import sejong.smartnotice.domain.announce.Announce;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.announce.AnnounceType;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.dto.AnnounceOutputDTO;
 import sejong.smartnotice.dto.AnnounceRegisterDTO;
+import sejong.smartnotice.dto.MqttAnnounceJson;
+import sejong.smartnotice.dto.MqttInboundJson;
 import sejong.smartnotice.repository.AnnounceRepository;
 
 import java.io.*;
@@ -30,9 +34,13 @@ public class AnnounceService {
     private final AdminService adminService;
     private final TownService townService;
     private final AnnounceRepository announceRepository;
+    private final MqttConfig.MyGateway myGateway;
 
     public Long registerAnnounce(AnnounceRegisterDTO registerDTO) {
         log.info("== 문자 방송 등록 ==");
+
+        Admin admin = adminService.findById(registerDTO.getAdminId());
+
         // 1. 방송 파일 저장
         String fileName = UUID.randomUUID().toString();
         String path = getDirectory(); // 폴더 생성
@@ -47,6 +55,17 @@ public class AnnounceService {
                 log.info("새로 생성");
                 AnnounceOutputDTO outputDTO = makeTextAnnounce(registerDTO.getContents());
                 saveAudioContents(outputDTO.getAudioContents(), fileName, path); // 저장
+
+                // JSON 변환 및 MQTT 전송
+                try {
+                    ObjectMapper mapper = new ObjectMapper();
+                    MqttAnnounceJson json = new MqttAnnounceJson(registerDTO.getContents(), admin.getName(),
+                            registerDTO.getType().toString(), registerDTO.getCategory().toString(), Arrays.toString(outputDTO.getAudioContents()));
+                    String jsonInString = mapper.writeValueAsString(json);
+                    myGateway.sendToMqtt(jsonInString, "announce");
+                } catch (Exception e) {
+                    log.error("JSON 파싱 실패!!");
+                }
             }
         } else { // == 음성 방송인 경우 ==
             byte[] audioContents = Base64.getDecoder().decode(registerDTO.getData());
@@ -61,7 +80,6 @@ public class AnnounceService {
         }
 
         // 3. 방송 생성
-        Admin admin = adminService.findById(registerDTO.getAdminId());
         Announce announce = Announce.makeAnnounce(admin.getName(), registerDTO.getContents(), registerDTO.getCategory(),
                 registerDTO.getType(), townList, path, fileName);
         announceRepository.save(announce);

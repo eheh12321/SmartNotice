@@ -7,7 +7,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MqttInboundJson {
+public class MqttAnnounceJson {
     private String title;
-    private String content;
+    private String producer;
+    private String type;
+    private String status;
+    private String data;
 }

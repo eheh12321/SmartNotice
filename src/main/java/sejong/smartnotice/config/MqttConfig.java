@@ -7,7 +7,6 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.integration.annotation.IntegrationComponentScan;
 import org.springframework.integration.annotation.MessagingGateway;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.channel.DirectChannel;
@@ -41,7 +40,7 @@ public class MqttConfig {
     @Bean
     public MessageProducer inbound() {
         MqttPahoMessageDrivenChannelAdapter adapter =
-                new MqttPahoMessageDrivenChannelAdapter("tcp://localhost:1883", "testClient", "topic1", "topic2", "topic3");
+                new MqttPahoMessageDrivenChannelAdapter("tcp://localhost:1883", "testClient", "test", "announce", "check");
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(2);
@@ -71,6 +70,7 @@ public class MqttConfig {
                     mqttInboundDTOList().add(inboundDTO);
 
                 } catch (JsonProcessingException e) {
+                    e.printStackTrace();
                     log.error("JSON 파싱 실패!");
                 }
             }
@@ -87,7 +87,7 @@ public class MqttConfig {
     private MqttConnectOptions connectOptions() {
         MqttConnectOptions options = new MqttConnectOptions();
         options.setCleanSession(true);
-        options.setServerURIs(new String[] {"tcp://3.34.185.128:1883"});
+        options.setServerURIs(new String[] {"tcp://localhost:1883"});
         options.setUserName("username");
         options.setPassword("password".toCharArray());
         return options;
