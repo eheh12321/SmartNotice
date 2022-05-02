@@ -40,7 +40,7 @@ public class MqttConfig {
     @Bean
     public MessageProducer inbound() {
         MqttPahoMessageDrivenChannelAdapter adapter =
-                new MqttPahoMessageDrivenChannelAdapter("tcp://localhost:1883", "testClient", "test", "announce", "check");
+                new MqttPahoMessageDrivenChannelAdapter("tcp://localhost:1883", "testClient", "test", "announce");
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(2);

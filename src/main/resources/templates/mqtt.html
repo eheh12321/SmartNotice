@@ -36,7 +36,7 @@
     <div>
         <h1>MQTT Inbound TEST</h1>
         <p>mosquitto_pub -h 3.34.185.128 -p 1883 -t [토픽] -m "[메시지]"</p>
-        <p>Sub Topic: "topic1", "topic2", "topic3"</p>
+        <p>Sub Topic: "test", "announce"</p>
         <hr>
         <table class="table table-responsive table-hover">
             <thead>
@@ -65,7 +65,7 @@
         <p>파싱 가능 JSON: {"title":"title", "content":"content"}</p>
         <form method="post">
             <label for="topic">토픽</label>
-            <input class="form-control" type="text" id="topic" name="topic" value="topic1">
+            <input class="form-control" type="text" id="topic" name="topic" value="test">
             <br>
             <label for="content">내용</label>
             <textarea class="form-control" id="content" name="content">{"title":"title", "content":"content"}</textarea>
