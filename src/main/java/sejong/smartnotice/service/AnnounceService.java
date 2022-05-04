@@ -17,7 +17,6 @@ import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.dto.AnnounceOutputDTO;
 import sejong.smartnotice.dto.AnnounceRegisterDTO;
 import sejong.smartnotice.dto.MqttAnnounceJson;
-import sejong.smartnotice.dto.MqttInboundJson;
 import sejong.smartnotice.repository.AnnounceRepository;
 
 import java.io.*;
@@ -45,6 +44,7 @@ public class AnnounceService {
         String fileName = UUID.randomUUID().toString();
         String path = getDirectory(); // 폴더 생성
         byte[] audioContents;
+        String base64Data;
 
         // == 문자 방송인 경우 ==
         if(registerDTO.getType().equals(AnnounceType.TEXT)) {
@@ -66,12 +66,13 @@ public class AnnounceService {
         // JSON 변환 및 MQTT 전송
         try {
             ObjectMapper mapper = new ObjectMapper();
-            MqttAnnounceJson json = new MqttAnnounceJson(registerDTO.getContents(), admin.getName(),
-                    registerDTO.getType().toString(), registerDTO.getCategory().toString(), Arrays.toString(audioContents));
+            MqttAnnounceJson json = new MqttAnnounceJson(admin.getName(), registerDTO.getContents(),
+                    registerDTO.getType().toString(), registerDTO.getCategory().toString(), Base64.getEncoder().encodeToString(audioContents));
             String jsonInString = mapper.writeValueAsString(json);
             myGateway.sendToMqtt(jsonInString, "announce");
         } catch (Exception e) {
-            log.error("JSON 파싱 실패!!");
+            e.printStackTrace();
+            log.error("JSON 변환 실패!!");
         }
 
         // 2. 방송 대상 마을 추출

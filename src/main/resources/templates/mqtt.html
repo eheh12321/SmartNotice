@@ -42,19 +42,23 @@
             <thead>
             <tr>
                 <th>Topic</th>
+                <th>Producer</th>
                 <th>Message</th>
-                <th>Title</th>
-                <th>Content</th>
+                <th>Type</th>
+                <th>status</th>
                 <th>수신시각</th>
+                <th>Base64 Data</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="message : ${messageList}">
                 <td th:text="${message.getTopic()}"></td>
+                <td th:text="${message.getProducer()}"></td>
                 <td th:text="${message.getMessage()}"></td>
-                <td th:text="${message.getTitle()}"></td>
-                <td th:text="${message.getContent()}"></td>
+                <td th:text="${message.getType()}"></td>
+                <td th:text="${message.getStatus()}"></td>
                 <td th:text="${message.getInboundDateTime()}"></td>
+                <td th:text="${message.getData()}"></td>
             </tr>
             </tbody>
         </table>
@@ -62,13 +66,12 @@
         <hr>
         <h1>MQTT Outbound TEST</h1>
         <p>mosquitto_sub -h 3.34.185.128 -p 1883 -t #</p>
-        <p>파싱 가능 JSON: {"title":"title", "content":"content"}</p>
         <form method="post">
             <label for="topic">토픽</label>
-            <input class="form-control" type="text" id="topic" name="topic" value="test">
+            <input class="form-control" type="text" id="topic" name="topic" value="announce">
             <br>
             <label for="content">내용</label>
-            <textarea class="form-control" id="content" name="content">{"title":"title", "content":"content"}</textarea>
+            <textarea class="form-control" id="content" name="content">{"message":"Hello World!", "producer":"testProducer", "type":"TEXT", "status":"NORMAL","data":"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"}</textarea>
             <hr>
             <button class="btn btn-danger" type="submit">전송</button>
             <button class="btn btn-primary" type="button" onclick="location.href='/'">뒤로가기</button>

@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MqttAnnounceJson {
-    private String title;
     private String producer;
+    private String message;
     private String type;
     private String status;
     private String data;
