@@ -47,6 +47,11 @@ public class HomeController {
         return "mqtt";
     }
 
+    @GetMapping("/register/new")
+    public String SelectRegisterAuthPage() {
+        return "Register-authority";
+    }
+
     @PostMapping("/test-mqtt")
     public String testMqttOutbound(@RequestParam String content, @RequestParam String topic) {
         log.info("메시지 발신: {}", getUserIp());
@@ -56,7 +61,7 @@ public class HomeController {
 
     @GetMapping("/login")
     public String adminLoginForm(String error, String logout, Model model) {
-        log.info("== 관제 사이트 로그인 == ");
+        log.info("== 사이트 로그인 == ");
         log.info("접속 시각: {}", LocalDateTime.now());
         log.info("접속 IP: {}", getUserIp());
         log.info("error: {}", error);
@@ -70,7 +75,7 @@ public class HomeController {
             log.info("== 관리자 로그아웃 ==");
             model.addAttribute("logout", "Logout");
         }
-        return "login";
+        return "auth-login-basic";
     }
 
     @PostMapping("/logout")
