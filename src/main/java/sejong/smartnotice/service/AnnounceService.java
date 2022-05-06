@@ -44,7 +44,6 @@ public class AnnounceService {
         String fileName = UUID.randomUUID().toString();
         String path = getDirectory(); // 폴더 생성
         byte[] audioContents;
-        String base64Data;
 
         // == 문자 방송인 경우 ==
         if(registerDTO.getType().equals(AnnounceType.TEXT)) {
@@ -97,8 +96,8 @@ public class AnnounceService {
         log.info("방송 내용: {}", text);
         log.info("문자 길이: {}", text.length());
         log.info("==================");
-        if(text.length() > 500) { // 제한
-            throw new IllegalStateException("500자를 초과할 수 없습니다");
+        if(text.length() > 1000) { // 제한
+            throw new IllegalStateException("1000자를 초과할 수 없습니다");
         }
         try {
             byte[] audioContents = synthesizeText(text); // API 통신

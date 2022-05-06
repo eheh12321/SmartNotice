@@ -30,16 +30,6 @@ public class HomeController {
     private final List<MqttInboundDTO> mqttInboundDTOList;
     private final MqttConfig.MyGateway myGateway;
 
-    @GetMapping("/test-login")
-    public String testLoginPage() {
-        return "auth-login";
-    }
-
-    @GetMapping("/test-index")
-    public String testIndexPage() {
-        return "test";
-    }
-
     @GetMapping("/test-mqtt")
     public String testMqttPage(Model model) {
         model.addAttribute("ipAddress", getUserIp());
