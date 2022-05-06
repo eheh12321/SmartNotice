@@ -13,4 +13,5 @@ public class MqttAnnounceJson {
     private String type;
     private String status;
     private String data;
+    private String announceTime;
 }

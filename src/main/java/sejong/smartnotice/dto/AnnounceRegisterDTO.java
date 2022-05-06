@@ -29,5 +29,8 @@ public class AnnounceRegisterDTO {
     @NotNull
     private String data; // mp3 stream
 
+    @NotNull
+    private String title; // 방송 제목
+
     private String contents; // 문자방송 전용
 }

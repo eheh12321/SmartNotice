@@ -47,6 +47,9 @@ public class Announce {
     private String fileName; // 파일 이름
 
     @Column(nullable = false)
+    private String title; // 방송 제목
+
+    @Column(nullable = false)
     private String contents; // 문자방송 내용
     
     // 파일 저장 경로 리턴
@@ -55,11 +58,12 @@ public class Announce {
     }
 
     public static Announce makeAnnounce(String producer, String contents, AnnounceCategory category, AnnounceType type,
-                                        List<Town> townList, String directory, String fileName) {
+                                        List<Town> townList, String directory, String fileName, String title) {
         // 1. 방송 생성
         Announce announce = Announce.builder()
                 .producer(producer)
                 .contents(contents)
+                .title(title)
                 .category(category)
                 .type(type)
                 .atList(new ArrayList<>())

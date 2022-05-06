@@ -22,6 +22,7 @@ import sejong.smartnotice.repository.AnnounceRepository;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Slf4j
@@ -66,7 +67,7 @@ public class AnnounceService {
         try {
             ObjectMapper mapper = new ObjectMapper();
             MqttAnnounceJson json = new MqttAnnounceJson(admin.getName(), registerDTO.getContents(),
-                    registerDTO.getType().toString(), registerDTO.getCategory().toString(), Arrays.toString(audioContents));
+                    registerDTO.getType().toString(), registerDTO.getCategory().toString(), Base64.getEncoder().encodeToString(audioContents), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:ss:ss")));
             String jsonInString = mapper.writeValueAsString(json);
             myGateway.sendToMqtt(jsonInString, "announce");
         } catch (Exception e) {
@@ -83,7 +84,7 @@ public class AnnounceService {
 
         // 3. 방송 생성
         Announce announce = Announce.makeAnnounce(admin.getName(), registerDTO.getContents(), registerDTO.getCategory(),
-                registerDTO.getType(), townList, path, fileName);
+                registerDTO.getType(), townList, path, fileName, registerDTO.getTitle());
         announceRepository.save(announce);
 
         return announce.getId();
