@@ -64,8 +64,8 @@ public class MqttConfig {
                     MqttAnnounceJson json = objectMapper.readValue(message.getPayload().toString(), MqttAnnounceJson.class);
 
                     MqttInboundDTO inboundDTO = new MqttInboundDTO(
-                            message.getHeaders().get("mqtt_receivedTopic").toString(), json.getProducer(),
-                            json.getMessage(), json.getData(), json.getType(), json.getStatus(), json.getAnnounceTime());
+                            message.getHeaders().get("mqtt_receivedTopic").toString(), json.getProducer(), json.getTitle()
+                            ,json.getMessage(), json.getData(), json.getType(), json.getStatus(), json.getAnnounceTime());
                     mqttInboundDTOList().add(inboundDTO);
 
                 } catch (JsonProcessingException e) {

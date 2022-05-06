@@ -66,7 +66,7 @@ public class AnnounceService {
         // JSON 변환 및 MQTT 전송
         try {
             ObjectMapper mapper = new ObjectMapper();
-            MqttAnnounceJson json = new MqttAnnounceJson(admin.getName(), registerDTO.getContents(),
+            MqttAnnounceJson json = new MqttAnnounceJson(admin.getName(), registerDTO.getTitle(), registerDTO.getContents(),
                     registerDTO.getType().toString(), registerDTO.getCategory().toString(), Base64.getEncoder().encodeToString(audioContents), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:ss:ss")));
             String jsonInString = mapper.writeValueAsString(json);
             myGateway.sendToMqtt(jsonInString, "announce");

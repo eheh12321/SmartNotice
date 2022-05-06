@@ -9,6 +9,7 @@ public class MqttInboundDTO {
     private String topic;
 
     private String producer;
+    private String title;
     private String message; // 문자 내용
     private String data; // base64 데이터
 
