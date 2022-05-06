@@ -38,7 +38,7 @@ class SupporterServiceTest {
     @Test
     void 보호자_회원가입() {
         // given
-        User user = User.createUser("주민", "010-1212-1212", "주소", 33, null, null);
+        User user = User.createUser("주민", "010-1212-1212", "주소", "2022-05-06", null, null);
         when(userService.findById(any())).thenReturn(user);
 
         Supporter supporter = createSupporter("보호자", "010-1234-1234", "id", "pw");

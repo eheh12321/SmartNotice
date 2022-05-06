@@ -24,8 +24,4 @@ public class UserModifyDTO {
     private String tel;
 
     private String info;
-
-    @NotNull
-    @Range(min = 1, max = 150)
-    private Integer age;
 }

@@ -44,7 +44,7 @@ public class UserService implements UserDetailsService {
 
         // 계정 생성 및 저장
        User user = User.createUser(registerDTO.getName(), registerDTO.getTel(),
-                registerDTO.getAddress(), registerDTO.getAge(), town, account);
+                registerDTO.getAddress(), registerDTO.getBirth(), town, account);
         userRepository.save(user);
 
         return user.getId();
@@ -71,8 +71,7 @@ public class UserService implements UserDetailsService {
         }
 
         // 3. 정보 수정
-        user.modifyUserInfo(modifyDTO.getName(), modifyDTO.getTel(), modifyDTO.getAddress(),
-                modifyDTO.getInfo(), modifyDTO.getAge());
+        user.modifyUserInfo(modifyDTO.getName(), modifyDTO.getTel(), modifyDTO.getAddress(), modifyDTO.getInfo());
 
         return user.getId();
     }

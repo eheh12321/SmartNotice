@@ -27,12 +27,6 @@
             <div class="field-error" th:errors="*{name}">이름 입력 오류</div>
         </div>
         <div class="form-group mb-3">
-            <label for="age">나이</label>
-            <input type="text" class="form-control" id="age" placeholder="age"
-                   th:field="*{age}" th:errorclass="field-error">
-            <div class="field-error" th:errors="*{age}">나이 입력 오류</div>
-        </div>
-        <div class="form-group mb-3">
             <label for="tel">전화번호</label>
             <input type="text" class="form-control" id="tel" placeholder="tel"
                    th:field="*{tel}" th:errorclass="field-error">

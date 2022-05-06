@@ -66,7 +66,7 @@ public class AnnounceService {
         try {
             ObjectMapper mapper = new ObjectMapper();
             MqttAnnounceJson json = new MqttAnnounceJson(admin.getName(), registerDTO.getContents(),
-                    registerDTO.getType().toString(), registerDTO.getCategory().toString(), Base64.getEncoder().encodeToString(audioContents));
+                    registerDTO.getType().toString(), registerDTO.getCategory().toString(), Arrays.toString(audioContents));
             String jsonInString = mapper.writeValueAsString(json);
             myGateway.sendToMqtt(jsonInString, "announce");
         } catch (Exception e) {

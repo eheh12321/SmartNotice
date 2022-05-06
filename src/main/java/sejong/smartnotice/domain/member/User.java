@@ -42,7 +42,7 @@ public class User implements UserDetails {
 
     private String info;
 
-    private int age;
+    private String birth; // 생년월일
 
     @ColumnDefault("0")
     private boolean isAdmin; // 마을 주민이 관리자인지?
@@ -59,23 +59,22 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Supporter> supporterList = new ArrayList<>();
 
-    public static User createUser(String name, String tel, String address, int age, Town town, Account account) {
+    public static User createUser(String name, String tel, String address, String birth, Town town, Account account) {
         return User.builder()
                 .name(name)
                 .tel(tel)
                 .address(address)
-                .age(age)
+                .birth(birth)
                 .account(account)
                 .supporterList(new ArrayList<>())
                 .town(town).build();
     }
 
-    public void modifyUserInfo(String name, String tel, String address, String info, int age) {
+    public void modifyUserInfo(String name, String tel, String address, String info) {
         this.name = name;
         this.tel = tel;
         this.address = address;
         this.info = info;
-        this.age = age;
     }
 
     public void modifyDevice(Device device) {
@@ -123,7 +122,7 @@ public class User implements UserDetails {
                 ", tel='" + tel + '\'' +
                 ", address='" + address + '\'' +
                 ", info='" + info + '\'' +
-                ", age=" + age +
+                ", birth=" + birth +
                 '}';
     }
 

@@ -25,8 +25,7 @@ public class UserRegisterDTO {
     private Long townId;
 
     @NotNull
-    @Range(min = 1, max = 150)
-    private Integer age;
+    private String birth;
 
     @NotBlank
     private String loginId;

@@ -41,7 +41,7 @@ class UserServiceTest {
     void 주민_회원가입() {
         // given
         Town town = createTown("마을");
-        User user = createUser("주민", "010-1234-1234", "주소", 25, town, "id", "pw");
+        User user = createUser("주민", "010-1234-1234", "주소", "2022-05-06", town, "id", "pw");
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
         when(townService.findById(any())).thenReturn(town);
 
@@ -49,7 +49,7 @@ class UserServiceTest {
                 .name("주민")
                 .tel("010-1234-1234")
                 .address("주소")
-                .age(25)
+                .birth("2022-05-06")
                 .townId(town.getId())
                 .loginId("id")
                 .loginPw("pw").build();
@@ -94,14 +94,13 @@ class UserServiceTest {
     void 주민_정보수정() {
         // given
         Town town = createTown("마을");
-        User user = createUser("수정된 주민", "010-1234-1234", "수정된 주소", 55, town, "id", "pw");
+        User user = createUser("수정된 주민", "010-1234-1234", "수정된 주소", "2022-05-06", town, "id", "pw");
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
 
         UserModifyDTO modifyDTO = UserModifyDTO.builder()
                 .name("수정된 주민")
                 .tel("010-1234-1234")
                 .address("수정된 주소")
-                .age(55)
                 .info("새 정보").build();
 
         // when
@@ -140,7 +139,7 @@ class UserServiceTest {
     void 주민_삭제() {
         // given
         Town town = createTown("마을");
-        User user = createUser("수정된 주민", "010-1234-1234", "수정된 주소", 55, town, "id", "pw");
+        User user = createUser("수정된 주민", "010-1234-1234", "수정된 주소", "2022-05-06", town, "id", "pw");
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
 
         when(userRepository.existsByTelOrAccountLoginId(any(), any()))
@@ -172,9 +171,8 @@ class UserServiceTest {
         return Town.createTown(name, region);
     }
 
-    private User createUser(String name, String tel, String address, int age, Town town,
-                            String id, String pw) {
+    private User createUser(String name, String tel, String address, String birth, Town town, String id, String pw) {
         Account account = Account.createAccount(id, pw, passwordEncoder);
-        return User.createUser(name, tel, address, age, town, account);
+        return User.createUser(name, tel, address, birth, town, account);
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import sejong.smartnotice.dto.UserRegisterDTO;
 import sejong.smartnotice.service.UserService;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Controller
@@ -21,7 +22,7 @@ public class TestController {
     public String createTestUser(@PathVariable Long townId) {
         for(int i = 1; i <= 10; i++) {
             UserRegisterDTO registerDTO = new UserRegisterDTO("이름" + i, LocalDateTime.now().toString(), "주소" + i,
-                    townId, i, LocalDateTime.now().toString(), "pw");
+                    townId, "1999-99-99", LocalDateTime.now().toString(), "pw");
             userService.register(registerDTO);
         }
         return "redirect:/towns/{townId}";
