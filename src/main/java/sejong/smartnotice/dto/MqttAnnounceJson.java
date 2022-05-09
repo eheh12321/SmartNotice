@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 public class MqttAnnounceJson {
     private String producer;
     private String title;
-    private String message;
+    private String textData;
+    private String voiceData;
     private String type;
     private String status;
-    private String data;
     private String announceTime;
 }

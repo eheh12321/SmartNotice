@@ -44,11 +44,11 @@
                 <th>Topic</th>
                 <th>Producer</th>
                 <th>Title</th>
-                <th>Message</th>
+                <th>Text Data</th>
                 <th>Type</th>
                 <th>status</th>
                 <th>announceTime</th>
-                <th>Base64 Data</th>
+                <th>Voice Data</th>
             </tr>
             </thead>
             <tbody>
@@ -56,11 +56,11 @@
                 <td th:text="${message.getTopic()}"></td>
                 <td th:text="${message.getProducer()}"></td>
                 <td th:text="${message.getTitle()}"></td>
-                <td th:text="${message.getMessage()}"></td>
+                <td th:text="${message.getTextData()}"></td>
                 <td th:text="${message.getType()}"></td>
-                <td th:text="${message.getStatus()}"></td>
                 <td th:text="${message.getAnnounceTime()}"></td>
-                <td th:text="${message.getData()}"></td>
+                <td th:text="${message.getStatus()}"></td>
+                <td th:text="${message.getVoiceData()}"></td>
             </tr>
             </tbody>
         </table>

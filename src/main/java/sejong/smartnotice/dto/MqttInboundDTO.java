@@ -10,8 +10,8 @@ public class MqttInboundDTO {
 
     private String producer;
     private String title;
-    private String message; // 문자 내용
-    private String data; // base64 데이터
+    private String textData; // 문자 내용
+    private String voiceData; // base64 데이터
 
     private String type; // 문자 / 음성
     private String status; // 일반 / 재난

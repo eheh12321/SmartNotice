@@ -49,6 +49,9 @@
     </div>
     <hr>
     <form method="post" action="/announces/voice" role="form">
+        <label for="title">제목</label>
+        <input type="text" id="title" name="title" class="form-control" placeholder="방송 제목 입력" value="[임시 제목]">
+        <hr>
         <p>재난 유무 선택</p>
         <div class="form-check">
             <input class="form-check-input" type="radio" name="category" id="radio1" value="NORMAL" checked>
@@ -73,7 +76,7 @@
         <input type="hidden" th:value="${admin.getId()}" name="adminId">
         <input type="hidden" name="category" value="NORMAL">
         <input type="hidden" name="type" value="VOICE">
-        <input type="hidden" name="contents" value="[Voice Message]">
+        <input type="hidden" name="textData" value="[Voice Message]">
         <hr>
         <div class="card shadow mb-4">
             <div class="card-header py-3">
@@ -225,7 +228,7 @@
                     if(confirm("녹음한 파일로 방송 하시겠습니까??")) {
                         var input = document.createElement('input');
                         input.type = 'hidden';
-                        input.name = 'data';
+                        input.name = 'voiceData';
                         input.value = result.toString().replace("data:audio/mp3;;base64,", '');
                         formObj.appendChild(input);
 
@@ -283,7 +286,7 @@
             if(confirm("첨부한 파일로 방송하시겠습니까??")) {
                 var input = document.createElement('input');
                 input.type = 'hidden';
-                input.name = 'data';
+                input.name = 'voiceData';
                 input.value = audioContents;
                 formObj.appendChild(input);
                 formObj.submit();

@@ -52,7 +52,7 @@
         <input type="text" id="title" name="title" class="form-control" placeholder="방송 제목 입력">
         <hr>
         <label for="inputText">내용</label>
-        <input type="text" id="inputText" name="text" class="form-control" placeholder="방송 내용 입력 (1000자 제한)">
+        <input type="text" id="inputText" name="textData" class="form-control" placeholder="방송 내용 입력 (1000자 제한)">
         <hr>
         <p>재난 유무 선택</p>
         <div class="form-check">
@@ -149,9 +149,9 @@
 
             if(confirm("문자 방송 하시겠습니까?")) {
                 console.log(lastInputText);
-                formObj.append($('<input/>', {type:'hidden', name:'contents', value:inputText}));
+                formObj.append($('<input/>', {type:'hidden', name:'textData', value:inputText}));
                 if(lastInputText != null && inputText == lastInputText) {
-                    formObj.append($('<input/>', {type:'hidden', name:'data', value:lastData}));
+                    formObj.append($('<input/>', {type:'hidden', name:'voiceData', value:lastData}));
                 }
                 formObj.submit();
             }

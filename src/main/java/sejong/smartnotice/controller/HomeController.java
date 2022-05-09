@@ -84,10 +84,7 @@ public class HomeController {
         Say say2 = new Say.Builder("안녕하세요. 테스트 문장입니다. 문장이 끝나면 통화가 종료됩니다. 안녕히 계세요").voice(Say.Voice.POLLY_SEOYEON).build();
         VoiceResponse response = new VoiceResponse.Builder().say(say1).pause(pause).say(say2).build();
 
-        String stringXml = response.toXml();
-        log.info("xml: {}", stringXml);
-
-        Call call = Call.creator(new PhoneNumber(to), new PhoneNumber(from), new Twiml(stringXml)).create();
+        Call call = Call.creator(new PhoneNumber(to), new PhoneNumber(from), new Twiml(response.toXml())).create();
 
         System.out.println(call.getSid());
         return "SUCCESS";

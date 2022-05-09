@@ -48,25 +48,25 @@ public class AnnounceService {
 
         // == 문자 방송인 경우 ==
         if(registerDTO.getType().equals(AnnounceType.TEXT)) {
-            if(registerDTO.getData() != null) {
+            if(registerDTO.getVoiceData() != null) {
                 log.info("기존 파일 이용");
-                audioContents = Base64.getDecoder().decode(registerDTO.getData());
+                audioContents = Base64.getDecoder().decode(registerDTO.getVoiceData());
                 saveAudioContents(audioContents, fileName, path);
             } else {
                 log.info("새로 생성");
-                AnnounceOutputDTO outputDTO = makeTextAnnounce(registerDTO.getContents());
+                AnnounceOutputDTO outputDTO = makeTextAnnounce(registerDTO.getTextData());
                 audioContents = outputDTO.getAudioContents();
                 saveAudioContents(audioContents, fileName, path); // 저장
             }
         } else { // == 음성 방송인 경우 ==
-            audioContents = Base64.getDecoder().decode(registerDTO.getData());
+            audioContents = Base64.getDecoder().decode(registerDTO.getVoiceData());
             saveAudioContents(audioContents, fileName, path);
         }
 
         // JSON 변환 및 MQTT 전송
         try {
             ObjectMapper mapper = new ObjectMapper();
-            MqttAnnounceJson json = new MqttAnnounceJson(admin.getName(), registerDTO.getTitle(), registerDTO.getContents(),
+            MqttAnnounceJson json = new MqttAnnounceJson(admin.getName(), registerDTO.getTitle(), registerDTO.getTextData(),
                     registerDTO.getType().toString(), registerDTO.getCategory().toString(), Base64.getEncoder().encodeToString(audioContents), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:ss:ss")));
             String jsonInString = mapper.writeValueAsString(json);
             myGateway.sendToMqtt(jsonInString, "announce");
@@ -83,7 +83,7 @@ public class AnnounceService {
         }
 
         // 3. 방송 생성
-        Announce announce = Announce.makeAnnounce(admin.getName(), registerDTO.getContents(), registerDTO.getCategory(),
+        Announce announce = Announce.makeAnnounce(admin.getName(), registerDTO.getTextData(), registerDTO.getCategory(),
                 registerDTO.getType(), townList, path, fileName, registerDTO.getTitle());
         announceRepository.save(announce);
 
