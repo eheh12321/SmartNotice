@@ -24,7 +24,6 @@ import sejong.smartnotice.dto.MqttInboundDTO;
 import sejong.smartnotice.service.AdminService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -91,22 +90,20 @@ public class HomeController {
     }
 
     @GetMapping("/login")
-    public String adminLoginForm(String error, String logout, Model model) {
+    public String loginForm(String error, String logout, Model model) {
         log.info("== 사이트 로그인 == ");
         log.info("접속 시각: {}", LocalDateTime.now());
         log.info("접속 IP: {}", getUserIp());
-        log.info("error: {}", error);
-        log.info("logout: {}", logout);
-        log.info("====================");
-
         if(error != null) {
-            model.addAttribute("error", "Check your Account");
+            log.info(">> 로그인 실패");
+            model.addAttribute("error", "error");
         }
         if(logout != null) {
-            log.info("== 관리자 로그아웃 ==");
-            model.addAttribute("logout", "Logout");
+            log.info(">> 로그아웃");
+            model.addAttribute("logout", "logout");
         }
-        return "auth-login-basic";
+        log.info("====================");
+        return "login";
     }
 
     @PostMapping("/logout")

@@ -1,38 +1,132 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragment/header :: common_header ('관제 사이트 로그인')"/>
-<body style="background-color: #3c3c3c;">
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
 
-<div class="container" style="margin-top: 10em">
-    <div class="h-100 p-5 bg-light border rounded-3">
-        <h1>관제 사이트 로그인 (/**)</h1>
-        <hr>
-        <div th:if="${error}" style="color: red">아이디 혹은 비밀번호를 확인해 주세요</div>
-        <div th:if="${logout}" style="color: red">로그아웃 되었습니다</div>
-        <hr>
-        <form method="post">
-            <div class="form-group mb-3">
-                <label for="loginId">아이디</label>
-                <input type="text" id="loginId" name="username" placeholder="loginId" class="form-control">
+    <title>로그인</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/resources/img/favicon/favicon.ico"/>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"/>
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" href="/resources/vendor/fonts/boxicons.css"/>
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="/resources/vendor/css/core.css" class="template-customizer-core-css"/>
+    <link rel="stylesheet" href="/resources/vendor/css/theme-default.css" class="template-customizer-theme-css"/>
+    <link rel="stylesheet" href="/resources/css/demo.css"/>
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="/resources/vendor/libs/perfect-scrollbar/perfect-scrollbar.css"/>
+
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="/resources/vendor/css/pages/page-auth.css"/>
+
+    <!-- Helpers -->
+    <script src="/resources/vendor/js/helpers.js"></script>
+
+    <script src="/resources/js/config.js"></script>
+</head>
+
+<body>
+<!-- Icons -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+    </symbol>
+    <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+    </symbol>
+</svg>
+
+<!-- Content -->
+<div class="container-xxl">
+    <div class="authentication-wrapper authentication-basic container-p-y">
+        <div class="authentication-inner">
+            <!-- Register -->
+            <div class="card">
+                <div class="card-body">
+                    <!-- Logo -->
+                    <div class="app-brand justify-content-center">
+                        <a href="/login" class="app-brand-link gap-2">
+                          <span class="app-brand-logo demo">
+                            <span class="app-brand-text demo text-body fw-bolder">로그인</span>
+                          </span>
+                        </a>
+                    </div>
+
+                    <div class="alert alert-danger d-flex align-items-center" role="alert" th:if="${error}">
+                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+                        <div>아이디 혹은 비밀번호를 확인해 주세요.</div>
+                    </div>
+                    <div class="alert alert-success d-flex align-items-center" role="alert" th:if="${logout}">
+                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+                        <div>로그아웃 되었습니다</div>
+                    </div>
+
+                    <form id="formAuthentication" class="mb-3" action="" method="POST">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">아이디</label>
+                            <input
+                                    type="text"
+                                    class="form-control"
+                                    id="username"
+                                    name="username"
+                                    placeholder="아이디를 입력하세요"
+                                    autofocus
+                            />
+                        </div>
+                        <div class="mb-3 form-password-toggle">
+                            <div class="d-flex justify-content-between">
+                                <label class="form-label" for="password">비밀번호</label>
+                            </div>
+                            <div class="input-group input-group-merge">
+                                <input
+                                        type="password"
+                                        id="password"
+                                        class="form-control"
+                                        name="password"
+                                        placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                                        aria-describedby="password"
+                                />
+                                <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <button class="btn btn-primary d-grid w-100" type="submit">로그인</button>
+                        </div>
+                    </form>
+
+                    <p class="text-center">
+                        <span>회원이 아니십니까?</span>
+                        <a href="/register/new">
+                            <span>회원가입</span>
+                        </a>
+                    </p>
+                </div>
             </div>
-            <div class="form-group mb-3">
-                <label for="loginPw">비밀번호</label>
-                <input type="password" id="loginPw" name="password" placeholder="loginPw" class="form-control">
-            </div>
-            <hr>
-            <button class="btn btn-primary" type="submit">로그인</button>
-            <button class="btn btn-danger" type="button" style="float: right" onclick="location.href='/register'">회원가입</button>
-        </form>
-        <hr>
-        <button class="btn btn-warning" type="button" style="width: 100%" onclick="location.href='/u/login'">마을 주민 로그인 화면으로</button>
-        <br>
-        <button class="btn btn-warning" type="button" style="width: 100%; margin-top: 1em" onclick="location.href='/s/login'">보호자 로그인 화면으로</button>
-        <br>
-        <button class="btn btn-danger" type="button" style="width: 100%; margin-top: 1em" onclick="location.href='/test-login'">로그인 템플릿</button>
-        <button class="btn btn-danger" type="button" style="width: 100%; margin-top: 1em" onclick="location.href='/test-index'">인덱스 템플릿</button>
-        <br>
-        <button class="btn btn-success" type="button" style="width: 100%; margin-top: 1em" onclick="location.href='/test-mqtt'">MQTT TEST</button>
+        </div>
     </div>
 </div>
+
+<script src="/resources/vendor/libs/jquery/jquery.js"></script>
+<script src="/resources/vendor/libs/popper/popper.js"></script>
+<script src="/resources/vendor/js/bootstrap.js"></script>
+<script src="/resources/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+
+<script src="/resources/vendor/js/menu.js"></script>
+
+<script src="/resources/js/main.js"></script>
+
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
 </body>
 </html>
