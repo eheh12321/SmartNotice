@@ -37,6 +37,9 @@ dependencies {
 	implementation platform('com.google.cloud:libraries-bom:25.2.0')
 	implementation 'com.google.cloud:google-cloud-storage'
 
+	// Twilio API
+	implementation("com.twilio.sdk:twilio:8.0.+")
+
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'mysql:mysql-connector-java'
 	annotationProcessor 'org.projectlombok:lombok'

@@ -1,8 +1,15 @@
 package sejong.smartnotice.controller;
 
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Call;
+import com.twilio.twiml.VoiceResponse;
+import com.twilio.twiml.voice.Pause;
+import com.twilio.twiml.voice.Say;
+import com.twilio.type.PhoneNumber;
+import com.twilio.type.Twiml;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,6 +24,8 @@ import sejong.smartnotice.dto.MqttInboundDTO;
 import sejong.smartnotice.service.AdminService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -47,6 +56,41 @@ public class HomeController {
         log.info("메시지 발신: {}", getUserIp());
         myGateway.sendToMqtt(content, topic);
         return "redirect:/test-mqtt";
+    }
+
+    @Value("${twilio.sid}")
+    private String ACCOUNT_SID;
+
+    @Value("${twilio.token}")
+    private String AUTH_TOKEN;
+
+    @Value("${twilio.myTel}")
+    private String MY_TEL;
+
+    @Value("${twilio.verifiedToTel}")
+    private String TO_TEL;
+
+    @ResponseBody
+    @PostMapping("/test-twilio")
+    public String testTwilioPage() throws URISyntaxException {
+        log.info("== Twilio 호출 ==");
+        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+
+        String from = MY_TEL;
+        String to = TO_TEL;
+
+        Pause pause = new Pause.Builder().length(2).build();
+        Say say1 = new Say.Builder("안녕하세요. 테스트 문장입니다. 이 문장은 두번 반복 재생됩니다.").voice(Say.Voice.POLLY_SEOYEON).build();
+        Say say2 = new Say.Builder("안녕하세요. 테스트 문장입니다. 문장이 끝나면 통화가 종료됩니다. 안녕히 계세요").voice(Say.Voice.POLLY_SEOYEON).build();
+        VoiceResponse response = new VoiceResponse.Builder().say(say1).pause(pause).say(say2).build();
+
+        String stringXml = response.toXml();
+        log.info("xml: {}", stringXml);
+
+        Call call = Call.creator(new PhoneNumber(to), new PhoneNumber(from), new Twiml(stringXml)).create();
+
+        System.out.println(call.getSid());
+        return "SUCCESS";
     }
 
     @GetMapping("/login")
