@@ -149,7 +149,6 @@
 
             if(confirm("문자 방송 하시겠습니까?")) {
                 console.log(lastInputText);
-                formObj.append($('<input/>', {type:'hidden', name:'textData', value:inputText}));
                 if(lastInputText != null && inputText == lastInputText) {
                     formObj.append($('<input/>', {type:'hidden', name:'voiceData', value:lastData}));
                 }

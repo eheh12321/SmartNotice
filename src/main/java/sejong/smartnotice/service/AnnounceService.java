@@ -67,7 +67,7 @@ public class AnnounceService {
         try {
             ObjectMapper mapper = new ObjectMapper();
             MqttAnnounceJson json = new MqttAnnounceJson(admin.getName(), registerDTO.getTitle(), registerDTO.getTextData(),
-                    registerDTO.getType().toString(), registerDTO.getCategory().toString(), Base64.getEncoder().encodeToString(audioContents), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:ss:ss")));
+                    Base64.getEncoder().encodeToString(audioContents), registerDTO.getType().toString(), registerDTO.getCategory().toString(), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:ss:ss")));
             String jsonInString = mapper.writeValueAsString(json);
             myGateway.sendToMqtt(jsonInString, "announce");
         } catch (Exception e) {
