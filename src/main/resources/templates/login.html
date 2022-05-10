@@ -54,22 +54,20 @@
             <!-- Register -->
             <div class="card">
                 <div class="card-body">
-                    <!-- Logo -->
+
                     <div class="app-brand justify-content-center">
                         <a href="/login" class="app-brand-link gap-2">
-                          <span class="app-brand-logo demo">
                             <span class="app-brand-text demo text-body fw-bolder">로그인</span>
-                          </span>
                         </a>
                     </div>
 
-                    <div class="alert alert-danger d-flex align-items-center" role="alert" th:if="${error}">
+                    <div class="alert alert-danger d-flex align-items-center" role="alert" th:if="${errorMessage}">
                         <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
-                        <div>아이디 혹은 비밀번호를 확인해 주세요.</div>
+                        <div th:text="${errorMessage}">로그인 실패 문구</div>
                     </div>
-                    <div class="alert alert-success d-flex align-items-center" role="alert" th:if="${logout}">
+                    <div class="alert alert-success d-flex align-items-center" role="alert" th:if="${logoutMessage}">
                         <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
-                        <div>로그아웃 되었습니다</div>
+                        <div th:text="${logoutMessage}">로그아웃 문구</div>
                     </div>
 
                     <form id="formAuthentication" class="mb-3" action="" method="POST">
@@ -107,7 +105,7 @@
 
                     <p class="text-center">
                         <span>회원이 아니십니까?</span>
-                        <a href="/register/new">
+                        <a href="/register">
                             <span>회원가입</span>
                         </a>
                     </p>

@@ -10,6 +10,7 @@ import com.twilio.type.Twiml;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,6 +22,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import sejong.smartnotice.config.MqttConfig;
 import sejong.smartnotice.dto.AdminRegisterDTO;
 import sejong.smartnotice.dto.MqttInboundDTO;
+import sejong.smartnotice.handler.AdminAuthenticationFailureHandler;
 import sejong.smartnotice.service.AdminService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +36,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HomeController {
 
-    private final AdminService adminService;
     private final List<MqttInboundDTO> mqttInboundDTOList;
     private final MqttConfig.MyGateway myGateway;
 
@@ -45,16 +46,9 @@ public class HomeController {
         return "mqtt";
     }
 
-    @GetMapping("/register/new")
+    @GetMapping("/register")
     public String SelectRegisterAuthPage() {
-        return "Register-authority";
-    }
-
-    @PostMapping("/test-mqtt")
-    public String testMqttOutbound(@RequestParam String content, @RequestParam String topic) {
-        log.info("메시지 발신: {}", getUserIp());
-        myGateway.sendToMqtt(content, topic);
-        return "redirect:/test-mqtt";
+        return "register-authority";
     }
 
     @Value("${twilio.sid}")
@@ -90,19 +84,16 @@ public class HomeController {
     }
 
     @GetMapping("/login")
-    public String loginForm(String error, String logout, Model model) {
+    public String loginForm(@ModelAttribute("error") String errorMessage, @ModelAttribute("logout") String logoutMessage, Model model) {
         log.info("== 사이트 로그인 == ");
         log.info("접속 시각: {}", LocalDateTime.now());
         log.info("접속 IP: {}", getUserIp());
-        if(error != null) {
-            log.info(">> 로그인 실패");
-            model.addAttribute("error", "error");
+        if(errorMessage != null && errorMessage.length() != 0) {
+            model.addAttribute("errorMessage", errorMessage);
         }
-        if(logout != null) {
-            log.info(">> 로그아웃");
-            model.addAttribute("logout", "logout");
+        if(logoutMessage != null && logoutMessage.length() != 0) {
+            model.addAttribute("logoutMessage", logoutMessage);
         }
-        log.info("====================");
         return "login";
     }
 
@@ -111,30 +102,46 @@ public class HomeController {
         log.info("== 관리자 로그아웃 ==");
     }
 
-    @GetMapping("/register")
-    public String registerForm(Model model) {
-        model.addAttribute("admin", new AdminRegisterDTO());
-        return "register";
+    @PostMapping("/test-mqtt")
+    public String testMqttOutbound(@RequestParam String content, @RequestParam String topic) {
+        log.info("메시지 발신: {}", getUserIp());
+        myGateway.sendToMqtt(content, topic);
+        return "redirect:/test-mqtt";
     }
-    
-    // 관리자 회원가입
-    @PostMapping("/register")
-    public String register(@Validated @ModelAttribute("admin") AdminRegisterDTO registerDTO,
-                                BindingResult bindingResult) {
-        log.info("<<중복 검증>>");
-        if(adminService.findByLoginId(registerDTO.getLoginId()) != null) {
-            bindingResult.addError(new FieldError("admin", "loginId", registerDTO.getLoginId(), false, null, null, "중복된 아이디가 존재합니다"));
-        }
-        if(adminService.findByTel(registerDTO.getTel()) != null) {
-            bindingResult.addError(new FieldError("admin", "tel", registerDTO.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
-        }
-        if(bindingResult.hasErrors()) {
-            log.warn("검증 오류 발생: {}", bindingResult);
-            return "register";
-        }
-        adminService.register(registerDTO);
-        return "redirect:/";
+
+    @GetMapping("/register/admin")
+    public String registerAdminForm() {
+        return "register-admin";
     }
+
+    @GetMapping("/register/user")
+    public String registerUserForm() {
+        return "/register";
+    }
+
+    @GetMapping("/register/supporter")
+    public String registerSupporterForm() {
+        return "/register";
+    }
+
+//    // 관리자 회원가입
+//    @PostMapping("/register")
+//    public String register(@Validated @ModelAttribute("admin") AdminRegisterDTO registerDTO,
+//                                BindingResult bindingResult) {
+//        log.info("<<중복 검증>>");
+//        if(adminService.findByLoginId(registerDTO.getLoginId()) != null) {
+//            bindingResult.addError(new FieldError("admin", "loginId", registerDTO.getLoginId(), false, null, null, "중복된 아이디가 존재합니다"));
+//        }
+//        if(adminService.findByTel(registerDTO.getTel()) != null) {
+//            bindingResult.addError(new FieldError("admin", "tel", registerDTO.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
+//        }
+//        if(bindingResult.hasErrors()) {
+//            log.warn("검증 오류 발생: {}", bindingResult);
+//            return "register";
+//        }
+//        adminService.register(registerDTO);
+//        return "redirect:/";
+//    }
 
     public String getUserIp() {
 
