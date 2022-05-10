@@ -19,6 +19,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sejong.smartnotice.config.MqttConfig;
 import sejong.smartnotice.dto.AdminRegisterDTO;
 import sejong.smartnotice.dto.MqttInboundDTO;
@@ -26,6 +27,7 @@ import sejong.smartnotice.handler.AdminAuthenticationFailureHandler;
 import sejong.smartnotice.service.AdminService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -84,7 +86,9 @@ public class HomeController {
     }
 
     @GetMapping("/login")
-    public String loginForm(@ModelAttribute("error") String errorMessage, @ModelAttribute("logout") String logoutMessage, Model model) {
+    public String loginForm(@ModelAttribute("error") String errorMessage,
+                            @ModelAttribute("logout") String logoutMessage,
+                            String registerMessage, Model model) {
         log.info("== 사이트 로그인 == ");
         log.info("접속 시각: {}", LocalDateTime.now());
         log.info("접속 IP: {}", getUserIp());
@@ -93,6 +97,9 @@ public class HomeController {
         }
         if(logoutMessage != null && logoutMessage.length() != 0) {
             model.addAttribute("logoutMessage", logoutMessage);
+        }
+        if(registerMessage != null && registerMessage.length() != 0) {
+            model.addAttribute("registerMessage", registerMessage);
         }
         return "login";
     }
@@ -115,7 +122,8 @@ public class HomeController {
     }
 
     @PostMapping("/register/admin")
-    public String registerAdmin() {
+    public String registerAdmin(RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("registerMessage", "정상적으로 회원가입 되었습니다!");
         return "redirect:/login";
     }
 
@@ -125,7 +133,8 @@ public class HomeController {
     }
 
     @PostMapping("/register/user")
-    public String registerUser() {
+    public String registerUser(RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("registerMessage", "정상적으로 회원가입 되었습니다!");
         return "redirect:/login";
     }
 
@@ -135,9 +144,12 @@ public class HomeController {
     }
 
     @PostMapping("/register/supporter")
-    public String registerSupporter() {
+    public String registerSupporter(RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("registerMessage", "정상적으로 회원가입 되었습니다!");
         return "redirect:/login";
     }
+
+
 //    // 관리자 회원가입
 //    @PostMapping("/register")
 //    public String register(@Validated @ModelAttribute("admin") AdminRegisterDTO registerDTO,

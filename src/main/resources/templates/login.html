@@ -69,7 +69,10 @@
                         <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
                         <div th:text="${logoutMessage}">로그아웃 문구</div>
                     </div>
-
+                    <div class="alert alert-info d-flex align-items-center" role="alert" th:if="${registerMessage}">
+                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+                        <div th:text="${registerMessage}">로그아웃 문구</div>
+                    </div>
                     <form id="formAuthentication" class="mb-3" action="" method="POST">
                         <div class="mb-3">
                             <label for="username" class="form-label">아이디</label>
