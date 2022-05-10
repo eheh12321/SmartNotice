@@ -114,16 +114,30 @@ public class HomeController {
         return "register-admin";
     }
 
+    @PostMapping("/register/admin")
+    public String registerAdmin() {
+        return "redirect:/login";
+    }
+
     @GetMapping("/register/user")
     public String registerUserForm() {
-        return "/register";
+        return "register-user";
+    }
+
+    @PostMapping("/register/user")
+    public String registerUser() {
+        return "redirect:/login";
     }
 
     @GetMapping("/register/supporter")
     public String registerSupporterForm() {
-        return "/register";
+        return "register-supporter";
     }
 
+    @PostMapping("/register/supporter")
+    public String registerSupporter() {
+        return "redirect:/login";
+    }
 //    // 관리자 회원가입
 //    @PostMapping("/register")
 //    public String register(@Validated @ModelAttribute("admin") AdminRegisterDTO registerDTO,

@@ -7606,6 +7606,7 @@ button:focus {
 
 .form-label,
 .col-form-label {
+  width: fit-content;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: inherit;
