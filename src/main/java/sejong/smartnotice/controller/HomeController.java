@@ -40,6 +40,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HomeController {
 
+    private final AdminService adminService;
     private final MqttService mqttService;
 
     @GetMapping("/register")
@@ -104,12 +105,25 @@ public class HomeController {
     }
 
     @GetMapping("/register/admin")
-    public String registerAdminForm() {
+    public String registerAdminForm(Model model) {
+        model.addAttribute("admin", new AdminRegisterDTO());
         return "register-admin";
     }
 
     @PostMapping("/register/admin")
-    public String registerAdmin(@Validated @ModelAttribute("admin") AdminRegisterDTO registerDTO, BindingResult bindingResult,  RedirectAttributes redirectAttributes) {
+    public String registerAdmin(@Validated @ModelAttribute("admin") AdminRegisterDTO registerDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        log.info("<<중복 검증>>");
+        if(adminService.findByLoginId(registerDTO.getLoginId()) != null) {
+            bindingResult.addError(new FieldError("admin", "loginId", registerDTO.getLoginId(), false, null, null, "중복된 아이디가 존재합니다"));
+        }
+        if(adminService.findByTel(registerDTO.getTel()) != null) {
+            bindingResult.addError(new FieldError("admin", "tel", registerDTO.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
+        }
+        if(bindingResult.hasErrors()) {
+            log.warn("검증 오류 발생: {}", bindingResult);
+            return "register-admin";
+        }
+        adminService.register(registerDTO);
         redirectAttributes.addFlashAttribute("registerMessage", "정상적으로 회원가입 되었습니다!");
         return "redirect:/login";
     }
@@ -135,26 +149,6 @@ public class HomeController {
         redirectAttributes.addFlashAttribute("registerMessage", "정상적으로 회원가입 되었습니다!");
         return "redirect:/login";
     }
-
-
-//    // 관리자 회원가입
-//    @PostMapping("/register")
-//    public String register(@Validated @ModelAttribute("admin") AdminRegisterDTO registerDTO,
-//                                BindingResult bindingResult) {
-//        log.info("<<중복 검증>>");
-//        if(adminService.findByLoginId(registerDTO.getLoginId()) != null) {
-//            bindingResult.addError(new FieldError("admin", "loginId", registerDTO.getLoginId(), false, null, null, "중복된 아이디가 존재합니다"));
-//        }
-//        if(adminService.findByTel(registerDTO.getTel()) != null) {
-//            bindingResult.addError(new FieldError("admin", "tel", registerDTO.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
-//        }
-//        if(bindingResult.hasErrors()) {
-//            log.warn("검증 오류 발생: {}", bindingResult);
-//            return "register";
-//        }
-//        adminService.register(registerDTO);
-//        return "redirect:/";
-//    }
 
     public String getUserIp() {
 
