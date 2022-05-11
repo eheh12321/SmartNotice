@@ -33,8 +33,8 @@ public class AnnounceService {
 
     private final AdminService adminService;
     private final TownService townService;
+    private final MqttService mqttService;
     private final AnnounceRepository announceRepository;
-    private final MqttConfig.MyGateway myGateway;
 
     public Long registerAnnounce(AnnounceRegisterDTO registerDTO) {
         log.info("== 문자 방송 등록 ==");
@@ -69,7 +69,7 @@ public class AnnounceService {
             MqttAnnounceJson json = new MqttAnnounceJson(admin.getName(), registerDTO.getTitle(), registerDTO.getTextData(),
                     Base64.getEncoder().encodeToString(audioContents), registerDTO.getType().toString(), registerDTO.getCategory().toString(), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:ss:ss")));
             String jsonInString = mapper.writeValueAsString(json);
-            myGateway.sendToMqtt(jsonInString, "announce");
+            mqttService.sendToMqtt(jsonInString, "announce");
         } catch (Exception e) {
             e.printStackTrace();
             log.error("JSON 변환 실패!!");

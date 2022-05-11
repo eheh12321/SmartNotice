@@ -25,9 +25,11 @@ import sejong.smartnotice.dto.AdminRegisterDTO;
 import sejong.smartnotice.dto.MqttInboundDTO;
 import sejong.smartnotice.handler.AdminAuthenticationFailureHandler;
 import sejong.smartnotice.service.AdminService;
+import sejong.smartnotice.service.MqttService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.websocket.MessageHandler;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,15 +40,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HomeController {
 
-    private final List<MqttInboundDTO> mqttInboundDTOList;
-    private final MqttConfig.MyGateway myGateway;
-
-    @GetMapping("/test-mqtt")
-    public String testMqttPage(Model model) {
-        model.addAttribute("ipAddress", getUserIp());
-        model.addAttribute("messageList", mqttInboundDTOList);
-        return "mqtt";
-    }
+    private final MqttService mqttService;
 
     @GetMapping("/register")
     public String SelectRegisterAuthPage() {
@@ -109,20 +103,13 @@ public class HomeController {
         log.info("== 관리자 로그아웃 ==");
     }
 
-    @PostMapping("/test-mqtt")
-    public String testMqttOutbound(@RequestParam String content, @RequestParam String topic) {
-        log.info("메시지 발신: {}", getUserIp());
-        myGateway.sendToMqtt(content, topic);
-        return "redirect:/test-mqtt";
-    }
-
     @GetMapping("/register/admin")
     public String registerAdminForm() {
         return "register-admin";
     }
 
     @PostMapping("/register/admin")
-    public String registerAdmin(RedirectAttributes redirectAttributes) {
+    public String registerAdmin(@Validated @ModelAttribute("admin") AdminRegisterDTO registerDTO, BindingResult bindingResult,  RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute("registerMessage", "정상적으로 회원가입 되었습니다!");
         return "redirect:/login";
     }

@@ -32,6 +32,8 @@ public class Device {
     @OneToOne(mappedBy = "device", fetch = LAZY)
     private Sensor sensor;
 
+    private String mac;
+
     // 단말기 연결상태 점검
     public Long checkError() {
         return this.getId();

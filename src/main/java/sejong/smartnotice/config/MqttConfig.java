@@ -23,8 +23,7 @@ import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.handler.annotation.Header;
 import sejong.smartnotice.dto.MqttAnnounceJson;
 import sejong.smartnotice.dto.MqttInboundDTO;
-
-import java.time.LocalDateTime;
+import sejong.smartnotice.dto.MqttInitJson;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,34 +39,44 @@ public class MqttConfig {
     @Bean
     public MessageProducer inbound() {
         MqttPahoMessageDrivenChannelAdapter adapter =
-                new MqttPahoMessageDrivenChannelAdapter("tcp://localhost:1883", "testClient", "test", "announce");
+                new MqttPahoMessageDrivenChannelAdapter("tcp://localhost:1883", "testClient", "init", "announce");
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
-        adapter.setQos(2);
+        adapter.setQos(1);
         adapter.setOutputChannel(mqttInputChannel());
         return adapter;
     }
 
-    @Bean
+    @Bean // MQTT 수신(Subscribe)
     @ServiceActivator(inputChannel = "mqttInputChannel")
     public MessageHandler handler() {
         return new MessageHandler() {
 
             @Override
             public void handleMessage(Message<?> message) throws MessagingException {
-                log.info("Headers: {}, message: {}, receiveTime: {}",
-                        message.getHeaders(), message.getPayload(), LocalDateTime.now());
+                log.info("Headers: {}, message: {}", message.getHeaders(), message.getPayload());
 
-                // JSON Parsing
+                // 수신한 토픽
+                String receivedTopic = message.getHeaders().get("mqtt_receivedTopic").toString();
+                
+                // 수신한 토픽에 맞는 JSON 파싱
                 ObjectMapper objectMapper = new ObjectMapper();
                 try {
-                    MqttAnnounceJson json = objectMapper.readValue(message.getPayload().toString(), MqttAnnounceJson.class);
+                    if(receivedTopic.equals("announce")) {
+                        log.info("announce 토픽 처리");
+                        MqttAnnounceJson json = objectMapper.readValue(message.getPayload().toString(), MqttAnnounceJson.class);
 
-                    MqttInboundDTO inboundDTO = new MqttInboundDTO(
-                            message.getHeaders().get("mqtt_receivedTopic").toString(), json.getProducer(), json.getTitle()
-                            ,json.getTextData(), json.getVoiceData(), json.getType(), json.getStatus(), json.getAnnounceTime());
-                    mqttInboundDTOList().add(inboundDTO);
+                        MqttInboundDTO inboundDTO = new MqttInboundDTO(receivedTopic, json.getProducer(), json.getTitle()
+                                ,json.getTextData(), json.getVoiceData(), json.getType(), json.getStatus(), json.getAnnounceTime());
+                        mqttInboundDTOList().add(inboundDTO);
+                    } else if (receivedTopic.equals("init")) {
+                        log.info("init 토픽 처리");
+                        MqttInitJson json = objectMapper.readValue(message.getPayload().toString(), MqttInitJson.class);
+                        log.info("client: {}, MAC: {}", json.getClient(), json.getMac());
 
+                    } else {
+                        log.error("엥?");
+                    }
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                     log.error("JSON 파싱 실패!");
@@ -97,7 +106,7 @@ public class MqttConfig {
     public MessageHandler mqttOutbound(DefaultMqttPahoClientFactory clientFactory) {
         MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler(MqttClient.generateClientId(), clientFactory);
         messageHandler.setAsync(true);
-        messageHandler.setDefaultQos(2);
+        messageHandler.setDefaultQos(1);
         return messageHandler;
     }
 
