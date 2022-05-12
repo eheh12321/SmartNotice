@@ -62,7 +62,7 @@
                             <label for="name" class="form-label">이름</label>
                             <input type="text" class="form-control" id="name" th:errorclass="field-error"
                                    th:field="*{name}"
-                                   placeholder="이름을 입력해주세요" required>
+                                   placeholder="이름을 입력해주세요" autofocus="" required>
                             <div class="py-1">
                                 <p class="mb-0 field-error" th:errors="*{name}">이름 입력 오류</p>
                             </div>

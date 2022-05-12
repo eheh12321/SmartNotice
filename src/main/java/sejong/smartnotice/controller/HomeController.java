@@ -21,11 +21,15 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sejong.smartnotice.config.MqttConfig;
+import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.dto.AdminRegisterDTO;
 import sejong.smartnotice.dto.MqttInboundDTO;
+import sejong.smartnotice.dto.UserRegisterDTO;
 import sejong.smartnotice.handler.AdminAuthenticationFailureHandler;
 import sejong.smartnotice.service.AdminService;
 import sejong.smartnotice.service.MqttService;
+import sejong.smartnotice.service.TownService;
+import sejong.smartnotice.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,6 +45,8 @@ import java.util.List;
 public class HomeController {
 
     private final AdminService adminService;
+    private final UserService userService;
+    private final TownService townService;
     private final MqttService mqttService;
 
     @GetMapping("/register")
@@ -129,12 +135,29 @@ public class HomeController {
     }
 
     @GetMapping("/register/user")
-    public String registerUserForm() {
+    public String registerUserForm(Model model) {
+        List<Town> townList = townService.findAll();
+        model.addAttribute("townList", townList);
+        model.addAttribute("user", new UserRegisterDTO());
         return "register-user";
     }
 
     @PostMapping("/register/user")
-    public String registerUser(RedirectAttributes redirectAttributes) {
+    public String registerUser(@Validated @ModelAttribute("user") UserRegisterDTO registerDTO, BindingResult bindingResult,
+                               Model model, RedirectAttributes redirectAttributes) {
+        if(userService.findByLoginId(registerDTO.getLoginId()) != null) {
+            bindingResult.addError(new FieldError("user", "loginId", registerDTO.getLoginId(), false, null, null, "중복된 아이디가 존재합니다"));
+        }
+        if(userService.findByTel(registerDTO.getTel()) != null) {
+            bindingResult.addError(new FieldError("user", "tel", registerDTO.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
+        }
+        if(bindingResult.hasErrors()) {
+            log.warn("검증 오류 발생: {}", bindingResult);
+            List<Town> townList = townService.findAll();
+            model.addAttribute("townList", townList);
+            return "register-user";
+        }
+        userService.register(registerDTO);
         redirectAttributes.addFlashAttribute("registerMessage", "정상적으로 회원가입 되었습니다!");
         return "redirect:/login";
     }
