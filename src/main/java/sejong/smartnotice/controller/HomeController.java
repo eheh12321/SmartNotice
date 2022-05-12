@@ -24,12 +24,10 @@ import sejong.smartnotice.config.MqttConfig;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.dto.AdminRegisterDTO;
 import sejong.smartnotice.dto.MqttInboundDTO;
+import sejong.smartnotice.dto.SupporterRegisterDTO;
 import sejong.smartnotice.dto.UserRegisterDTO;
 import sejong.smartnotice.handler.AdminAuthenticationFailureHandler;
-import sejong.smartnotice.service.AdminService;
-import sejong.smartnotice.service.MqttService;
-import sejong.smartnotice.service.TownService;
-import sejong.smartnotice.service.UserService;
+import sejong.smartnotice.service.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,6 +45,7 @@ public class HomeController {
     private final AdminService adminService;
     private final UserService userService;
     private final TownService townService;
+    private final SupporterService supporterService;
     private final MqttService mqttService;
 
     @GetMapping("/register")
@@ -163,12 +162,28 @@ public class HomeController {
     }
 
     @GetMapping("/register/supporter")
-    public String registerSupporterForm() {
+    public String registerSupporterForm(Model model) {
+        model.addAttribute("supporter", new SupporterRegisterDTO());
         return "register-supporter";
     }
 
     @PostMapping("/register/supporter")
-    public String registerSupporter(RedirectAttributes redirectAttributes) {
+    public String registerSupporter(@Validated @ModelAttribute("supporter") SupporterRegisterDTO registerDTO,
+                                    BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        if(supporterService.findByLoginId(registerDTO.getLoginId()) != null) {
+            bindingResult.addError(new FieldError("supporter", "loginId", registerDTO.getLoginId(), false, null, null, "중복된 아이디가 존재합니다"));
+        }
+        if(supporterService.findByTel(registerDTO.getTel()) != null) {
+            bindingResult.addError(new FieldError("supporter", "tel", registerDTO.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
+        }
+        if(userService.findByTel(registerDTO.getUserTel()) == null) { // 전화번호에 해당하는 마을 주민이 없을 경우
+            bindingResult.addError(new FieldError("supporter", "userTel", registerDTO.getUserTel(), false, null, null, "해당하는 마을 주민이 존재하지 않습니다"));
+        }
+        if(bindingResult.hasErrors()) {
+            log.warn("검증 오류 발생: {}", bindingResult);
+            return "register-supporter";
+        }
+        supporterService.register(registerDTO);
         redirectAttributes.addFlashAttribute("registerMessage", "정상적으로 회원가입 되었습니다!");
         return "redirect:/login";
     }

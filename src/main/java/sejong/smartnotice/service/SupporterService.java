@@ -43,7 +43,8 @@ public class SupporterService implements UserDetailsService {
         supporterRepository.save(supporter);
 
         // 4. 보호자와 주민 연결
-        connectWithUser(registerDTO.getUserId(), supporter);
+        User user = userService.findByTel(registerDTO.getUserTel());
+        connectWithUser(user.getId(), supporter);
         return supporter.getId();
     }
 

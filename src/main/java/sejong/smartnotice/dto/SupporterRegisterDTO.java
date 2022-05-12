@@ -23,6 +23,6 @@ public class SupporterRegisterDTO {
     @NotBlank
     private String loginPw;
 
-    @NotNull
-    private Long userId;
+    @NotBlank
+    private String userTel;
 }

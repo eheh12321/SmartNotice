@@ -33,6 +33,16 @@
     <!-- Helpers -->
     <script src="/resources/vendor/js/helpers.js"></script>
     <script src="/resources/js/config.js"></script>
+
+    <!--AJAX-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <style>
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+    </style>
 </head>
 <body>
 <!-- Content -->
@@ -46,40 +56,66 @@
                         <span class="app-brand-text demo text-body fw-bolder">보호자 회원가입</span>
                     </div>
 
-                    <form id="formAuthentication" class="mb-3" action="" method="POST">
+                    <form id="formAuthentication" class="mb-3" action="" method="POST" th:object="${supporter}">
                         <div class="mb-3">
-                            <label for="username" class="form-label">이름</label>
-                            <input type="text" class="form-control" id="username" name="username" placeholder="이름을 입력해주세요" autofocus="">
+                            <label for="name" class="form-label">이름</label>
+                            <input type="text" class="form-control" id="name" th:errorclass="field-error"
+                                   th:field="*{name}"
+                                   placeholder="이름을 입력해주세요" autofocus="" required>
+                            <div class="py-1">
+                                <p class="mb-0 field-error" th:errors="*{name}">이름 입력 오류</p>
+                            </div>
                         </div>
                         <div class="mb-3">
-                            <label for="email" class="form-label">아이디</label>
-                            <input type="text" class="form-control" id="email" name="email" placeholder="아이디를 입력해주세요">
-                        </div>
-                        <div class="mb-3 form-password-toggle">
-                            <label class="form-label" for="password">비밀번호</label>
-                            <div class="input-group input-group-merge">
-                                <input type="password" id="password" class="form-control" name="password" placeholder="············" aria-describedby="password">
-                                <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                            <label for="loginId" class="form-label">아이디</label>
+                            <input type="text" class="form-control" id="loginId" th:errorclass="field-error"
+                                   th:field="*{loginId}"
+                                   placeholder="아이디를 입력해주세요" required>
+                            <div class="py-1">
+                                <p class="mb-0 field-error" id="loginIdErrorText" th:errors="*{loginId}">아이디 입력 오류</p>
                             </div>
                         </div>
                         <div class="mb-3 form-password-toggle">
-                            <label class="form-label" for="chkPassword">비밀번호 확인</label>
+                            <label class="form-label" for="loginPw">비밀번호</label>
                             <div class="input-group input-group-merge">
-                                <input type="password" id="chkPassword" class="form-control" name="chkPassword" placeholder="············" aria-describedby="password">
-                                <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                <input type="password" id="loginPw" class="form-control" th:errorclass="field-error"
+                                       th:field="*{loginPw}"
+                                       placeholder="············" aria-describedby="password" required>
+                                <span class="input-group-text cursor-pointer"
+                                      th:unless="${#fields.hasErrors('${supporter.loginPw}')}"><i
+                                        class="bx bx-hide"></i></span>
+                                <span class="input-group-text cursor-pointer field-error"
+                                      th:if="${#fields.hasErrors('${supporter.loginPw}')}"><i class="bx bx-hide"></i></span>
+                            </div>
+                            <div class="py-1">
+                                <p class="mb-0 field-error" th:errors="*{loginPw}">비밀번호 입력 오류</p>
+                            </div>
+                        </div>
+                        <div class="mb-3 form-password-toggle">
+                            <label class="form-label" for="chkPw">비밀번호 확인</label>
+                            <div class="input-group input-group-merge">
+                                <input type="password" id="chkPw" class="form-control" name="chkPw"
+                                       placeholder="············" aria-describedby="password" required>
+                                <span id="chkPwSpan" class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="tel" class="col-md-2 col-form-label">전화번호</label>
-                            <input class="form-control" type="tel" id=tel name="tel"
-                                   maxlength="13" placeholder="숫자만 입력해주세요" oninput="autoHyphen(this)">
+                            <input class="form-control" type="tel" id=tel th:errorclass="field-error" th:field="*{tel}"
+                                   maxlength="13" placeholder="숫자만 입력해주세요" oninput="autoHyphen(this)" required>
+                            <div class="py-1">
+                                <p class="mb-0 field-error" id="telErrorText" th:errors="*{tel}">전화번호 입력 오류</p>
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="userTel" class="col-md-2 col-form-label">주민 전화번호</label>
-                            <input class="form-control" type="tel" id=userTel name="userTel"
+                            <input class="form-control" type="tel" id=userTel th:errorclass="field-error" th:field="*{userTel}"
                                    maxlength="13" placeholder="숫자만 입력해주세요" oninput="autoHyphen(this)">
+                            <div class="py-1">
+                                <p class="mb-0 field-error" id="userTelErrorText" th:errors="*{userTel}">주민 전화번호 입력 오류</p>
+                            </div>
                         </div>
-                        <button class="btn btn-primary d-grid w-100">등록</button>
+                        <button id="registerBtn" type="submit" class="btn btn-primary d-grid w-100">등록</button>
                     </form>
 
                     <p class="text-center">
@@ -101,6 +137,45 @@
             .replace(/[^0-9]/g, '')
             .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3").replace(/(\-{1,2})$/g, "");
     }
+    $(document).ready(function () {
+        $("#loginId").focusout(function () {
+            $(this).removeClass('field-error');
+            $("#loginIdErrorText").css('display', 'none');
+        });
+        $("#tel").focusout(function () {
+            $(this).removeClass('field-error');
+            $("#telErrorText").css('display', 'none');
+        });
+        $("#userTel").focusout(function () {
+            $(this).removeClass('field-error');
+            $("#userTelErrorText").css('display', 'none');
+        });
+        $("#chkPw").focus(function () {
+            $(this).val('');
+        });
+        $("#chkPw").focusout(function () {
+            validatePassword();
+        });
+        $("#registerBtn").on("click", function () {
+            if (!validatePassword()) return false; // 비밀번호 검증 실패하면 submit X
+        });
+
+        function validatePassword() {
+            var loginPw = $("#loginPw").val();
+            var chkPw = $("#chkPw").val();
+            if (loginPw == chkPw) {
+                console.log("일치!");
+                $("#chkPw").css('border-color', '');
+                $("#chkPwSpan").css('border-color', '');
+                return true;
+            } else {
+                console.log("불일치!");
+                $("#chkPw").css('border-color', 'red');
+                $("#chkPwSpan").css('border-color', 'red');
+                return false;
+            }
+        }
+    });
 </script>
 <script src="/resources/vendor/libs/jquery/jquery.js"></script>
 <script src="/resources/vendor/libs/popper/popper.js"></script>
