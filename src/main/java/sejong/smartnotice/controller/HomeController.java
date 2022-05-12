@@ -10,7 +10,6 @@ import com.twilio.type.Twiml;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,18 +19,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import sejong.smartnotice.config.MqttConfig;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.dto.AdminRegisterDTO;
-import sejong.smartnotice.dto.MqttInboundDTO;
 import sejong.smartnotice.dto.SupporterRegisterDTO;
 import sejong.smartnotice.dto.UserRegisterDTO;
-import sejong.smartnotice.handler.AdminAuthenticationFailureHandler;
 import sejong.smartnotice.service.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.websocket.MessageHandler;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -50,7 +44,7 @@ public class HomeController {
 
     @GetMapping("/register")
     public String SelectRegisterAuthPage() {
-        return "register-authority";
+        return "/register/index";
     }
 
     @Value("${twilio.sid}")
@@ -112,7 +106,7 @@ public class HomeController {
     @GetMapping("/register/admin")
     public String registerAdminForm(Model model) {
         model.addAttribute("admin", new AdminRegisterDTO());
-        return "register-admin";
+        return "/register/admin";
     }
 
     @PostMapping("/register/admin")
@@ -126,7 +120,7 @@ public class HomeController {
         }
         if(bindingResult.hasErrors()) {
             log.warn("검증 오류 발생: {}", bindingResult);
-            return "register-admin";
+            return "/register/admin";
         }
         adminService.register(registerDTO);
         redirectAttributes.addFlashAttribute("registerMessage", "정상적으로 회원가입 되었습니다!");
@@ -138,7 +132,7 @@ public class HomeController {
         List<Town> townList = townService.findAll();
         model.addAttribute("townList", townList);
         model.addAttribute("user", new UserRegisterDTO());
-        return "register-user";
+        return "register/user";
     }
 
     @PostMapping("/register/user")
@@ -154,7 +148,7 @@ public class HomeController {
             log.warn("검증 오류 발생: {}", bindingResult);
             List<Town> townList = townService.findAll();
             model.addAttribute("townList", townList);
-            return "register-user";
+            return "register/user";
         }
         userService.register(registerDTO);
         redirectAttributes.addFlashAttribute("registerMessage", "정상적으로 회원가입 되었습니다!");
@@ -164,7 +158,7 @@ public class HomeController {
     @GetMapping("/register/supporter")
     public String registerSupporterForm(Model model) {
         model.addAttribute("supporter", new SupporterRegisterDTO());
-        return "register-supporter";
+        return "/register/supporter";
     }
 
     @PostMapping("/register/supporter")
@@ -181,7 +175,7 @@ public class HomeController {
         }
         if(bindingResult.hasErrors()) {
             log.warn("검증 오류 발생: {}", bindingResult);
-            return "register-supporter";
+            return "/register/supporter";
         }
         supporterService.register(registerDTO);
         redirectAttributes.addFlashAttribute("registerMessage", "정상적으로 회원가입 되었습니다!");
