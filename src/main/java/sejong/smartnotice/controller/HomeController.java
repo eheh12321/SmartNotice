@@ -1,6 +1,7 @@
 package sejong.smartnotice.controller;
 
 import com.twilio.Twilio;
+import com.twilio.exception.ApiException;
 import com.twilio.rest.api.v2010.account.Call;
 import com.twilio.twiml.VoiceResponse;
 import com.twilio.twiml.voice.Pause;
@@ -20,6 +21,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sejong.smartnotice.domain.Town;
+import sejong.smartnotice.domain.member.Supporter;
+import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.dto.AdminRegisterDTO;
 import sejong.smartnotice.dto.SupporterRegisterDTO;
 import sejong.smartnotice.dto.UserRegisterDTO;
@@ -28,6 +31,7 @@ import sejong.smartnotice.service.*;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -60,22 +64,45 @@ public class HomeController {
     private String TO_TEL;
 
     @ResponseBody
-    @PostMapping("/test-twilio")
-    public String testTwilioPage() throws URISyntaxException {
+    @PostMapping("/emergency/{userId}")
+    public String makeEmergencyCall(@PathVariable Long userId) throws URISyntaxException {
         log.info("== Twilio 호출 ==");
+
+        // 1. 전화 대상 조회
+        User user = null;
+        try {
+            user = userService.findById(userId);
+        } catch (NullPointerException e) {
+            return "마을 주민이 존재하지 않습니다";
+        }
+
+        // 2. Twilio 초기화
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+        String from = MY_TEL; // Twilio 가상 번호
 
-        String from = MY_TEL;
-        String to = TO_TEL;
+        // 3. 주민과 연결된 보호자를 대상으로 모두 전화
+        List<Supporter> supporterList = user.getSupporterList();
+        for (Supporter supporter : supporterList) {
+            log.info("보호자 이름: {}, 번호: {}에게 알림", supporter.getName(), supporter.getTel());
+            // 형식에 맞게 전화번호 변경
+            String originalTel = supporter.getTel();
+            String localTelNum = "+82";
+            String to = localTelNum.concat(originalTel.replace("-", "").substring(1));
+            log.info("변환된 전화번호: {}", to);
 
-        Pause pause = new Pause.Builder().length(2).build();
-        Say say1 = new Say.Builder("안녕하세요. 테스트 문장입니다. 이 문장은 두번 반복 재생됩니다.").voice(Say.Voice.POLLY_SEOYEON).build();
-        Say say2 = new Say.Builder("안녕하세요. 테스트 문장입니다. 문장이 끝나면 통화가 종료됩니다. 안녕히 계세요").voice(Say.Voice.POLLY_SEOYEON).build();
-        VoiceResponse response = new VoiceResponse.Builder().say(say1).pause(pause).say(say2).build();
+            try {
+                Pause pause = new Pause.Builder().length(2).build();
+                Say say = new Say.Builder("스마트 마을 알림 시스템 긴급 알림입니다." + user.getName() + "님에게 긴급 상황이 발생했습니다.").voice(Say.Voice.POLLY_SEOYEON).build();
+                Say endMessage = new Say.Builder("스마트 마을 알림 시스템 긴급 알림입니다." + user.getName() + "님에게 긴급 상황이 발생했습니다. 문장은 여기까지입니다.").voice(Say.Voice.POLLY_SEOYEON).build();
+                VoiceResponse response = new VoiceResponse.Builder().say(say).pause(pause).say(say).pause(pause).say(endMessage).build();
 
-        Call call = Call.creator(new PhoneNumber(to), new PhoneNumber(from), new Twiml(response.toXml())).create();
-
-        System.out.println(call.getSid());
+                Call call = Call.creator(new PhoneNumber(to), new PhoneNumber(from), new Twiml(response.toXml())).create();
+                log.info("성공!: {}", call.getSid());
+            } catch (ApiException e) {
+                e.printStackTrace();
+                return "API 호출에 실패했습니다 (전화번호가 유효하지 않음)";
+            }
+        }
         return "SUCCESS";
     }
 
@@ -100,7 +127,7 @@ public class HomeController {
 
     @PostMapping("/logout")
     public void logout() {
-        log.info("== 관리자 로그아웃 ==");
+        log.info("== 로그아웃 ==");
     }
 
     @GetMapping("/register/admin")
