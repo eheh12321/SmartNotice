@@ -48,7 +48,7 @@ public class HomeController {
 
     @GetMapping("/register")
     public String SelectRegisterAuthPage() {
-        return "/register/index";
+        return "register/index";
     }
 
     @Value("${twilio.sid}")
@@ -133,7 +133,7 @@ public class HomeController {
     @GetMapping("/register/admin")
     public String registerAdminForm(Model model) {
         model.addAttribute("admin", new AdminRegisterDTO());
-        return "/register/admin";
+        return "register/admin";
     }
 
     @PostMapping("/register/admin")
@@ -147,7 +147,7 @@ public class HomeController {
         }
         if(bindingResult.hasErrors()) {
             log.warn("검증 오류 발생: {}", bindingResult);
-            return "/register/admin";
+            return "register/admin";
         }
         adminService.register(registerDTO);
         redirectAttributes.addFlashAttribute("registerMessage", "정상적으로 회원가입 되었습니다!");
@@ -185,7 +185,7 @@ public class HomeController {
     @GetMapping("/register/supporter")
     public String registerSupporterForm(Model model) {
         model.addAttribute("supporter", new SupporterRegisterDTO());
-        return "/register/supporter";
+        return "register/supporter";
     }
 
     @PostMapping("/register/supporter")
@@ -202,7 +202,7 @@ public class HomeController {
         }
         if(bindingResult.hasErrors()) {
             log.warn("검증 오류 발생: {}", bindingResult);
-            return "/register/supporter";
+            return "register/supporter";
         }
         supporterService.register(registerDTO);
         redirectAttributes.addFlashAttribute("registerMessage", "정상적으로 회원가입 되었습니다!");
