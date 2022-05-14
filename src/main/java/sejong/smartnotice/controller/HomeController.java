@@ -29,7 +29,6 @@ import sejong.smartnotice.dto.UserRegisterDTO;
 import sejong.smartnotice.service.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -181,7 +180,7 @@ public class HomeController {
         }
         userService.register(registerDTO);
         redirectAttributes.addFlashAttribute("registerMessage", "정상적으로 회원가입 되었습니다!");
-        return "redirect:/login";
+        return "redirect:/login?loginAuth=user";
     }
 
     @GetMapping("/register/supporter")
@@ -208,7 +207,7 @@ public class HomeController {
         }
         supporterService.register(registerDTO);
         redirectAttributes.addFlashAttribute("registerMessage", "정상적으로 회원가입 되었습니다!");
-        return "redirect:/login";
+        return "redirect:/login?loginAuth=supporter";
     }
 
     public String getUserIp() {

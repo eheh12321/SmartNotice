@@ -24,6 +24,7 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
         FlashMapManager flashMapManager = new SessionFlashMapManager();
         flashMapManager.saveOutputFlashMap(flashMap, request, response);
 
-        response.sendRedirect("/login");
+        String loginAuth = request.getParameter("loginAuth");
+        response.sendRedirect("/login?loginAuth=" + loginAuth);
     }
 }

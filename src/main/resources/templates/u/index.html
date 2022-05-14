@@ -11,8 +11,9 @@
 <div class="container">
     <hr>
     <div id="authInfo">
-        <form action="/u/logout" method="post">
+        <form action="/logout" method="post">
             <button type="submit" class="btn btn-danger" style="float: right">로그아웃</button>
+            <input type="hidden" name="loginAuth" value="user">
         </form>
         <b>Authenticated username: </b>
         <span sec:authentication="name"></span> <br>

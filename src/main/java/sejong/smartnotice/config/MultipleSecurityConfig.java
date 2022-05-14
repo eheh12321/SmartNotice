@@ -42,6 +42,11 @@ public class MultipleSecurityConfig {
                     .loginProcessingUrl("/u/login")
                     .successHandler(userLoginSuccessHandler())
                     .failureHandler(userLoginFailureHandler());
+
+            http.logout()
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSION_ID")
+                    .logoutSuccessHandler(userLogoutSuccessHandler());
         }
 
         @Override
@@ -57,6 +62,11 @@ public class MultipleSecurityConfig {
         @Bean
         public AuthenticationSuccessHandler userLoginSuccessHandler() {
             return new UserAuthenticationSuccessHandler();
+        }
+
+        @Bean
+        public LogoutSuccessHandler userLogoutSuccessHandler() {
+            return new CustomLogoutSuccessHandler();
         }
     }
 
@@ -79,6 +89,11 @@ public class MultipleSecurityConfig {
                     .loginProcessingUrl("/s/login")
                     .successHandler(supporterLoginSuccessHandler())
                     .failureHandler(supporterLoginFailureHandler());
+
+            http.logout()
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSION_ID")
+                    .logoutSuccessHandler(supporterLogoutSuccessHandler());
         }
 
         @Override
@@ -94,6 +109,11 @@ public class MultipleSecurityConfig {
         @Bean
         public AuthenticationSuccessHandler supporterLoginSuccessHandler() {
             return new SupporterAuthenticationSuccessHandler();
+        }
+
+        @Bean
+        public LogoutSuccessHandler supporterLogoutSuccessHandler() {
+            return new CustomLogoutSuccessHandler();
         }
     }
 
@@ -121,7 +141,7 @@ public class MultipleSecurityConfig {
             http.logout()
                     .invalidateHttpSession(true)
                     .deleteCookies("JSESSION_ID")
-                    .logoutSuccessHandler(customLogoutSuccessHandler());
+                    .logoutSuccessHandler(adminLogoutSuccessHandler());
 
             http.exceptionHandling()
                     .accessDeniedHandler(accessDeniedHandler());
@@ -143,7 +163,7 @@ public class MultipleSecurityConfig {
         }
 
         @Bean
-        public LogoutSuccessHandler customLogoutSuccessHandler() {
+        public LogoutSuccessHandler adminLogoutSuccessHandler() {
             return new CustomLogoutSuccessHandler();
         }
 
