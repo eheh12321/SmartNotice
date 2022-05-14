@@ -16,7 +16,7 @@ public class WebAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException ade) throws IOException, ServletException {
-        log.warn("접근 권한이 없습니다");
+        log.warn("접근 권한이 없습니다: {}", request.getRequestURL());
         response.sendRedirect("/login");
     }
 }

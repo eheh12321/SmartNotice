@@ -3,9 +3,6 @@ package sejong.smartnotice.handler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
-import org.springframework.security.web.savedrequest.RequestCache;
-import org.springframework.security.web.savedrequest.SavedRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,8 +12,6 @@ import java.time.LocalDateTime;
 @Slf4j
 public class SupporterAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final RequestCache requestCache = new HttpSessionRequestCache();
-
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication auth) throws IOException {
         log.info("== 보호자 로그인 성공! ==");
@@ -24,13 +19,6 @@ public class SupporterAuthenticationSuccessHandler implements AuthenticationSucc
         log.info("로그인 시각: {}", LocalDateTime.now());
         log.info("=========================");
 
-        SavedRequest savedRequest = requestCache.getRequest(request, response);
-
-        if(savedRequest != null) {
-            String targetURL = savedRequest.getRedirectUrl();
-            response.sendRedirect(targetURL);
-        } else {
-            response.sendRedirect("/s/");
-        }
+        response.sendRedirect("/s/");
     }
 }

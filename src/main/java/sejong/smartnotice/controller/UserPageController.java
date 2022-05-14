@@ -14,6 +14,7 @@ public class UserPageController {
 
     @GetMapping("/login")
     public String userLogin() {
+        log.info("== 마을 주민 로그인 ==");
         return "login";
     }
 
