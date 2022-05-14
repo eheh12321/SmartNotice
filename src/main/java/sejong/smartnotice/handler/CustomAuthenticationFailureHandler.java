@@ -15,7 +15,7 @@ import java.io.IOException;
 
 @Slf4j
 @NoArgsConstructor
-public class AdminAuthenticationFailureHandler implements AuthenticationFailureHandler {
+public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
@@ -27,6 +27,7 @@ public class AdminAuthenticationFailureHandler implements AuthenticationFailureH
             final FlashMapManager flashMapManager = new SessionFlashMapManager();
             flashMapManager.saveOutputFlashMap(flashMap, request, response);
         }
-        response.sendRedirect(request.getHeader("referer"));
+        String loginAuth = request.getParameter("loginAuth");
+        response.sendRedirect("/login?loginAuth=" + loginAuth);
     }
 }

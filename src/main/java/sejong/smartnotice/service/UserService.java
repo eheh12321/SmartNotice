@@ -29,6 +29,7 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final TownService townService;
     private final DeviceService deviceService;
+    private static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
     // 신규 주민 등록
     public Long register(UserRegisterDTO registerDTO) {
@@ -40,7 +41,7 @@ public class UserService implements UserDetailsService {
         Town town = townService.findById(registerDTO.getTownId());
 
         // 비밀번호 암호화
-        Account account = Account.createAccount(registerDTO.getLoginId(), registerDTO.getLoginPw(), new BCryptPasswordEncoder());
+        Account account = Account.createAccount(registerDTO.getLoginId(), registerDTO.getLoginPw(), PASSWORD_ENCODER);
 
         // 계정 생성 및 저장
        User user = User.createUser(registerDTO.getName(), registerDTO.getTel(),

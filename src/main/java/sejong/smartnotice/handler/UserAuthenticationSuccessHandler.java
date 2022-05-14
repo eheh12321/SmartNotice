@@ -30,7 +30,7 @@ public class UserAuthenticationSuccessHandler implements AuthenticationSuccessHa
             String targetURL = savedRequest.getRedirectUrl();
             response.sendRedirect(targetURL);
         } else {
-            response.sendRedirect("/u/");
+            response.sendRedirect("/u");
         }
     }
 }

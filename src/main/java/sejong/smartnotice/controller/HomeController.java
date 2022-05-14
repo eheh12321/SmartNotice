@@ -29,9 +29,9 @@ import sejong.smartnotice.dto.UserRegisterDTO;
 import sejong.smartnotice.service.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -109,6 +109,7 @@ public class HomeController {
     @GetMapping("/login")
     public String loginForm(@ModelAttribute("error") String errorMessage,
                             @ModelAttribute("logout") String logoutMessage,
+                            @RequestParam(required = false) String loginAuth,
                             String registerMessage, Model model) {
         log.info("== 사이트 로그인 == ");
         log.info("접속 시각: {}", LocalDateTime.now());
@@ -122,6 +123,7 @@ public class HomeController {
         if(registerMessage != null && registerMessage.length() != 0) {
             model.addAttribute("registerMessage", registerMessage);
         }
+        model.addAttribute("auth", loginAuth);
         return "login";
     }
 
