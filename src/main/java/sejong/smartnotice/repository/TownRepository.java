@@ -15,4 +15,7 @@ public interface TownRepository extends JpaRepository<Town, Long> {
     List<Town> findByNameContaining(String name);
 
     boolean existsByRegionAndName(Region region, String name);
+
+    @Query("select t from Town t join fetch t.region")
+    List<Town> findAllWithRegion();
 }

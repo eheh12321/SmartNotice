@@ -128,7 +128,7 @@ public class TownService {
     // 마을 목록 조회
     @Transactional(readOnly = true)
     public List<Town> findAll() {
-        return townRepository.findAll();
+        return townRepository.findAllWithRegion();
     }
 
     // 마을 이름 검색
