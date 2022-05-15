@@ -62,11 +62,8 @@
             <tr>
                 <th>#</th>
                 <th>방송자</th>
-                <th>방송 중요도</th>
-                <th>방송 타입</th>
                 <th>방송 내용</th>
                 <th>방송 시각</th>
-                <th>저장 경로</th>
                 <th>관리</th>
             </tr>
             </thead>
@@ -75,14 +72,57 @@
                 th:class="${announce.getCategory() == announce.getCategory.DISASTER ? 'a' : 'b'}">
                 <td th:text="${announce.getId()}"></td>
                 <td th:text="${announce.getProducer()}"></td>
-                <td th:text="${announce.getCategory()}"></td>
-                <td th:text="${announce.getType()}"></td>
                 <td th:text="${announce.getContents()}"></td>
-                <td th:text="${announce.getTime()}"></td>
-                <td th:text="${announce.getDirectory()}"></td>
+                <td th:text="${#temporals.format(announce.getTime(), 'yy/MM/dd HH:mm:ss')}"></td>
                 <td>
-                    <a href="#" th:href="@{/announces/{id} (id=${announce.getId})}"
-                       class="btn btn-success" role="button">듣기</a>
+                    <!-- Vertically Centered Modal -->
+                    <div class="col-lg-4 col-md-6">
+
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#modalCenter"
+                                th:data-bs-target="|#modalCenter_${announce.getId()}|">
+                            <i class='bx bx-play-circle bx-lg'></i>
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="modalCenter" th:id="|modalCenter_${announce.getId()}|" tabindex="-1"
+                             aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="modalCenterTitle">방송 듣기</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col mb-3">
+                                                <audio th:src="|\${announce.getDirectory()}\${announce.getFileName()}.mp3|"
+                                                       controls>방송
+                                                </audio>
+                                                <hr>
+                                                <p th:text="|방송 이름: ${announce.getTitle()}|"></p>
+                                                <p th:text="|방송타입: ${announce.getType()}|"></p>
+                                                <p th:text="|방송자: ${announce.getProducer()}|"></p>
+                                                <p th:text="|방송내용: ${announce.getContents()}|"></p>
+                                                <p th:text="|방송시각: ${#temporals.format(announce.getTime(), 'yy/MM/dd HH:mm:ss')}|"></p>
+                                                <hr>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <form th:action="@{/announces/{id}(id=${announce.id})}" method="post">
+                                            <input type="hidden" name="id" th:value="${announce.id}"/>
+                                            <input type="hidden" name="_method" value="DELETE"/>
+                                            <button class="btn btn-danger" type="submit">삭제</button>
+                                        </form>
+                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">닫기
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </td>
             </tr>
             </tbody>
