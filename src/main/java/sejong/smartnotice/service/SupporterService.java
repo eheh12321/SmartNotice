@@ -90,9 +90,9 @@ public class SupporterService implements UserDetailsService {
 
     // 보호자 목록 조회
     @Transactional(readOnly = true)
-    public List<Supporter> findAll() {
+    public List<Supporter> findAllWithUser() {
         log.info("== 보호자 전체 조회 ==");
-        return supporterRepository.findAll();
+        return supporterRepository.findAllWithUser();
     }
 
     @Transactional(readOnly = true)

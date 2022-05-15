@@ -13,6 +13,9 @@ public interface AdminRepository extends JpaRepository<Admin, Long> {
     @Query("select a from Admin a where a.name like %?1%")
     List<Admin> findByNameContaining(String name);
 
+    @Query("select a from Admin a join fetch a.atList at join fetch at.town t")
+    List<Admin> findAllWithTown();
+
     Admin findByName(String name);
 
     Admin findByAccountLoginId(String loginId);

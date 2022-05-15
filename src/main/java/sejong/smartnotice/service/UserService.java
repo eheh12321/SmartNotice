@@ -10,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.Town;
-import sejong.smartnotice.domain.device.Device;
 import sejong.smartnotice.domain.member.Account;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.dto.UserModifyDTO;
@@ -28,7 +27,6 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final TownService townService;
-    private final DeviceService deviceService;
     private static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
     // 신규 주민 등록
@@ -83,10 +81,15 @@ public class UserService implements UserDetailsService {
         return validateUserId(userId);
     }
 
-    // 마을 주민 목록 조회
     public List<User> findAll() {
         log.info("== 마을 주민 전체 조회 ==");
         return userRepository.findAll();
+    }
+
+    // 마을 주민 목록 조회 (소속 마을과 함께 fetch join)
+    public List<User> findAllWithTown() {
+        log.info("== 마을 주민 전체 조회(fetch) ==");
+        return userRepository.findAllWithTown();
     }
 
     // 마을 주민 검색(이름으로)

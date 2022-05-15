@@ -25,7 +25,7 @@ public class SupporterController {
     @GetMapping
     public String getSupporterList(Model model, @RequestParam(required = false) String name) {
         log.info("== 보호자 목록 조회 ==");
-        List<Supporter> supporterList = supporterService.findAll();
+        List<Supporter> supporterList = supporterService.findAllWithUser();
         model.addAttribute("supporterList", supporterList);
         return "supporter/list";
     }

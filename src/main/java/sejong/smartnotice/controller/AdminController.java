@@ -30,7 +30,7 @@ public class AdminController {
         if(StringUtils.hasText(name)) {
             adminList = adminService.findByName(name);
         } else {
-            adminList = adminService.findAll();
+            adminList = adminService.findAllWithTown();
         }
         model.addAttribute("adminList", adminList);
         return "admin/list";

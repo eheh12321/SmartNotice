@@ -43,7 +43,6 @@ public class HomeController {
     private final UserService userService;
     private final TownService townService;
     private final SupporterService supporterService;
-    private final MqttService mqttService;
 
     @GetMapping("/register")
     public String SelectRegisterAuthPage() {

@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AdminService implements UserDetailsService {
 
-    private final AdminRepository adminRepository;
     private final EntityManager em;
+    private final AdminRepository adminRepository;
     private static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
     // 회원가입
@@ -88,6 +88,12 @@ public class AdminService implements UserDetailsService {
     public List<Admin> findAll() {
         log.info("== 관리자 전체 목록 조회 ==");
         return adminRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Admin> findAllWithTown() {
+        log.info("== 관리자 전체 목록 조회(fetch) ==");
+        return adminRepository.findAllWithTown();
     }
 
     @Transactional(readOnly = true)

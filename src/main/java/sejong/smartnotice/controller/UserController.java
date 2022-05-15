@@ -11,7 +11,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.dto.UserModifyDTO;
-import sejong.smartnotice.service.EmergencyAlertService;
 import sejong.smartnotice.service.UserService;
 
 import java.util.List;
@@ -23,7 +22,6 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final EmergencyAlertService alertService;
 
     @GetMapping
     public String getUserList(Model model, @RequestParam(required = false) String name) {
@@ -32,7 +30,7 @@ public class UserController {
         if(StringUtils.hasText(name)) {
             userList = userService.findByName(name);
         } else {
-            userList = userService.findAll();
+            userList = userService.findAllWithTown();
         }
         model.addAttribute("userList", userList);
         return "user/list";
@@ -78,16 +76,5 @@ public class UserController {
         log.info("== 마을 주민 삭제 ==");
         userService.delete(id);
         return "redirect:/";
-    }
-
-    /**
-     * 유저 긴급호출 (테스트)
-     * http://localhost:8080/user/emergency/1
-     * (사전조건 - 유저랑 보호자랑 연결되있어야됨)
-     */
-    @GetMapping("/emergency/{userId}")
-    public void doUserEmergencyAlert(@PathVariable Long userId) {
-        User user = userService.findById(userId);
-        alertService.createAlert(user);
     }
 }
