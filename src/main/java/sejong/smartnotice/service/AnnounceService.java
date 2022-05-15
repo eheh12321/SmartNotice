@@ -145,6 +145,12 @@ public class AnnounceService {
         return announceRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
+    public List<Announce> findAllAnnounceToTown(Long townId) {
+        log.info("== 방송 목록 전체 조회(fetch) ==");
+        return announceRepository.findAllAnnounceToTown(townId);
+    }
+
     // 문자 -> 음성파일 변환
     private static byte[] synthesizeText(String text) throws Exception {
         // Instantiates a client

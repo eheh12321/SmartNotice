@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.Region;
 import sejong.smartnotice.domain.Town;
+import sejong.smartnotice.domain.announce.Announce;
 import sejong.smartnotice.domain.member.Account;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.AdminType;
@@ -21,6 +22,7 @@ import sejong.smartnotice.dto.AdminRegisterDTO;
 import sejong.smartnotice.dto.TownModifyDTO;
 import sejong.smartnotice.dto.TownRegisterDTO;
 import sejong.smartnotice.service.AdminService;
+import sejong.smartnotice.service.AnnounceService;
 import sejong.smartnotice.service.TownService;
 import sejong.smartnotice.service.UserService;
 
@@ -37,6 +39,7 @@ public class TownController {
     private final TownService townService;
     private final AdminService adminService;
     private final UserService userService;
+    private final AnnounceService announceService;
 
     @GetMapping
     public String getTownList(Model model, @RequestParam(required = false) String name) {
@@ -88,8 +91,13 @@ public class TownController {
     @GetMapping("/{id}")
     public String getTownDetail(@PathVariable Long id, Model model) {
         log.info("== 마을 상세 조회 ==");
-        Town town = townService.findById(id);
+        Town town = townService.findById(id); // 마을 정보
+        List<Admin> adminList = adminService.findAdminByTown(id); // 마을 관리자 목록
+        List<Announce> announceList = announceService.findAllAnnounceToTown(id); // 방송 정보
+
+        model.addAttribute("announceList", announceList);
         model.addAttribute("town", town);
+        model.addAttribute("adminList", adminList);
         return "town/townDetail";
     }
 
@@ -129,15 +137,10 @@ public class TownController {
     }
 
     @DeleteMapping("/{id}")
-    @ResponseBody
-    public ResponseEntity<String> remove(@PathVariable Long id) {
+    public String remove(@PathVariable Long id) {
         log.info("== 마을 삭제 ==");
-        try {
-            townService.delete(id);
-            return ResponseEntity.status(HttpStatus.OK).body("삭제 완료");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("마을 주민이 없어야 마을을 삭제할 수 있습니다");
-        }
+        townService.delete(id);
+        return "redirect:/towns";
     }
 
     // 마을 관리자 목록 조회

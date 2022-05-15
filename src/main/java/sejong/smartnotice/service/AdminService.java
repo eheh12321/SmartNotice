@@ -134,6 +134,12 @@ public class AdminService implements UserDetailsService {
     }
 
     @Transactional(readOnly = true)
+    public List<Admin> findAdminByTown(Long townId) {
+        log.info("== 마을 관리자 목록 조회(fetch) ==");
+        return adminRepository.findAdminByTown(townId);
+    }
+
+    @Transactional(readOnly = true)
     public Admin findByTel(String tel) {
         log.info("== 관리자 전화번호 조회 ==");
         return adminRepository.findByTel(tel);
