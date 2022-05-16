@@ -8,6 +8,8 @@ import sejong.smartnotice.domain.EmergencyAlert;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.repository.EmergencyAlertRepository;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @Transactional
@@ -20,5 +22,17 @@ public class EmergencyAlertService {
         EmergencyAlert alert = EmergencyAlert.createAlert(user);
         emRepository.save(alert);
         return alert.getId();
+    }
+
+    @Transactional(readOnly = true)
+    public List<EmergencyAlert> findAllWithUser() {
+        log.info("== 긴급 호출 목록 조회(fetch) ==");
+        return emRepository.findAllWithUser();
+    }
+
+    @Transactional(readOnly = true)
+    public List<EmergencyAlert> findAllWithUserByTown(Long townId) {
+        log.info("== 마을별 긴급 호출 목록 조회(fetch) ==");
+        return emRepository.findAllWithUserByTown(townId);
     }
 }

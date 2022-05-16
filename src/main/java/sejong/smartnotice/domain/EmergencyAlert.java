@@ -24,27 +24,16 @@ public class EmergencyAlert {
     private Long id;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "device_id", nullable = false)
-    private Device device;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(nullable = false)
     private LocalDateTime alertTime;
 
     public static EmergencyAlert createAlert(User user) {
-        // 마을주민 단말기 참조
-        Device device = user.getDevice();
-        // 단말기 긴급상황 표시
-        device.doAlert();
-        // Alert 생성
         EmergencyAlert alert = EmergencyAlert.builder()
-                .device(device)
+                .user(user)
                 .alertTime(LocalDateTime.now()).build();
-
-        // 마을 주민과 연결된 보호자에게 전화알림
-        List<Supporter> supporterList = user.getSupporterList();
-        for (Supporter supporter : supporterList) {
-            supporter.emergencyCall(alert); // API 들어가야됨
-        }
         return alert;
     }
 }

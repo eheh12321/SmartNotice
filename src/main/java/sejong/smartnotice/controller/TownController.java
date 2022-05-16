@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import sejong.smartnotice.domain.EmergencyAlert;
 import sejong.smartnotice.domain.Region;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.announce.Announce;
@@ -21,10 +22,7 @@ import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.dto.AdminRegisterDTO;
 import sejong.smartnotice.dto.TownModifyDTO;
 import sejong.smartnotice.dto.TownRegisterDTO;
-import sejong.smartnotice.service.AdminService;
-import sejong.smartnotice.service.AnnounceService;
-import sejong.smartnotice.service.TownService;
-import sejong.smartnotice.service.UserService;
+import sejong.smartnotice.service.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -40,6 +38,7 @@ public class TownController {
     private final AdminService adminService;
     private final UserService userService;
     private final AnnounceService announceService;
+    private final EmergencyAlertService emService;
 
     @GetMapping
     public String getTownList(Model model, @RequestParam(required = false) String name) {
@@ -94,10 +93,12 @@ public class TownController {
         Town town = townService.findById(id); // 마을 정보
         List<Admin> adminList = adminService.findAdminByTown(id); // 마을 관리자 목록
         List<Announce> announceList = announceService.findAllAnnounceToTown(id); // 방송 정보
+        List<EmergencyAlert> alertList = emService.findAllWithUserByTown(id);// 긴급 호출 정보
 
         model.addAttribute("announceList", announceList);
         model.addAttribute("town", town);
         model.addAttribute("adminList", adminList);
+        model.addAttribute("alertList", alertList);
         return "town/townDetail";
     }
 

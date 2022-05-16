@@ -56,9 +56,25 @@
                 </form>
                 <hr>
                 <div class="mb-3 card">
-                    <h3 class="card-header">긴급 호출 목록</h3>
+                    <h3 class="card-header">마을 내 긴급 호출 목록</h3>
                     <div class="card-body">
                         <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>호출 주민</th>
+                                <th>호출 시각</th>
+                                <th>전화번호</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="alert : ${alertList}">
+                                <td th:text="${alert.id}"></td>
+                                <td th:text="${alert.user.name}"></td>
+                                <td th:text="${#temporals.format(alert.alertTime, 'yy/MM/dd HH:mm:ss')}"></td>
+                                <td th:text="${alert.user.tel}"></td>
+                            </tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -92,7 +108,7 @@
                 </div>
                 <br>
                 <div class="mb-3 card">
-                    <h3 class="card-header">소속 마을 주민 목록</h3>
+                    <h3 class="card-header">해당 마을 주민 목록</h3>
                     <div class="card-body">
                         <table class="table table-striped">
                             <thead>
@@ -123,7 +139,7 @@
                 </div>
                 <br>
                 <div class="mb-3 card">
-                    <h3 class="card-header">소속 마을 관리자 목록</h3>
+                    <h3 class="card-header">해당 마을 관리자 목록</h3>
                     <div class="card-body">
                         <table class="table table-striped">
                             <thead>
