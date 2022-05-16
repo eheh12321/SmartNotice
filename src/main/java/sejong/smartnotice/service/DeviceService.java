@@ -5,8 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import sejong.smartnotice.domain.device.Device;
 import sejong.smartnotice.domain.device.Sensor;
+import sejong.smartnotice.dto.DeviceRegisterDTO;
 import sejong.smartnotice.repository.DeviceRepository;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -17,8 +19,11 @@ public class DeviceService {
 
     private final DeviceRepository deviceRepository;
 
-    public Long register() {
-        Device device = Device.builder().build();
+    public Long register(DeviceRegisterDTO registerDTO) {
+        Device device = Device.builder()
+                .mac(registerDTO.getMac())
+                .available(registerDTO.isAvailable()).build();
+
         deviceRepository.save(device);
         return device.getId();
     }
@@ -40,5 +45,10 @@ public class DeviceService {
             throw new RuntimeException("에러");
         }
         return opt.get();
+    }
+
+    public List<Device> findAll() {
+        log.info("== 단말기 전체 목록 조회 ==");
+        return deviceRepository.findAll();
     }
 }

@@ -34,6 +34,9 @@ public class Device {
 
     private String mac;
 
+    @ColumnDefault("false")
+    private boolean available;
+
     // 단말기 연결상태 점검
     public Long checkError() {
         return this.getId();

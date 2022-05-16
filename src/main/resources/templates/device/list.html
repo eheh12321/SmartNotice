@@ -1,0 +1,127 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <title>방송 목록</title>
+    <meta charset="UTF-8"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/resources/img/favicon/favicon.ico"/>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+            rel="stylesheet"
+    />
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" href="/resources/vendor/fonts/boxicons.css"/>
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="/resources/vendor/css/core.css" class="template-customizer-core-css"/>
+    <link rel="stylesheet" href="/resources/vendor/css/theme-default.css" class="template-customizer-theme-css"/>
+    <link rel="stylesheet" href="/resources/css/demo.css"/>
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="/resources/vendor/libs/perfect-scrollbar/perfect-scrollbar.css"/>
+
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="/resources/vendor/css/pages/page-auth.css"/>
+
+    <!-- Helpers -->
+    <script src="/resources/vendor/js/helpers.js"></script>
+    <script src="/resources/js/config.js"></script>
+
+    <!--AJAX-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+
+<body>
+<div class="container-fluid">
+    <div>
+        <h1>단말기 목록</h1>
+        <hr>
+        <div id="authInfo">
+            <form action="/logout" method="post">
+                <button type="submit" class="btn btn-danger" style="float: right">로그아웃</button>
+            </form>
+            <b>Authenticated username: </b>
+            <span sec:authentication="name"></span> <br>
+            <b>Authenticated user role: </b>
+            <span sec:authentication="principal.authorities"></span> <br>
+            <b>페이지 접근가능 권한: </b>
+            <span>ADMIN</span>
+        </div>
+        <hr>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#backDropModal">단말기 등록</button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="backDropModal" data-bs-backdrop="static" tabindex="-1" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog">
+                <form class="modal-content" action="/devices" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="backDropModalTitle">단말기 신규 등록</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="macAddress" class="form-label">단말기 MAC Address</label>
+                            <input type="text" id="macAddress" name="mac" class="form-control" placeholder="MAC Address">
+                        </div>
+                        <div class="mb-3">
+                            <input class="form-check-input" type="checkbox" id="available" name="available" value="true" checked>
+                            <label class="form-check-label" for="available">사용가능 유무</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">닫기</button>
+                        <button type="submit" class="btn btn-primary">저장</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <hr>
+
+        <table class="table table-responsive table-hover">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>맥 주소</th>
+                <th>긴급 유무</th>
+                <th>장애 유무</th>
+                <th>사용 가능 유무</th>
+                <th>사용자</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="device : ${deviceList}">
+                <td th:text="${device.id}"></td>
+                <td th:text="${device.mac}"></td>
+                <td th:text="${device.emergency}"></td>
+                <td th:text="${device.error}"></td>
+                <td th:text="${device.available}"></td>
+                <td th:text="${device.user}? ${device.user.name} : '단말기 미연결'"></td>
+            </tr>
+            </tbody>
+        </table>
+        <hr>
+        <button class="btn btn-primary" type="button" onclick="location.href='/'">메인 화면으로</button>
+    </div>
+</div>
+
+<script src="/resources/vendor/libs/jquery/jquery.js"></script>
+<script src="/resources/vendor/libs/popper/popper.js"></script>
+<script src="/resources/vendor/js/bootstrap.js"></script>
+<script src="/resources/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+
+<script src="/resources/vendor/js/menu.js"></script>
+
+<script src="/resources/js/main.js"></script>
+
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+</body>
+</html>
