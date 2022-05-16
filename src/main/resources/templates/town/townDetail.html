@@ -56,6 +56,16 @@
                 </form>
                 <hr>
                 <div class="mb-3 card">
+                    <h3 class="card-header">마을 현황</h3>
+                    <div class="card-body">
+                        <p th:text="|마을 주민: ${town.userList.size()}명|"></p>
+                        <p th:text="|마을 관리자: ${adminList.size()}명|"></p>
+                        <p th:text="|긴급호출: ${alertList.size()}건|"></p>
+                        <p th:text="|방송 횟수: ${announceList.size()}회|"></p>
+                    </div>
+                </div>
+                <br>
+                <div class="mb-3 card">
                     <h3 class="card-header">마을 내 긴급 호출 목록</h3>
                     <div class="card-body">
                         <table class="table table-striped">
