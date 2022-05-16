@@ -2,6 +2,7 @@ package sejong.smartnotice.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -10,12 +11,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.announce.Announce;
 import sejong.smartnotice.domain.member.Admin;
+import sejong.smartnotice.dto.AnnounceModalDTO;
 import sejong.smartnotice.dto.AnnounceOutputDTO;
 import sejong.smartnotice.dto.AnnounceRegisterDTO;
 import sejong.smartnotice.service.AdminService;
 import sejong.smartnotice.service.AnnounceService;
 
 import javax.validation.Valid;
+import java.io.File;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -39,6 +42,7 @@ public class AnnounceController {
                 return o2.getId().compareTo(o1.getId());
             }
         });
+        model.addAttribute("separator", File.separator);
         model.addAttribute("announceList", announceList);
         return "announce/list";
     }
@@ -82,14 +86,10 @@ public class AnnounceController {
     }
 
     @GetMapping("/{id}")
-    public String getAnnounce(@PathVariable Long id, Model model) {
+    @ResponseBody
+    public ResponseEntity<AnnounceModalDTO> getAnnounce(@PathVariable Long id) {
         Announce announce = announceService.findById(id);
-
-        String fullPath = announce.getFullPath();
-        log.info("방송 탐색 경로: {}", fullPath);
-
-        model.addAttribute("announce", announce);
-        model.addAttribute("filePath", fullPath);
-        return "announce/getAnnounce";
+        AnnounceModalDTO dto = AnnounceModalDTO.entityToDto(announce);
+        return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 }

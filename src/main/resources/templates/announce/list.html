@@ -33,8 +33,10 @@
 
     <!-- Helpers -->
     <script src="/resources/vendor/js/helpers.js"></script>
-
     <script src="/resources/js/config.js"></script>
+
+    <!--AJAX-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 
 <body>
@@ -77,51 +79,10 @@
                 <td>
                     <!-- Vertically Centered Modal -->
                     <div class="col-lg-4 col-md-6">
-
                         <!-- Button trigger modal -->
-                        <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#modalCenter"
-                                th:data-bs-target="|#modalCenter_${announce.getId()}|">
+                        <button type="button" class="btn btn-link modalBtn" data-bs-toggle="modal" data-bs-target="#modalCenter" th:index="${announce.getId()}">
                             <i class='bx bx-play-circle bx-lg'></i>
                         </button>
-
-                        <!-- Modal -->
-                        <div class="modal fade" id="modalCenter" th:id="|modalCenter_${announce.getId()}|" tabindex="-1"
-                             aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="modalCenterTitle">방송 듣기</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="row">
-                                            <div class="col mb-3">
-                                                <audio th:src="|\${announce.getDirectory()}\${announce.getFileName()}.mp3|"
-                                                       controls>방송
-                                                </audio>
-                                                <hr>
-                                                <p th:text="|방송 이름: ${announce.getTitle()}|"></p>
-                                                <p th:text="|방송타입: ${announce.getType()}|"></p>
-                                                <p th:text="|방송자: ${announce.getProducer()}|"></p>
-                                                <p th:text="|방송내용: ${announce.getContents()}|"></p>
-                                                <p th:text="|방송시각: ${#temporals.format(announce.getTime(), 'yy/MM/dd HH:mm:ss')}|"></p>
-                                                <hr>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <form th:action="@{/announces/{id}(id=${announce.id})}" method="post">
-                                            <input type="hidden" name="id" th:value="${announce.id}"/>
-                                            <input type="hidden" name="_method" value="DELETE"/>
-                                            <button class="btn btn-danger" type="submit">삭제</button>
-                                        </form>
-                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">닫기
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </td>
             </tr>
@@ -135,7 +96,77 @@
             <button type="submit" class="btn btn-outline-secondary">Search</button>
         </form>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalCenter" tabindex="-1"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalCenterTitle">방송 듣기</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col mb-3">
+                            <audio id="modal_src" src="" controls>방송</audio>
+                            <hr>
+                            <p id="modal_title">방송 제목</p>
+                            <p id="modal_producer">방송자</p>
+                            <p id="modal_contents">내용</p>
+                            <p id="modal_time">방송 시각</p>
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <form action="" method="post" id="deleteForm">
+                        <input type="hidden" name="id" value="" id="deleteFormId"/>
+                        <input type="hidden" name="_method" value="DELETE"/>
+                        <button id="deleteBtn" class="btn btn-danger" type="submit">삭제</button>
+                    </form>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">닫기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+<script type="text/javascript" th:inline="javascript">
+    $(document).ready(function (){
+        $('.modalBtn').on("click", function (e){
+            e.preventDefault();
+            var idx = $(this).attr('index');
+            console.log("click: " + idx);
+            $.ajax({
+                type:"GET",
+                url:"/announces/"+idx,
+                success: function(result) {
+                    console.log("방송을 가져왔습니다");
+                    $("#modal_src").attr('src', result.src);
+                    $("#modal_title").text("방송 제목: " + result.title);
+                    $("#modal_producer").text("방송자: " + result.producer);
+                    $("#modal_contents").text("방송 내용: " + result.contents);
+                    $("#modal_time").text("방송 시각: " + result.time);
+
+                    $("#deleteFormId").attr('value', idx)
+                    $("#deleteForm").attr('action', '/announces/' + idx);
+                },
+                error: function(xhr) {
+                    alert("방송을 가져오는데 실패했습니다");
+                }
+            });
+        });
+        $("#deleteBtn").on("click", function (e){
+            e.preventDefault();
+            if(confirm("방송을 삭제하시겠습니까?")) {
+                var formObj = $("#deleteForm");
+                formObj.submit();
+            }
+        });
+    });
+</script>
 <script src="/resources/vendor/libs/jquery/jquery.js"></script>
 <script src="/resources/vendor/libs/popper/popper.js"></script>
 <script src="/resources/vendor/js/bootstrap.js"></script>
