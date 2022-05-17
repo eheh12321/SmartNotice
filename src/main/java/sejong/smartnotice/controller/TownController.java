@@ -90,16 +90,17 @@ public class TownController {
     @GetMapping("/{id}")
     public String getTownDetail(@PathVariable Long id, Model model) {
         log.info("== 마을 상세 조회 ==");
-        Town town = townService.findById(id); // 마을 정보
-        List<Admin> adminList = adminService.findAdminByTown(id); // 마을 관리자 목록
-        List<Announce> announceList = announceService.findAllAnnounceToTown(id); // 방송 정보
-        List<EmergencyAlert> alertList = emService.findAllWithUserByTown(id);// 긴급 호출 정보
-
-        model.addAttribute("announceList", announceList);
-        model.addAttribute("town", town);
-        model.addAttribute("adminList", adminList);
-        model.addAttribute("alertList", alertList);
-        return "town/townDetail";
+//        Town town = townService.findById(id); // 마을 정보
+//        List<Admin> adminList = adminService.findAdminByTown(id); // 마을 관리자 목록
+//        List<Announce> announceList = announceService.findAllAnnounceToTown(id); // 방송 정보
+//        List<EmergencyAlert> alertList = emService.findAllWithUserByTown(id);// 긴급 호출 정보
+//
+//        model.addAttribute("announceList", announceList);
+//        model.addAttribute("town", town);
+//        model.addAttribute("adminList", adminList);
+//        model.addAttribute("alertList", alertList);
+//        return "town/townDetail";
+        return "town/newTownDetail";
     }
 
     @GetMapping("/{id}/edit")

@@ -140,7 +140,7 @@ public class AnnounceService {
     }
 
     @Transactional(readOnly = true)
-    public List<Announce> findAllAnnounce() {
+    public List<Announce> findAll() {
         log.info("== 방송 전체 목록 조회 ==");
         return announceRepository.findAll();
     }

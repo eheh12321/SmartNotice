@@ -1,6 +1,13 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<html
+        lang="en"
+        class="light-style layout-menu-fixed"
+        dir="ltr"
+        data-theme="theme-default"
+        data-assets-path="../assets/"
+        data-template="vertical-menu-template-free"
+>
 <head>
     <meta charset="utf-8"/>
     <meta
@@ -113,7 +120,7 @@
                   </g>
                 </svg>
               </span>
-                    <span class="menu-text fw-bolder fs-4 ms-2">스마트 <br> 마을알림 시스템</span>
+                    <span class="menu-text fw-bolder ms-2">스마트 <br> 마을알림 시스템</span>
                 </a>
 
                 <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
@@ -124,28 +131,26 @@
             <div class="menu-inner-shadow"></div>
 
             <ul class="menu-inner py-1">
+                <!-- 로그인 정보 -->
+                <li class="menu-item">
+                    <a class="menu-link">
+                        <div><strong>최고 관리자 | ooo님</strong></div>
+                    </a>
+                </li>
+
                 <!-- 시계 -->
                 <li class="menu-item">
                     <a class="menu-link" style="background-color: #333333">
-                        <div style="color:white;">2022년 05월 17일<br>AM 12:57:00</div>
+                        <div style="color:white;">2022년 05월 17일 AM 12:57</div>
                     </a>
                 </li>
 
-                <!-- 로그인 정보 -->
-                <li class="menu-item mb-3">
-                    <a class="menu-link">
-                        <div class="fw-bold fs-4">
-                            <p>
-                                <span sec:authentication="name"></span>님
-                                <br>
-                                <span>(최고 관리자)</span>
-                            </p>
-                        </div>
-                    </a>
+                <li class="menu-header small text-uppercase">
+                    <span class="menu-header-text"></span>
                 </li>
 
                 <!-- 홈 -->
-                <li class="menu-item active">
+                <li class="menu-item">
                     <a href="/" class="menu-link">
                         <i class="menu-icon tf-icons bx bx-home-circle"></i>
                         <div data-i18n="Analytics">홈</div>
@@ -158,7 +163,7 @@
                 </li>
 
                 <!-- 마을 현황 -->
-                <li class="menu-item">
+                <li class="menu-item active">
                     <a href="/towns" class="menu-link">
                         <i class="menu-icon tf-icons bx bx-building-house"></i>
                         <div data-i18n="Basic">마을 현황</div>
@@ -283,25 +288,19 @@
 
                 <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
                     <!-- Search -->
-                    <div class="input-group w-50">
+                    <div class="input-group">
                         <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            마을 이름
+                            전체
                         </button>
                         <ul class="dropdown-menu" style="">
-                            <li><a class="dropdown-item" href="javascript:void(0);">마을 이름</a></li>
+                            <li><a class="dropdown-item" href="javascript:void(0);">전체</a></li>
                             <li><a class="dropdown-item" href="javascript:void(0);">마을 관리자</a></li>
+                            <li><a class="dropdown-item" href="javascript:void(0);">마을 주민</a></li>
                         </ul>
                         <input type="text" class="form-control" placeholder="검색...">
-                        <button class="btn btn-outline-primary" type="button" id="button-addon2">
-                            <i class="bx bx-search fs-4 lh-0"></i>
-                        </button>
+                        <button class="btn btn-outline-primary" type="button" id="button-addon2">검색</button>
                     </div>
                     <!-- /Search -->
-                    <ul class="navbar-nav flex-row align-items-center ms-auto">
-                        <li class="nav-item">
-                            <button type="button" class="btn btn-primary">마을 추가</button>
-                        </li>
-                    </ul>
                 </div>
             </nav>
             <!-- / Navbar(검색창) -->
@@ -311,15 +310,12 @@
                 <!-- Content -->
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <!-- 마을 Card -->
-                    <div class="row" th:each="town : ${townList}">
+                    <div class="row">
                         <div class="col mb-4">
                             <div class="card">
                                 <div class="d-flex align-items-end row">
                                     <div class="card-header">
-                                        <h2 class="d-inline ms-2" th:text="${town.name}">마을 이름</h2>
-                                        <button class="btn bg-transparent pt-0 pb-0" style="float: right">
-                                            <i class='bx bxs-right-arrow-circle bx-md'></i>
-                                        </button>
+                                        <h2 class="d-inline">xx마을 상세</h2>
                                         <hr>
                                     </div>
                                     <div class="card-body">
@@ -368,34 +364,34 @@
                                                         </script>
                                                     </div>
                                                     <!-- /Chart -->
-                                                    <div class="col-md-5 ps-3">
-                                                        <h5 class="text-center fw-bold">마을 현황</h5>
-                                                        <table class="table table-borderless border border-secondary">
+                                                    <div class="col-md-5">
+                                                        <h5 class="text-center mt-3">마을 현황</h5>
+                                                        <table class="table table-borderless">
                                                             <tbody>
                                                             <tr>
-                                                                <td class="fw-bold">마을 주민</td>
+                                                                <td>마을 주민</td>
                                                                 <td>10명</td>
                                                             </tr>
                                                             <tr>
-                                                                <td class="fw-bold" style="color: green">정상:0</td>
-                                                                <td class="fw-bold" style="color: coral">장애:0</td>
-                                                                <td class="fw-bold" style="color: #dc3545">긴급:0</td>
+                                                                <td>정상:8</td>
+                                                                <td>긴급:0</td>
+                                                                <td>장애:2</td>
                                                             </tr>
                                                             <tr>
-                                                                <td class="fw-bold">마을 관리자</td>
+                                                                <td>마을 관리자</td>
                                                                 <td>2명</td>
                                                             </tr>
                                                             <tr>
-                                                                <td class="fw-bold">긴급 호출</td>
+                                                                <td>긴급 호출 횟수</td>
                                                                 <td>4건</td>
                                                             </tr>
                                                             <tr>
-                                                                <td class="fw-bold" style="color: #e83e8c">사용자: 1</td>
-                                                                <td class="fw-bold" style="color: coral">동작: 3</td>
-                                                                <td class="fw-bold" style="color: #dc3545">화재: 0</td>
+                                                                <td>사용자: 1</td>
+                                                                <td>동작: 3</td>
+                                                                <td>화재: 0</td>
                                                             </tr>
                                                             <tr>
-                                                                <td class="fw-bold">방송 송출</td>
+                                                                <td>방송 송출 횟수</td>
                                                                 <td>13건</td>
                                                             </tr>
                                                             </tbody>
@@ -406,60 +402,91 @@
                                             <div class="col-sm-5 pe-4">
                                                 <div class="row row-bordered g-0">
                                                     <div class="col-12 mb-4">
-                                                        <h5 class="fw-bold">관리자 목록</h5>
-                                                        <table class="table table-bordered">
-                                                            <thead class="table-secondary">
+                                                        <table class="table table-borderless">
                                                             <tr>
-                                                                <th>관리자</th>
-                                                                <th>이름</th>
-                                                                <th>연락처</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            <tr>
-                                                                <td>이장</td>
-                                                                <td>홍길동</td>
-                                                                <td>010-1234-1234</td>
+                                                                <td>
+                                                                    <label>마을 이름</label>
+                                                                    <input type="text" class="form-control" value="xx마을">
+                                                                </td>
                                                             </tr>
                                                             <tr>
-                                                                <td>이장</td>
-                                                                <td>홍길동</td>
-                                                                <td>010-1234-1234</td>
-                                                            </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-
-                                                    <div class="col-12 mb-4">
-                                                        <h5 class="fw-bold">긴급 호출 내역</h5>
-                                                        <table class="table table-bordered">
-                                                            <thead class="table-secondary">
-                                                            <tr>
-                                                                <th>사용자</th>
-                                                                <th>분류</th>
-                                                                <th>시각</th>
-                                                                <th>수신 여부</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            <tr>
-                                                                <td>홍길동</td>
-                                                                <td>사용자 호출</td>
-                                                                <td>22/05/17 12:33</td>
-                                                                <td>확인</td>
+                                                                <td>
+                                                                    <label>마을 주소 1</label>
+                                                                    <input type="text" class="form-control" value="경기도">
+                                                                </td>
                                                             </tr>
                                                             <tr>
-                                                                <td>홍길동</td>
-                                                                <td>사용자 호출</td>
-                                                                <td>22/05/17 12:33</td>
-                                                                <td>확인</td>
+                                                                <td>
+                                                                    <label>마을 주소 2(?)</label>
+                                                                    <input type="text" class="form-control" value="파주시 광탄면">
+                                                                </td>
                                                             </tr>
-                                                            </tbody>
+                                                            <tr>
+                                                                <td>
+                                                                    <button type="button" class="btn btn-primary">저장</button>
+                                                                    <button type="button" class="btn btn-danger">삭제</button>
+                                                                    <button type="button" class="btn btn-success">관리자 추가</button>
+                                                                </td>
+                                                            </tr>
                                                         </table>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /마을 Card-->
+                    <!-- 마을 Card -->
+                    <div class="row">
+                        <div class="col mb-4">
+                            <div class="card">
+                                <div class="d-flex align-items-end row">
+                                    <div class="card-header">
+                                        <h2 class="d-inline">마을 정보 테이블</h2>
+                                        <hr>
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-bordered">
+                                            <thead class="table-secondary">
+                                            <tr>
+                                                <th>관리자</th>
+                                                <th>이름</th>
+                                                <th>연락처</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td>이장</td>
+                                                <td>홍길동</td>
+                                                <td>010-1234-1234</td>
+                                            </tr>
+                                            <tr>
+                                                <td>이장</td>
+                                                <td>홍길동</td>
+                                                <td>010-1234-1234</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                        <hr>
+                                        <table class="table table-borderless">
+                                            <tr class="text-center">
+                                                <td>
+                                                    <button class="btn btn-primary w-100">마을 주민 목록</button>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-primary w-100">마을 관리자 목록</button>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-primary w-100">마을 방송 목록</button>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-primary w-100">긴급 호출 목록</button>
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -473,7 +500,7 @@
                 <footer class="footer bg-light">
                     <div class="container-fluid d-flex flex-md-row flex-column justify-content-between align-items-md-center gap-1 container-p-x py-3">
                         <div>
-                            <a href="/" class="footer-text fw-bolder">스마트 마을알림 시스템</a>
+                            <a href="index.html" class="footer-text fw-bolder">스마트 마을랄림 시스템</a>
                         </div>
                         <div>
                             <a class="footer-link me-4" target="_blank">4조</a>

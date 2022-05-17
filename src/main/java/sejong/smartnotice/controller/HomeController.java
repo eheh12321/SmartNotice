@@ -11,7 +11,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import sejong.smartnotice.domain.EmergencyAlert;
 import sejong.smartnotice.domain.Town;
+import sejong.smartnotice.domain.announce.Announce;
+import sejong.smartnotice.domain.member.Admin;
+import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.dto.AdminRegisterDTO;
 import sejong.smartnotice.dto.SupporterRegisterDTO;
 import sejong.smartnotice.dto.UserRegisterDTO;
@@ -31,6 +35,16 @@ public class HomeController {
     private final UserService userService;
     private final TownService townService;
     private final SupporterService supporterService;
+    private final EmergencyAlertService emService;
+    private final AnnounceService announceService;
+
+    @GetMapping
+    public String indexPage(Model model) {
+        List<Town> townList = townService.findAll();
+
+        model.addAttribute("townList", townList);
+        return "index";
+    }
 
     @GetMapping("/register")
     public String SelectRegisterAuthPage() {
