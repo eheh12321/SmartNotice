@@ -35,7 +35,7 @@ public class Town {
     @OneToMany(mappedBy = "town", cascade = CascadeType.ALL)
     private List<Admin_Town> adminList; // 소속 관리자 목록
 
-    @OneToMany(mappedBy = "town")
+    @OneToMany(mappedBy = "town", cascade = CascadeType.ALL)
     private List<Announce_Town> announceList;
 
     // 마을 생성

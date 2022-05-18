@@ -420,7 +420,7 @@
                                                             </tr>
                                                             </thead>
                                                             <tbody>
-                                                            <tr th:each="admin : ${dto.getAdminList()}">
+                                                            <tr th:each="admin, i : ${dto.getAdminList()}" th:if="${i.index < 3}">
                                                                 <td th:text="${admin.type}">이장</td>
                                                                 <td th:text="${admin.name}">홍길동</td>
                                                                 <td th:text="${admin.tel}">010-1234-1234</td>
@@ -441,10 +441,10 @@
                                                             </tr>
                                                             </thead>
                                                             <tbody>
-                                                            <tr th:each="alert : ${dto.getAlertList()}">
-                                                                <td th:text="${alert.user.name}">홍길동</td>
+                                                            <tr th:each="alert, i : ${dto.alertList}" th:if="${i.index < 3}">
+                                                                <td th:text="${alert.user.name}">-</td>
                                                                 <td>사용자 호출</td>
-                                                                <td th:text="${alert.alertTime}">22/05/17 12:33</td>
+                                                                <td th:text="${#temporals.format(alert.alertTime, 'yy/MM/dd HH:mm:ss')}">-</td>
                                                                 <td>확인</td>
                                                             </tr>
                                                             </tbody>

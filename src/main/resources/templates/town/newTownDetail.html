@@ -2,53 +2,56 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
-<head>
-    <meta charset="utf-8"/>
-    <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
-    />
+    <head>
+        <meta charset="utf-8"/>
+        <meta
+                name="viewport"
+                content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+        />
 
-    <title>관제 메인 페이지</title>
+        <title>관제 메인 페이지</title>
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/resources/img/favicon/favicon.ico"/>
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" href="/resources/img/favicon/favicon.ico"/>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com"/>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-    <link
-            href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
-            rel="stylesheet"
-    />
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com"/>
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+        <link
+                href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+                rel="stylesheet"
+        />
 
-    <!-- Icons. Uncomment required icon fonts -->
-    <link rel="stylesheet" href="/resources/vendor/fonts/boxicons.css"/>
+        <!-- Icons. Uncomment required icon fonts -->
+        <link rel="stylesheet" href="/resources/vendor/fonts/boxicons.css"/>
 
-    <!-- Core CSS -->
-    <link rel="stylesheet" href="/resources/vendor/css/core.css" class="template-customizer-core-css"/>
-    <link rel="stylesheet" href="/resources/vendor/css/theme-default.css" class="template-customizer-theme-css"/>
-    <link rel="stylesheet" href="/resources/css/demo.css"/>
+        <!-- Core CSS -->
+        <link rel="stylesheet" href="/resources/vendor/css/core.css" class="template-customizer-core-css"/>
+        <link rel="stylesheet" href="/resources/vendor/css/theme-default.css" class="template-customizer-theme-css"/>
+        <link rel="stylesheet" href="/resources/css/demo.css"/>
 
-    <!-- Vendors CSS -->
-    <link rel="stylesheet" href="/resources/vendor/libs/perfect-scrollbar/perfect-scrollbar.css"/>
+        <!-- Vendors CSS -->
+        <link rel="stylesheet" href="/resources/vendor/libs/perfect-scrollbar/perfect-scrollbar.css"/>
 
-    <link rel="stylesheet" href="/resources/vendor/libs/apex-charts/apex-charts.css"/>
+        <link rel="stylesheet" href="/resources/vendor/libs/apex-charts/apex-charts.css"/>
 
-    <!-- Page CSS -->
+        <!-- Page CSS -->
 
-    <!-- Helpers -->
-    <script src="/resources/vendor/js/helpers.js"></script>
+        <!-- Helpers -->
+        <script src="/resources/vendor/js/helpers.js"></script>
 
-    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
-    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
-    <script src="/resources/js/config.js"></script>
+        <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+        <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+        <script src="/resources/js/config.js"></script>
 
-    <!-- Chart.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"
-            integrity="sha512-QSkVNOCYLtj73J4hbmVoOV6KVZuMluZlioC+trLpewV8qMjsWqlIQvkn1KGX2StWvPMdWGBqim1xlC8krl1EKQ=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-</head>
+        <!-- Chart.js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"
+                integrity="sha512-QSkVNOCYLtj73J4hbmVoOV6KVZuMluZlioC+trLpewV8qMjsWqlIQvkn1KGX2StWvPMdWGBqim1xlC8krl1EKQ=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+        <!--AJAX-->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    </head>
 
 <body>
 <!-- Layout wrapper -->
@@ -285,7 +288,8 @@
                 <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
                     <!-- Search -->
                     <div class="input-group w-50">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
                             마을 주민
                         </button>
                         <ul class="dropdown-menu" style="">
@@ -370,9 +374,15 @@
                                                                 <td th:text="|${dto.getUserList.size()}명|">-명</td>
                                                             </tr>
                                                             <tr>
-                                                                <td class="fw-bold" style="color: green" th:text="|정상:${dto.getStatus_ok()}|">정상:-</td>
-                                                                <td class="fw-bold" style="color: coral" th:text="|장애:${dto.getStatus_error()}|">장애:-</td>
-                                                                <td class="fw-bold" style="color: #dc3545" th:text="|긴급:${dto.getStatus_emergency()}|">긴급:-</td>
+                                                                <td class="fw-bold" style="color: green"
+                                                                    th:text="|정상:${dto.getStatus_ok()}|">정상:-
+                                                                </td>
+                                                                <td class="fw-bold" style="color: coral"
+                                                                    th:text="|장애:${dto.getStatus_error()}|">장애:-
+                                                                </td>
+                                                                <td class="fw-bold" style="color: #dc3545"
+                                                                    th:text="|긴급:${dto.getStatus_emergency()}|">긴급:-
+                                                                </td>
                                                             </tr>
                                                             <tr>
                                                                 <td class="fw-bold">마을 관리자</td>
@@ -383,9 +393,15 @@
                                                                 <td th:text="|${dto.getAlertList.size()}건|">-건</td>
                                                             </tr>
                                                             <tr>
-                                                                <td class="fw-bold" style="color: #e83e8c" th:text="|사용자:${dto.getAlert_user()}|">사용자:-</td>
-                                                                <td class="fw-bold" style="color: coral" th:text="|동작:${dto.getAlert_motion()}|">동작:-</td>
-                                                                <td class="fw-bold" style="color: #dc3545" th:text="|화재:${dto.getAlert_fire()}|">화재:-</td>
+                                                                <td class="fw-bold" style="color: #e83e8c"
+                                                                    th:text="|사용자:${dto.getAlert_user()}|">사용자:-
+                                                                </td>
+                                                                <td class="fw-bold" style="color: coral"
+                                                                    th:text="|동작:${dto.getAlert_motion()}|">동작:-
+                                                                </td>
+                                                                <td class="fw-bold" style="color: #dc3545"
+                                                                    th:text="|화재:${dto.getAlert_fire()}|">화재:-
+                                                                </td>
                                                             </tr>
                                                             <tr>
                                                                 <td class="fw-bold">방송 송출</td>
@@ -400,31 +416,39 @@
                                                 <div class="row row-bordered g-0">
                                                     <div class="col-12 mb-4">
                                                         <table class="table table-borderless">
-                                                            <tr>
-                                                                <td>
-                                                                    <label>마을 이름</label>
-                                                                    <input type="text" class="form-control" th:value="${dto.town.name}">
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    <label>마을 주소 1</label>
-                                                                    <input type="text" class="form-control" th:value="${dto.town.region.mainRegion}">
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    <label>마을 주소 2</label>
-                                                                    <input type="text" class="form-control" th:value="${dto.town.region.subRegion}">
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td class="text-end">
-                                                                    <button type="button" class="btn btn-primary">저장</button>
-                                                                    <button type="button" class="btn btn-danger">삭제</button>
-                                                                    <button type="button" class="btn btn-success">관리자 추가</button>
-                                                                </td>
-                                                            </tr>
+                                                            <form id="formObj"
+                                                                  th:action="@{/towns/{id}(id=${dto.town.id})}" method="post">
+                                                                <tr>
+                                                                    <td>
+                                                                        <label>마을 이름</label>
+                                                                        <input type="text" class="form-control"
+                                                                               th:value="${dto.town.name}">
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <label>마을 주소 1</label>
+                                                                        <input type="text" class="form-control"
+                                                                               th:value="${dto.town.region.mainRegion}">
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <label>마을 주소 2</label>
+                                                                        <input type="text" class="form-control"
+                                                                               th:value="${dto.town.region.subRegion}">
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="text-end">
+                                                                        <button type="button" class="btn btn-primary" id="townSaveBtn">저장</button>
+                                                                        <button type="button" class="btn btn-danger" id="townDeleteBtn">삭제</button>
+                                                                        <button type="button" class="btn btn-success" id="addTownAdminBtn">관리자 추가</button>
+
+                                                                        <input id="forDelete" type="hidden" name="_method" value="DELETE"/>
+                                                                    </td>
+                                                                </tr>
+                                                            </form>
                                                         </table>
                                                     </div>
                                                 </div>
@@ -442,7 +466,7 @@
                             <div class="card">
                                 <div class="d-flex align-items-end row">
                                     <div class="card-header">
-                                        <h2 class="d-inline">마을 정보 테이블</h2>
+                                        <h2 class="d-inline">마을 관리자 정보</h2>
                                         <hr>
                                     </div>
                                     <div class="card-body">
@@ -451,14 +475,12 @@
                                             <tr>
                                                 <th>이름</th>
                                                 <th>전화번호</th>
-                                                <th>주소</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr th:each="user : ${dto.getUserList}">
-                                                <td th:text="${user.name}">이름</td>
-                                                <td th:text="${user.tel}">전화번호</td>
-                                                <td th:text="${user.address}">주소</td>
+                                            <tr th:each="admin : ${dto.getAdminList}">
+                                                <td th:text="${admin.name}">이름</td>
+                                                <td th:text="${admin.tel}">전화번호</td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -466,16 +488,16 @@
                                         <table class="table table-borderless">
                                             <tr class="text-center">
                                                 <td>
-                                                    <button class="btn btn-primary w-100">마을 주민 목록</button>
+                                                    <button class="btn btn-primary w-100" id="showUserTableBtn">마을 주민 목록</button>
                                                 </td>
                                                 <td>
-                                                    <button class="btn btn-primary w-100">마을 관리자 목록</button>
+                                                    <button class="btn btn-primary w-100" id="showAdminTableBtn">마을 관리자 목록</button>
                                                 </td>
                                                 <td>
-                                                    <button class="btn btn-primary w-100">마을 방송 목록</button>
+                                                    <button class="btn btn-primary w-100" id="showAnnounceTableBtn">마을 방송 목록</button>
                                                 </td>
                                                 <td>
-                                                    <button class="btn btn-primary w-100">긴급 호출 목록</button>
+                                                    <button class="btn btn-primary w-100" id="showAlertTableBtn">긴급 호출 목록</button>
                                                 </td>
                                             </tr>
                                         </table>
@@ -513,7 +535,51 @@
     <div class="layout-overlay layout-menu-toggle"></div>
 </div>
 <!-- / Layout wrapper -->
+<script type="text/javascript" th:inline="javascript">
+    $(document).ready(function () {
+        let formObj = $("#formObj");
 
+        $("#townDeleteBtn").on("click", function() {
+            if (confirm("마을을 삭제하시겠습니까? (주의:해당 마을에 주민이 존재하는 경우 삭제가 불가능합니다.)")) {
+                if([[${dto.userList.size()}]] != 0) {
+                    alert("마을 주민이 존재하면 마을을 삭제할 수 없습니다");
+                    return false;
+                }
+                formObj.submit();
+            } else {
+                return false;
+            }
+        });
+
+        $("#townSaveBtn").on("click", function() {
+            if (confirm("수정된 정보를 저장하시겠습니까?")) {
+                alert("이런! 아직 구현이 안되었어요");
+            } else {
+                console.log("ㄴㄴ");
+            }
+        });
+
+        $("#addTownAdminBtn").on("click", function() {
+            alert("이런! 아직 구현이 안되었어요");
+        });
+
+        $("#showUserTableBtn").on("click", function() {
+            alert("이런! 아직 구현이 안되었어요");
+        });
+
+        $("#showAdminTableBtn").on("click", function() {
+            alert("이런! 아직 구현이 안되었어요");
+        });
+
+        $("#showAnnounceTableBtn").on("click", function() {
+            alert("이런! 아직 구현이 안되었어요");
+        });
+
+        $("#showAlertTableBtn").on("click", function() {
+            alert("이런! 아직 구현이 안되었어요");
+        });
+    });
+</script>
 <!-- Core JS -->
 <!-- build:js assets/vendor/js/core.js -->
 <script src="/resources/vendor/libs/jquery/jquery.js"></script>

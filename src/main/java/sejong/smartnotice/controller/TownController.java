@@ -183,7 +183,7 @@ public class TownController {
     public String remove(@PathVariable Long id) {
         log.info("== 마을 삭제 ==");
         townService.delete(id);
-        return "redirect:/towns";
+        return "redirect:/";
     }
 
     // 마을 관리자 목록 조회

@@ -24,8 +24,7 @@ import sejong.smartnotice.service.*;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Controller
@@ -58,7 +57,7 @@ public class HomeController {
                 .getResultList();
 
         // (4) 마을 + 방송 fetch
-        List<Announce> announceList = em.createQuery("select distinct a from Announce a join fetch a.atList at join fetch at.town", Announce.class).getResultList();
+        List<Announce> announceList = em.createQuery("select distinct a from Announce a join fetch a.atList at join fetch at.town order by a.time desc", Announce.class).getResultList();
 
         log.info(" (쿼리 종료) ========================");
 
