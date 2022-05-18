@@ -2,9 +2,12 @@ package sejong.smartnotice.domain.device;
 
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import sejong.smartnotice.domain.EmergencyAlert;
 import sejong.smartnotice.domain.member.User;
 
 import javax.persistence.*;
+
+import java.util.List;
 
 import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.*;
@@ -28,9 +31,6 @@ public class Device {
 
     @ColumnDefault("false")
     private boolean emergency;
-
-    @OneToOne(mappedBy = "device", fetch = LAZY)
-    private Sensor sensor;
 
     private String mac;
 

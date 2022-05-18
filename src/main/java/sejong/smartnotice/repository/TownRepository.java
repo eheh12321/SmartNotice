@@ -7,6 +7,7 @@ import sejong.smartnotice.domain.Region;
 import sejong.smartnotice.domain.Town;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TownRepository extends JpaRepository<Town, Long> {
@@ -18,4 +19,7 @@ public interface TownRepository extends JpaRepository<Town, Long> {
 
     @Query("select t from Town t join fetch t.region")
     List<Town> findAllWithRegion();
+
+    @Query("select t from Town t join fetch t.region where t.id=?1")
+    Optional<Town> findById(Long townId);
 }

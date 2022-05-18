@@ -32,11 +32,11 @@ public class DeviceService {
         return validateDeviceId(deviceId);
     }
 
-    public Map<String, Double> getRecentData(Long deviceId) {
-        Device device = validateDeviceId(deviceId);
-        Sensor sensor = device.getSensor();
-        return sensor.getRecentData();
-    }
+//    public Map<String, Double> getRecentData(Long deviceId) {
+//        Device device = validateDeviceId(deviceId);
+//        Sensor sensor = device.getSensor();
+//        return sensor.getRecentData();
+//    }
 
     private Device validateDeviceId(Long deviceId) {
         Optional<Device> opt = deviceRepository.findById(deviceId);

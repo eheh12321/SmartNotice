@@ -27,12 +27,14 @@ public class EmergencyAlertService {
     @Transactional(readOnly = true)
     public List<EmergencyAlert> findAllWithUser() {
         log.info("== 긴급 호출 목록 조회(fetch) ==");
-        return emRepository.findAllWithUser();
+//        return emRepository.findAllWithUser();
+        return emRepository.findAll();
     }
 
     @Transactional(readOnly = true)
     public List<EmergencyAlert> findAllWithUserByTown(Long townId) {
         log.info("== 마을별 긴급 호출 목록 조회(fetch) ==");
-        return emRepository.findAllWithUserByTown(townId);
+//        return emRepository.findAllWithUserByTown(townId);
+        return emRepository.findAll();
     }
 }

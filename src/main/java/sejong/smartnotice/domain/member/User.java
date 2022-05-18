@@ -6,6 +6,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import sejong.smartnotice.domain.EmergencyAlert;
 import sejong.smartnotice.domain.announce.Announce;
 import sejong.smartnotice.domain.device.Device;
 import sejong.smartnotice.domain.Town;
@@ -52,6 +53,9 @@ public class User implements UserDetails {
     @JoinColumn(name = "device_id")
     private Device device;
 
+    @OneToMany(mappedBy = "user")
+    private List<EmergencyAlert> alertList;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "town_id")
     private Town town;
@@ -67,6 +71,7 @@ public class User implements UserDetails {
                 .birth(birth)
                 .account(account)
                 .supporterList(new ArrayList<>())
+                .alertList(new ArrayList<>())
                 .town(town).build();
     }
 

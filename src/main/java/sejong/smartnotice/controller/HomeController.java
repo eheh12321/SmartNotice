@@ -11,18 +11,23 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import sejong.smartnotice.domain.Admin_Town;
+import sejong.smartnotice.domain.Announce_Town;
 import sejong.smartnotice.domain.EmergencyAlert;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.announce.Announce;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.dto.AdminRegisterDTO;
+import sejong.smartnotice.dto.ComplexDTO;
 import sejong.smartnotice.dto.SupporterRegisterDTO;
 import sejong.smartnotice.dto.UserRegisterDTO;
 import sejong.smartnotice.service.*;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -37,12 +42,112 @@ public class HomeController {
     private final SupporterService supporterService;
     private final EmergencyAlertService emService;
     private final AnnounceService announceService;
+    private final EntityManager em;
+
+    @ResponseBody
+    @GetMapping("/test1234")
+    public String test1234() {
+//        List<User> userList = em.createQuery("select distinct u from User u join fetch u.device d join fetch d.alertList where u.town.id=1", User.class)
+//                .getResultList();
+//        log.info("길이: {}", userList.size());
+//        for (User user : userList) {
+//            log.info("이름: {}", user.getName());
+//            log.info("맥주소: {}", user.getDevice().getMac());
+//            for (EmergencyAlert alert : user.getDevice().getAlertList()) {
+//                log.info("호출 시각: {}", alert.getAlertTime().toString());
+//            }
+//        }
+
+//        List<Admin> adminList = em.createQuery("select a from Admin a left join a.atList at where at.town.id=16", Admin.class)
+//                .getResultList();
+//
+//        for (Admin admin : adminList) {
+//            log.info("이름: {}", admin.getName());
+//        }
+
+        List<Town> townList = em.createQuery("select distinct t from Town t join fetch t.adminList at join fetch at.admin", Town.class)
+                .getResultList();
+
+        for (Town town : townList) {
+            log.info("마을 이름: {}", town.getName());
+            for (Admin_Town at : town.getAdminList()) {
+                log.info("관리자: {}", at.getAdmin().getName());
+            }
+            log.info("===");
+        }
+
+        return "OK";
+    }
 
     @GetMapping
     public String indexPage(Model model) {
+
+        log.info(" (쿼리 시작) ========================");
+
+        // (1) 마을 조회
         List<Town> townList = townService.findAll();
 
-        model.addAttribute("townList", townList);
+        // (2) 마을 + 관리자 fetch
+        List<Admin> adminList = em.createQuery("select distinct a from Admin a join fetch a.atList at join fetch at.town", Admin.class)
+                .getResultList();
+
+        // (3) 마을 + 주민 + 긴급알림 fetch
+        List<User> userList = em.createQuery("select distinct u from User u join fetch u.alertList", User.class)
+                .getResultList();
+
+        // (4) 마을 + 방송 fetch
+        List<Announce> announceList = em.createQuery("select distinct a from Announce a join fetch a.atList at join fetch at.town", Announce.class).getResultList();
+
+        log.info(" (쿼리 종료) ========================");
+
+        List<ComplexDTO> complexDTOList = new ArrayList<>();
+        for (Town town : townList) {
+
+            List<Admin> al = new ArrayList<>();
+            for (Admin admin : adminList) {
+                for (Admin_Town at : admin.getAtList()) {
+                    if(at.getTown().equals(town)) {
+                        al.add(admin);
+                    }
+                }
+            }
+
+            List<Announce> aal = new ArrayList<>();
+            for (Announce announce : announceList) {
+                for (Announce_Town at : announce.getAtList()) {
+                    if(at.getTown().equals(town)) {
+                        aal.add(announce);
+                    }
+                }
+            }
+
+            List<User> ul = new ArrayList<>();
+            List<EmergencyAlert> el = new ArrayList<>();
+            for (User user : userList) {
+                if(user.getTown().equals(town)) {
+                    ul.add(user);
+                    for (EmergencyAlert alert : user.getAlertList()) {
+                        el.add(alert);
+                    }
+                }
+            }
+
+            ComplexDTO dto = ComplexDTO.builder()
+                    .town(town)
+                    .userList(ul)
+                    .adminList(al)
+                    .announceList(aal)
+                    .alertList(el)
+                    .alert_fire(0)
+                    .alert_user(el.size())
+                    .alert_motion(0)
+                    .status_ok(ul.size())
+                    .status_emergency(0)
+                    .status_error(0).build();
+            complexDTOList.add(dto);
+        }
+        
+        model.addAttribute("dtoList", complexDTOList);
         return "index";
     }
 

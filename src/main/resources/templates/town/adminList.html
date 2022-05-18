@@ -22,7 +22,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="admin : ${town.atList}">
+            <tr th:each="admin : ${town.getAdminList}">
                 <td th:text="${admin.admin.id}"></td>
                 <td th:text="${admin.admin.name}"></td>
                 <td th:text="${admin.admin.tel}"></td>

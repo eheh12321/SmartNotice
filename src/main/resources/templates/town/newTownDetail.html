@@ -1,13 +1,7 @@
 <!DOCTYPE html>
-
-<html
-        lang="en"
-        class="light-style layout-menu-fixed"
-        dir="ltr"
-        data-theme="theme-default"
-        data-assets-path="../assets/"
-        data-template="vertical-menu-template-free"
->
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
 <head>
     <meta charset="utf-8"/>
     <meta
@@ -120,7 +114,7 @@
                   </g>
                 </svg>
               </span>
-                    <span class="menu-text fw-bolder ms-2">스마트 <br> 마을알림 시스템</span>
+                    <span class="menu-text fw-bolder fs-4 ms-2">스마트 <br> 마을알림 시스템</span>
                 </a>
 
                 <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
@@ -131,22 +125,24 @@
             <div class="menu-inner-shadow"></div>
 
             <ul class="menu-inner py-1">
-                <!-- 로그인 정보 -->
-                <li class="menu-item">
-                    <a class="menu-link">
-                        <div><strong>최고 관리자 | ooo님</strong></div>
-                    </a>
-                </li>
-
                 <!-- 시계 -->
                 <li class="menu-item">
                     <a class="menu-link" style="background-color: #333333">
-                        <div style="color:white;">2022년 05월 17일 AM 12:57</div>
+                        <div style="color:white;">2022년 05월 17일<br>AM 12:57:00</div>
                     </a>
                 </li>
 
-                <li class="menu-header small text-uppercase">
-                    <span class="menu-header-text"></span>
+                <!-- 로그인 정보 -->
+                <li class="menu-item mb-3">
+                    <a class="menu-link">
+                        <div class="fw-bold fs-4">
+                            <p>
+                                <span sec:authentication="name"></span>님
+                                <br>
+                                <span>(최고 관리자)</span>
+                            </p>
+                        </div>
+                    </a>
                 </li>
 
                 <!-- 홈 -->
@@ -288,17 +284,18 @@
 
                 <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
                     <!-- Search -->
-                    <div class="input-group">
+                    <div class="input-group w-50">
                         <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            전체
+                            마을 주민
                         </button>
                         <ul class="dropdown-menu" style="">
-                            <li><a class="dropdown-item" href="javascript:void(0);">전체</a></li>
-                            <li><a class="dropdown-item" href="javascript:void(0);">마을 관리자</a></li>
                             <li><a class="dropdown-item" href="javascript:void(0);">마을 주민</a></li>
+                            <li><a class="dropdown-item" href="javascript:void(0);">마을 관리자</a></li>
                         </ul>
                         <input type="text" class="form-control" placeholder="검색...">
-                        <button class="btn btn-outline-primary" type="button" id="button-addon2">검색</button>
+                        <button class="btn btn-outline-primary" type="button" id="button-addon2">
+                            <i class="bx bx-search fs-4 lh-0"></i>
+                        </button>
                     </div>
                     <!-- /Search -->
                 </div>
@@ -315,7 +312,7 @@
                             <div class="card">
                                 <div class="d-flex align-items-end row">
                                     <div class="card-header">
-                                        <h2 class="d-inline">xx마을 상세</h2>
+                                        <h2 class="d-inline" th:text="|${dto.town.name} 상세|">xx마을 상세</h2>
                                         <hr>
                                     </div>
                                     <div class="card-body">
@@ -364,35 +361,35 @@
                                                         </script>
                                                     </div>
                                                     <!-- /Chart -->
-                                                    <div class="col-md-5">
-                                                        <h5 class="text-center mt-3">마을 현황</h5>
-                                                        <table class="table table-borderless">
+                                                    <div class="col-md-5 ps-3">
+                                                        <h5 class="text-center fw-bold">마을 현황</h5>
+                                                        <table class="table table-borderless border border-secondary">
                                                             <tbody>
                                                             <tr>
-                                                                <td>마을 주민</td>
-                                                                <td>10명</td>
+                                                                <td class="fw-bold">마을 주민</td>
+                                                                <td th:text="|${dto.getUserList.size()}명|">-명</td>
                                                             </tr>
                                                             <tr>
-                                                                <td>정상:8</td>
-                                                                <td>긴급:0</td>
-                                                                <td>장애:2</td>
+                                                                <td class="fw-bold" style="color: green" th:text="|정상:${dto.getStatus_ok()}|">정상:-</td>
+                                                                <td class="fw-bold" style="color: coral" th:text="|장애:${dto.getStatus_error()}|">장애:-</td>
+                                                                <td class="fw-bold" style="color: #dc3545" th:text="|긴급:${dto.getStatus_emergency()}|">긴급:-</td>
                                                             </tr>
                                                             <tr>
-                                                                <td>마을 관리자</td>
-                                                                <td>2명</td>
+                                                                <td class="fw-bold">마을 관리자</td>
+                                                                <td th:text="|${dto.getAdminList.size()}명|">-명</td>
                                                             </tr>
                                                             <tr>
-                                                                <td>긴급 호출 횟수</td>
-                                                                <td>4건</td>
+                                                                <td class="fw-bold">긴급 호출</td>
+                                                                <td th:text="|${dto.getAlertList.size()}건|">-건</td>
                                                             </tr>
                                                             <tr>
-                                                                <td>사용자: 1</td>
-                                                                <td>동작: 3</td>
-                                                                <td>화재: 0</td>
+                                                                <td class="fw-bold" style="color: #e83e8c" th:text="|사용자:${dto.getAlert_user()}|">사용자:-</td>
+                                                                <td class="fw-bold" style="color: coral" th:text="|동작:${dto.getAlert_motion()}|">동작:-</td>
+                                                                <td class="fw-bold" style="color: #dc3545" th:text="|화재:${dto.getAlert_fire()}|">화재:-</td>
                                                             </tr>
                                                             <tr>
-                                                                <td>방송 송출 횟수</td>
-                                                                <td>13건</td>
+                                                                <td class="fw-bold">방송 송출</td>
+                                                                <td th:text="|${dto.getAnnounceList.size()}건|">-건</td>
                                                             </tr>
                                                             </tbody>
                                                         </table>
@@ -406,23 +403,23 @@
                                                             <tr>
                                                                 <td>
                                                                     <label>마을 이름</label>
-                                                                    <input type="text" class="form-control" value="xx마을">
+                                                                    <input type="text" class="form-control" th:value="${dto.town.name}">
                                                                 </td>
                                                             </tr>
                                                             <tr>
                                                                 <td>
                                                                     <label>마을 주소 1</label>
-                                                                    <input type="text" class="form-control" value="경기도">
+                                                                    <input type="text" class="form-control" th:value="${dto.town.region.mainRegion}">
                                                                 </td>
                                                             </tr>
                                                             <tr>
                                                                 <td>
-                                                                    <label>마을 주소 2(?)</label>
-                                                                    <input type="text" class="form-control" value="파주시 광탄면">
+                                                                    <label>마을 주소 2</label>
+                                                                    <input type="text" class="form-control" th:value="${dto.town.region.subRegion}">
                                                                 </td>
                                                             </tr>
                                                             <tr>
-                                                                <td>
+                                                                <td class="text-end">
                                                                     <button type="button" class="btn btn-primary">저장</button>
                                                                     <button type="button" class="btn btn-danger">삭제</button>
                                                                     <button type="button" class="btn btn-success">관리자 추가</button>
@@ -452,21 +449,16 @@
                                         <table class="table table-bordered">
                                             <thead class="table-secondary">
                                             <tr>
-                                                <th>관리자</th>
                                                 <th>이름</th>
-                                                <th>연락처</th>
+                                                <th>전화번호</th>
+                                                <th>주소</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr>
-                                                <td>이장</td>
-                                                <td>홍길동</td>
-                                                <td>010-1234-1234</td>
-                                            </tr>
-                                            <tr>
-                                                <td>이장</td>
-                                                <td>홍길동</td>
-                                                <td>010-1234-1234</td>
+                                            <tr th:each="user : ${dto.getUserList}">
+                                                <td th:text="${user.name}">이름</td>
+                                                <td th:text="${user.tel}">전화번호</td>
+                                                <td th:text="${user.address}">주소</td>
                                             </tr>
                                             </tbody>
                                         </table>
