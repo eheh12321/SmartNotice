@@ -2,6 +2,7 @@ package sejong.smartnotice.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -21,14 +22,20 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.handler.annotation.Header;
+import sejong.smartnotice.domain.member.User;
+import sejong.smartnotice.dto.MqttAlertJson;
 import sejong.smartnotice.dto.MqttAnnounceJson;
 import sejong.smartnotice.dto.MqttInboundDTO;
 import sejong.smartnotice.dto.MqttInitJson;
+import sejong.smartnotice.service.EmergencyAlertService;
+import sejong.smartnotice.service.UserService;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @Configuration
+@RequiredArgsConstructor
 public class MqttConfig {
 
     @Bean
@@ -39,13 +46,16 @@ public class MqttConfig {
     @Bean
     public MessageProducer inbound() {
         MqttPahoMessageDrivenChannelAdapter adapter =
-                new MqttPahoMessageDrivenChannelAdapter("tcp://localhost:1883", "testClient", "init", "announce");
+                new MqttPahoMessageDrivenChannelAdapter("tcp://localhost:1883", "testClient", "init", "announce", "emergency");
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(1);
         adapter.setOutputChannel(mqttInputChannel());
         return adapter;
     }
+
+    private final EmergencyAlertService alertService;
+    private final UserService userService;
 
     @Bean // MQTT 수신(Subscribe)
     @ServiceActivator(inputChannel = "mqttInputChannel")
@@ -73,9 +83,12 @@ public class MqttConfig {
                         log.info("init 토픽 처리");
                         MqttInitJson json = objectMapper.readValue(message.getPayload().toString(), MqttInitJson.class);
                         log.info("client: {}, MAC: {}", json.getClient(), json.getMac());
-
-                    } else {
-                        log.error("엥?");
+                    } else if (receivedTopic.equals("emergency")) {
+                        log.info("emergency 토픽 처리");
+                        MqttAlertJson json = objectMapper.readValue(message.getPayload().toString(), MqttAlertJson.class);
+                        log.info("client: {}, emergency: {}", json.getClient(), json.getEmergency());
+                        User user = userService.findByTel(json.getClient());
+                        alertService.createAlert(user);
                     }
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
