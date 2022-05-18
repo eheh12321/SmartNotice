@@ -92,7 +92,7 @@ public class HomeController {
                 .getResultList();
 
         // (3) 마을 + 주민 + 긴급알림 fetch
-        List<User> userList = em.createQuery("select distinct u from User u join fetch u.alertList", User.class)
+        List<User> userList = em.createQuery("select distinct u from User u left join fetch u.alertList", User.class)
                 .getResultList();
 
         // (4) 마을 + 방송 fetch

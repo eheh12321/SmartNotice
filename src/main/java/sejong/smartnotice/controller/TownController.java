@@ -116,7 +116,7 @@ public class TownController {
         }
 
         // (4) 주민 + 긴급알림 조회
-        List<User> userList = em.createQuery("select distinct u from User u join fetch u.alertList where u.town=:town", User.class)
+        List<User> userList = em.createQuery("select distinct u from User u left join fetch u.alertList where u.town=:town", User.class)
                 .setParameter("town", town)
                 .getResultList();
 
