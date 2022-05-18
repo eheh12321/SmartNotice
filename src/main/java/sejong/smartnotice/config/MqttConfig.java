@@ -85,9 +85,14 @@ public class MqttConfig {
                         log.info("client: {}, MAC: {}", json.getClient(), json.getMac());
                     } else if (receivedTopic.equals("emergency")) {
                         log.info("emergency 토픽 처리");
+                        // JSON 파싱
                         MqttAlertJson json = objectMapper.readValue(message.getPayload().toString(), MqttAlertJson.class);
                         log.info("client: {}, emergency: {}", json.getClient(), json.getEmergency());
+
+                        // 주민 조회 (주민 연락처 이용)
                         User user = userService.findByTel(json.getClient());
+                        
+                        // 긴급 호출 생성
                         alertService.createAlert(user);
                     }
                 } catch (JsonProcessingException e) {

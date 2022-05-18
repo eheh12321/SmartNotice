@@ -11,10 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import sejong.smartnotice.domain.Admin_Town;
-import sejong.smartnotice.domain.Announce_Town;
-import sejong.smartnotice.domain.EmergencyAlert;
-import sejong.smartnotice.domain.Town;
+import sejong.smartnotice.domain.*;
 import sejong.smartnotice.domain.announce.Announce;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.User;
@@ -43,41 +40,6 @@ public class HomeController {
     private final EmergencyAlertService emService;
     private final AnnounceService announceService;
     private final EntityManager em;
-
-    @ResponseBody
-    @GetMapping("/test1234")
-    public String test1234() {
-//        List<User> userList = em.createQuery("select distinct u from User u join fetch u.device d join fetch d.alertList where u.town.id=1", User.class)
-//                .getResultList();
-//        log.info("길이: {}", userList.size());
-//        for (User user : userList) {
-//            log.info("이름: {}", user.getName());
-//            log.info("맥주소: {}", user.getDevice().getMac());
-//            for (EmergencyAlert alert : user.getDevice().getAlertList()) {
-//                log.info("호출 시각: {}", alert.getAlertTime().toString());
-//            }
-//        }
-
-//        List<Admin> adminList = em.createQuery("select a from Admin a left join a.atList at where at.town.id=16", Admin.class)
-//                .getResultList();
-//
-//        for (Admin admin : adminList) {
-//            log.info("이름: {}", admin.getName());
-//        }
-
-        List<Town> townList = em.createQuery("select distinct t from Town t join fetch t.adminList at join fetch at.admin", Town.class)
-                .getResultList();
-
-        for (Town town : townList) {
-            log.info("마을 이름: {}", town.getName());
-            for (Admin_Town at : town.getAdminList()) {
-                log.info("관리자: {}", at.getAdmin().getName());
-            }
-            log.info("===");
-        }
-
-        return "OK";
-    }
 
     @GetMapping
     public String indexPage(Model model) {
@@ -146,8 +108,12 @@ public class HomeController {
                     .status_error(0).build();
             complexDTOList.add(dto);
         }
-        
+
+        List<Region> regionList = em.createQuery("select r from Region r", Region.class).getResultList();
+
         model.addAttribute("dtoList", complexDTOList);
+        model.addAttribute("regionList", regionList);
+
         return "index";
     }
 

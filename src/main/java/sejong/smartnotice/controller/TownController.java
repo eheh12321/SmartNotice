@@ -82,7 +82,7 @@ public class TownController {
         }
         try {
             townService.register(registerDTO);
-            return "redirect:/towns";
+            return "redirect:/";
         } catch (IllegalStateException e) {
             return "redirect:/towns/new?error";
         }
