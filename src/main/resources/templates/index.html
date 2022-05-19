@@ -47,6 +47,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"
             integrity="sha512-QSkVNOCYLtj73J4hbmVoOV6KVZuMluZlioC+trLpewV8qMjsWqlIQvkn1KGX2StWvPMdWGBqim1xlC8krl1EKQ=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!--AJAX-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 
 <body>
@@ -284,7 +287,8 @@
                 <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
                     <!-- Search -->
                     <div class="input-group w-50">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
                             마을 이름
                         </button>
                         <ul class="dropdown-menu" style="">
@@ -299,7 +303,9 @@
                     <!-- /Search -->
                     <ul class="navbar-nav flex-row align-items-center ms-auto">
                         <li class="nav-item">
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#backDropModal">마을 추가</button>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#backDropModal">마을 추가
+                            </button>
                         </li>
                     </ul>
                 </div>
@@ -317,7 +323,8 @@
                                 <div class="d-flex align-items-end row">
                                     <div class="card-header">
                                         <h2 class="d-inline ms-2" th:text="${dto.town.name}">마을 이름</h2>
-                                        <button class="btn bg-transparent pt-0 pb-0" style="float: right" th:onclick="|location.href='@{/towns/{id}(id=${dto.town.id})}'|">
+                                        <button class="btn bg-transparent pt-0 pb-0" style="float: right"
+                                                th:onclick="|location.href='@{/towns/{id}(id=${dto.town.id})}'|">
                                             <i class='bx bxs-right-arrow-circle bx-md'></i>
                                         </button>
                                         <hr>
@@ -328,7 +335,8 @@
                                                 <div class="row row-bordered g-0">
                                                     <!-- Chart -->
                                                     <div class="col-md-7">
-                                                        <canvas id="myChart" th:id="|myChart_${i.index}|" width="400" height="400"></canvas>
+                                                        <canvas id="myChart" th:id="|myChart_${i.index}|" width="400"
+                                                                height="400"></canvas>
                                                         <script th:inline="javascript">
                                                             var userCnt = [[${dto.userList.size()}]];
                                                             var adminCnt = [[${dto.adminList.size()}]];
@@ -391,9 +399,15 @@
                                                                 <td th:text="|${dto.getUserList().size()}명|">-명</td>
                                                             </tr>
                                                             <tr>
-                                                                <td class="fw-bold" style="color: green" th:text="|정상: ${dto.getStatus_ok()}|">정상:-</td>
-                                                                <td class="fw-bold" style="color: coral" th:text="|정상: ${dto.getStatus_error()}|">장애:-</td>
-                                                                <td class="fw-bold" style="color: #dc3545" th:text="|정상: ${dto.getStatus_emergency()}|">긴급:-</td>
+                                                                <td class="fw-bold" style="color: green"
+                                                                    th:text="|정상: ${dto.getStatus_ok()}|">정상:-
+                                                                </td>
+                                                                <td class="fw-bold" style="color: coral"
+                                                                    th:text="|정상: ${dto.getStatus_error()}|">장애:-
+                                                                </td>
+                                                                <td class="fw-bold" style="color: #dc3545"
+                                                                    th:text="|정상: ${dto.getStatus_emergency()}|">긴급:-
+                                                                </td>
                                                             </tr>
                                                             <tr>
                                                                 <td class="fw-bold">마을 관리자</td>
@@ -405,11 +419,14 @@
                                                             </tr>
                                                             <tr>
                                                                 <td class="fw-bold" style="color: #e83e8c"
-                                                                    th:text="|사용자:${dto.getAlert_user()}|">사용자:-</td>
+                                                                    th:text="|사용자:${dto.getAlert_user()}|">사용자:-
+                                                                </td>
                                                                 <td class="fw-bold" style="color: coral"
-                                                                    th:text="|동작:${dto.getAlert_motion()}|">동작:-</td>
+                                                                    th:text="|동작:${dto.getAlert_motion()}|">동작:-
+                                                                </td>
                                                                 <td class="fw-bold" style="color: #dc3545"
-                                                                    th:text="|화재:${dto.getAlert_fire()}|">화재:-</td>
+                                                                    th:text="|화재:${dto.getAlert_fire()}|">화재:-
+                                                                </td>
                                                             </tr>
                                                             <tr>
                                                                 <td class="fw-bold">방송 송출</td>
@@ -433,7 +450,8 @@
                                                             </tr>
                                                             </thead>
                                                             <tbody>
-                                                            <tr th:each="admin, i : ${dto.getAdminList()}" th:if="${i.index < 3}">
+                                                            <tr th:each="admin, i : ${dto.getAdminList()}"
+                                                                th:if="${i.index < 3}">
                                                                 <td th:text="${admin.type}">이장</td>
                                                                 <td th:text="${admin.name}">홍길동</td>
                                                                 <td th:text="${admin.tel}">010-1234-1234</td>
@@ -454,10 +472,13 @@
                                                             </tr>
                                                             </thead>
                                                             <tbody>
-                                                            <tr th:each="alert, i : ${dto.alertList}" th:if="${i.index < 3}">
+                                                            <tr th:each="alert, i : ${dto.alertList}"
+                                                                th:if="${i.index < 3}">
                                                                 <td th:text="${alert.user.name}">-</td>
                                                                 <td>사용자 호출</td>
-                                                                <td th:text="${#temporals.format(alert.alertTime, 'yy/MM/dd HH:mm:ss')}">-</td>
+                                                                <td th:text="${#temporals.format(alert.alertTime, 'yy/MM/dd HH:mm:ss')}">
+                                                                    -
+                                                                </td>
                                                                 <td>확인</td>
                                                             </tr>
                                                             </tbody>
@@ -474,31 +495,36 @@
                     <!-- /마을 Card-->
 
                     <!-- Modal -->
-                    <div class="modal fade" id="backDropModal" data-bs-backdrop="static" tabindex="-1" style="display: none;" aria-hidden="true">
+                    <div class="modal fade" id="backDropModal" data-bs-backdrop="static" tabindex="-1"
+                         style="display: none;" aria-hidden="true">
                         <div class="modal-dialog">
-                            <form class="modal-content" action="/towns" method="post">
+                            <form class="modal-content" action="/towns" method="post" id="formObj">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="backDropModalTitle">마을 추가</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <div class="form-group mb-3">
                                         <label for="name">마을 이름</label>
-                                        <input type="text" class="form-control" id="name" name="name" placeholder="마을 이름">
+                                        <input type="text" class="form-control" id="name" name="name"
+                                               placeholder="마을 이름">
                                     </div>
                                     <div class="form-group mb-3">
                                         <div>지역 선택</div>
                                         <select name="regionCode" class="form-select">
                                             <option th:each="region : ${regionList}"
                                                     th:value="${region.regionCode}"
-                                                    th:text="${region.toString()}">지역명</option>
+                                                    th:text="${region.toString()}">지역명
+                                            </option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
                                     <hr>
-                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">닫기</button>
-                                    <button type="submit" class="btn btn-primary">저장</button>
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">닫기
+                                    </button>
+                                    <button type="button" class="btn btn-primary" id="townRegisterBtn">저장</button>
                                 </div>
                             </form>
                         </div>
@@ -531,7 +557,35 @@
     <div class="layout-overlay layout-menu-toggle"></div>
 </div>
 <!-- / Layout wrapper -->
-
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#townRegisterBtn").on("click", function () {
+            if (confirm("마을을 추가하시갰습니까?")) {
+                var name = $("input[name='name']").val();
+                var regionCode = $("select[name='regionCode']").val();
+                if(name.replace(/\s/gi, "").length == 0) {
+                    alert("마을 이름을 입력해주세요");
+                    return false;
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/towns",
+                    data: {name: name, regionCode: regionCode},
+                    dataType: "text",
+                    success: function (result) {
+                        alert(result);
+                        window.location.href = "/";
+                    },
+                    error: function (xhr) {
+                        alert(xhr.responseText);
+                    }
+                });
+            } else {
+                return false;
+            }
+        });
+    });
+</script>
 <!-- Core JS -->
 <!-- build:js assets/vendor/js/core.js -->
 <script src="/resources/vendor/libs/jquery/jquery.js"></script>

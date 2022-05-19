@@ -64,25 +64,17 @@ public class TownController {
     }
 
     @PostMapping
-    public String register(@Validated @ModelAttribute("town") TownRegisterDTO registerDTO,
-                           BindingResult bindingResult, Model model) {
+    @ResponseBody
+    public ResponseEntity<String> register(@ModelAttribute("town") TownRegisterDTO registerDTO) {
         log.info("== 마을 등록 ==");
         if(registerDTO.getRegionCode() == 1L) {
-            bindingResult.addError(new FieldError("town", "regionCode","마을을 선택해주세요"));
-        }
-        if(bindingResult.hasErrors()) {
-            log.warn("검증 오류 발생: {}", bindingResult);
-
-            // 지역 목록 다시 뽑아서 모델에 같이 넘긴다 (마땅한 방법이 없네..)
-            List<Region> regionList = townService.findAllRegion();
-            model.addAttribute("regionList", regionList);
-            return "town/register";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("마을을 선택해주세요");
         }
         try {
             townService.register(registerDTO);
-            return "redirect:/";
+            return ResponseEntity.ok("마을을 추가하였습니다");
         } catch (IllegalStateException e) {
-            return "redirect:/towns/new?error";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("동일한 지역에 동일한 마을 이름이 존재합니다");
         }
     }
 
