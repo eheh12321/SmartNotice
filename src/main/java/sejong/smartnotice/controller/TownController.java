@@ -38,8 +38,6 @@ public class TownController {
     private final TownService townService;
     private final AdminService adminService;
     private final UserService userService;
-    private final AnnounceService announceService;
-    private final EmergencyAlertService emService;
 
     @GetMapping
     public String getTownList(Model model, @RequestParam(required = false) String name) {
@@ -140,42 +138,26 @@ public class TownController {
                 .status_error(0)
                 .status_emergency(0).build();
 
+        List<Region> regionList = em.createQuery("select r from Region r", Region.class).getResultList();
+
         model.addAttribute("dto", dto);
+        model.addAttribute("regionList", regionList);
+        model.addAttribute("town", new TownModifyDTO(town.getId(), town.getName(), town.getRegion().getRegionCode()));
         return "town/newTownDetail";
     }
 
-    @GetMapping("/{id}/edit")
-    public String modify(@PathVariable Long id, String error, Model model) {
-        log.info("== 마을 수정 ==");
-        if(error != null) {
-            model.addAttribute("error", "동일한 지역에 중복된 마을이 존재합니다");
-        }
-        Town town = townService.findById(id);
-        List<Region> regionList = townService.findAllRegion();
-        model.addAttribute("town", new TownModifyDTO(town.getId(), town.getName(), town.getRegion().getRegionCode()));
-        model.addAttribute("regionList", regionList);
-        return "town/modify";
-    }
-
     @PutMapping("/{id}")
-    public String modify(@Validated @ModelAttribute("town") TownModifyDTO modifyDTO,
-                         BindingResult bindingResult, Model model) {
+    @ResponseBody
+    public ResponseEntity<String> modify(@ModelAttribute("town") TownModifyDTO modifyDTO) {
         log.info("== 마을 수정 ==");
         if(modifyDTO.getRegionCode() == 1L) {
-            bindingResult.addError(new FieldError("town", "regionCode","마을을 선택해주세요"));
-        }
-        if(bindingResult.hasErrors()) {
-            log.warn("검증 오류 발생: {}", bindingResult);
-            // 마을 목록 다시 집어넣기
-            List<Region> regionList = townService.findAllRegion();
-            model.addAttribute("regionList", regionList);
-            return "town/modify";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("마을을 선택해주세요");
         }
         try {
             townService.modifyTownInfo(modifyDTO);
-            return "redirect:/towns";
+            return ResponseEntity.ok("수정을 완료했습니다");
         } catch (IllegalStateException e) {
-            return "redirect:/towns/{id}/edit?error";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("동일한 지역에 동일한 마을 이름이 존재합니다");
         }
     }
 
