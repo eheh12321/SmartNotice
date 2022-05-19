@@ -99,24 +99,8 @@ public class AdminService implements UserDetailsService {
     @Transactional(readOnly = true)
     public List<Admin> findNotTownAdmin(Town town) {
         log.info("== 해당 마을 관리자가 아닌 관리자 목록 조회 ==");
-
-        // 1. 전체 관리자 조회
-        List<Admin> adminList = findAll();
-
-        // 2. 현재 해당 마을의 관리자 조회
-        List<Admin_Town> atList = em.createQuery("select at from Admin_Town at where at.town=:town", Admin_Town.class)
-                .setParameter("town", town).getResultList();
-
-        // 2-1. 관리자 목록으로 변환
-        List<Admin> townAdminList = new ArrayList<>();
-        for (Admin_Town at : atList) {
-            townAdminList.add(at.getAdmin());
-        }
-
-        // 3. 전체 관리자 - 해당 마을 관리자 목록 생성 후 반환
-        for (Admin admin : townAdminList) {
-            adminList.remove(admin);
-        }
+        List<Admin> adminList = em.createQuery("select a from Admin a where a.id not in(select at.admin.id from Admin_Town at where at.town.id=?1)", Admin.class)
+                .setParameter(1, town.getId()).getResultList();
         return adminList;
     }
 

@@ -6,14 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.*;
 import sejong.smartnotice.domain.announce.Announce;
-import sejong.smartnotice.domain.member.Account;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.AdminType;
 import sejong.smartnotice.domain.member.User;
@@ -24,10 +19,8 @@ import sejong.smartnotice.dto.TownRegisterDTO;
 import sejong.smartnotice.service.*;
 
 import javax.persistence.EntityManager;
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -40,27 +33,8 @@ public class TownController {
     private final UserService userService;
 
     @GetMapping
-    public String getTownList(Model model, @RequestParam(required = false) String name) {
-        log.info("== 마을 목록 조회 ==");
-        List<Town> townList;
-        if(StringUtils.hasText(name)) {
-            townList = townService.findByName(name);
-        } else {
-            townList = townService.findAll();
-        }
-        model.addAttribute("townList", townList);
-        return "town/townList";
-    }
-
-    @GetMapping("/new")
-    public String registerTown(String error, Model model) {
-        if(error != null) {
-            model.addAttribute("error", "동일한 지역에 중복된 마을이 존재합니다");
-        }
-        List<Region> regionList = townService.findAllRegion();
-        model.addAttribute("regionList", regionList);
-        model.addAttribute("town", new TownRegisterDTO());
-        return "town/register";
+    public String getTownList() {
+        return "redirect:/";
     }
 
     @PostMapping
@@ -135,7 +109,7 @@ public class TownController {
         model.addAttribute("dto", dto);
         model.addAttribute("regionList", regionList);
         model.addAttribute("town", new TownModifyDTO(town.getId(), town.getName(), town.getRegion().getRegionCode()));
-        return "town/newTownDetail";
+        return "town/townDetail";
     }
 
     @PutMapping("/{id}")
@@ -181,7 +155,7 @@ public class TownController {
         model.addAttribute("adminList", adminList);
         model.addAttribute("townId", id);
 
-        return "town/userList";
+        return "town/townAdminRegister";
     }
 
     // 마을 관리자 등록(등록)
