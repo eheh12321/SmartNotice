@@ -330,38 +330,51 @@
                                                     <div class="col-md-7">
                                                         <canvas id="myChart" th:id="|myChart_${i.index}|" width="400" height="400"></canvas>
                                                         <script th:inline="javascript">
+                                                            var userCnt = [[${dto.userList.size()}]];
+                                                            var adminCnt = [[${dto.adminList.size()}]];
+                                                            var alertCnt = [[${dto.alertList.size()}]];
+                                                            var announceCnt = [[${dto.announceList.size()}]];
                                                             var chartId = "myChart_" + [[${i.index}]];
                                                             var ctx = document.getElementById(chartId).getContext('2d');
                                                             var myChart = new Chart(ctx, {
                                                                 type: 'bar',
                                                                 data: {
-                                                                    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                                                                    labels: ['마을 주민', '마을 관리자', '긴급호출', '방송 송출'],
                                                                     datasets: [{
-                                                                        label: '# of Votes',
-                                                                        data: [12, 19, 3, 5, 2, 3],
+                                                                        data: [userCnt, adminCnt, alertCnt, announceCnt],
                                                                         backgroundColor: [
-                                                                            'rgba(255, 99, 132, 0.2)',
-                                                                            'rgba(54, 162, 235, 0.2)',
-                                                                            'rgba(255, 206, 86, 0.2)',
-                                                                            'rgba(75, 192, 192, 0.2)',
-                                                                            'rgba(153, 102, 255, 0.2)',
-                                                                            'rgba(255, 159, 64, 0.2)'
+                                                                            'rgba(255, 99, 132, 0.3)',
+                                                                            'rgba(54, 162, 235, 0.3)',
+                                                                            'rgba(255, 206, 86, 0.3)',
+                                                                            'rgba(75, 192, 192, 0.3)'
                                                                         ],
                                                                         borderColor: [
                                                                             'rgba(255, 99, 132, 1)',
                                                                             'rgba(54, 162, 235, 1)',
                                                                             'rgba(255, 206, 86, 1)',
                                                                             'rgba(75, 192, 192, 1)',
-                                                                            'rgba(153, 102, 255, 1)',
-                                                                            'rgba(255, 159, 64, 1)'
                                                                         ],
-                                                                        borderWidth: 1
+                                                                        borderWidth: 1,
+                                                                        minBarLength: 1
                                                                     }]
                                                                 },
                                                                 options: {
+                                                                    plugins: {
+                                                                        title: {
+                                                                            display: true,
+                                                                            text: '마을 현황 차트'
+                                                                        },
+                                                                        legend: {
+                                                                            display: false
+                                                                        }
+                                                                    },
+                                                                    responsive: true,
                                                                     scales: {
                                                                         y: {
-                                                                            beginAtZero: true
+                                                                            beginAtZero: true,
+                                                                            ticks: {
+                                                                                stepSize: 1
+                                                                            }
                                                                         }
                                                                     }
                                                                 }
