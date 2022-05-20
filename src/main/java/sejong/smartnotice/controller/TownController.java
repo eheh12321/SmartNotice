@@ -79,8 +79,8 @@ public class TownController {
             announceList.add(at.getAnnounce());
         }
 
-        // (4) 주민 + 긴급알림 조회
-        List<User> userList = em.createQuery("select distinct u from User u left join fetch u.alertList where u.town=:town", User.class)
+        // (4) 주민 + 긴급알림 + 단말기 조회
+        List<User> userList = em.createQuery("select distinct u from User u left join fetch u.alertList join fetch u.device where u.town=:town", User.class)
                 .setParameter("town", town)
                 .getResultList();
 

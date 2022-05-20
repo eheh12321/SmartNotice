@@ -49,8 +49,14 @@
                 integrity="sha512-QSkVNOCYLtj73J4hbmVoOV6KVZuMluZlioC+trLpewV8qMjsWqlIQvkn1KGX2StWvPMdWGBqim1xlC8krl1EKQ=="
                 crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-        <!--JQuery-->
+        <!--JQuery -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+        <!-- DataTables(JQuery required) -->
+        <script type="text/javascript" src="https://cdn.datatables.net/1.12.0/js/jquery.dataTables.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/1.12.0/js/dataTables.bootstrap5.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.0/css/dataTables.bootstrap5.min.css">
+
     </head>
 <body>
 <!-- Layout wrapper -->
@@ -483,21 +489,80 @@
                                         <h2 class="d-inline">마을 관리자 정보</h2>
                                         <hr>
                                     </div>
+
                                     <div class="card-body">
-                                        <table class="table table-bordered">
-                                            <thead class="table-secondary">
-                                            <tr>
-                                                <th>이름</th>
-                                                <th>전화번호</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr th:each="admin : ${dto.getAdminList}">
-                                                <td th:text="${admin.name}">이름</td>
-                                                <td th:text="${admin.tel}">전화번호</td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
+                                        <div id="adminDiv">
+                                            <table class="table table-bordered" id="adminTable">
+                                                <thead class="table-secondary">
+                                                <tr>
+                                                    <th>이름</th>
+                                                    <th>전화번호</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr th:each="admin : ${dto.getAdminList}">
+                                                    <td th:text="${admin.name}">이름</td>
+                                                    <td th:text="${admin.tel}">전화번호</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div id="userDiv" style="display: none;">
+                                            <table class="table table-bordered" id="userTable">
+                                                <thead class="table-secondary">
+                                                <tr>
+                                                    <th>이름</th>
+                                                    <th>생년월일</th>
+                                                    <th>전화번호</th>
+                                                    <th>주소</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr th:each="user : ${dto.getUserList}">
+                                                    <td th:text="${user.name}">이름</td>
+                                                    <td th:text="${user.birth}">생년월일</td>
+                                                    <td th:text="${user.tel}">전화번호</td>
+                                                    <td th:text="${user.address}">주소</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div id="announceDiv" style="display: none;">
+                                            <table class="table table-bordered" id="announceTable">
+                                                <thead class="table-secondary">
+                                                <tr>
+                                                    <th>방송 제목</th>
+                                                    <th>타입</th>
+                                                    <th>방송자</th>
+                                                    <th>시각</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr th:each="announce : ${dto.getAnnounceList()}">
+                                                    <td th:text="${announce.title}">제목</td>
+                                                    <td th:text="${announce.category}">타입</td>
+                                                    <td th:text="${announce.producer}">이름</td>
+                                                    <td th:text="${announce.time}">시각</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div id="alertDiv" style="display: none;">
+                                            <table class="table table-bordered" id="alertTable">
+                                                <thead class="table-secondary">
+                                                <tr>
+                                                    <th>호출인</th>
+                                                    <th>호출시각</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr th:each="alert : ${dto.getAlertList()}">
+                                                    <td th:text="${alert.user.name}">호출인</td>
+                                                    <td th:text="${alert.alertTime}">호출시각</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                         <hr>
                                         <table class="table table-borderless">
                                             <tr class="text-center">
@@ -515,6 +580,92 @@
                                                 </td>
                                             </tr>
                                         </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /마을 Card-->
+                    <!-- 마을 Card -->
+                    <div class="row">
+                        <div class="col mb-4">
+                            <div class="card">
+                                <div class="d-flex align-items-end row">
+                                    <div class="card-header">
+                                        <h2 class="d-inline">마을 주민 정보</h2>
+                                        <hr>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row" style="display: flex; justify-content: center;">
+                                            <div class="col-md-11 text-center">
+                                                <!-- 주민 별 Card-->
+                                                <a th:href="@{/users/{id}(id=${user.id})}" th:each="user, i : ${dto.userList}" style="color: black;">
+                                                    <div class="col-lg-5 card border border-secondary mb-5 ms-5 d-inline-block" style="min-width: 330px">
+                                                        <div class="card-header">
+                                                            <p th:text="|주민 ${user.name} 정보|">이름 카드</p>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <div th:unless="${user.device}">
+                                                                <span style="color:#dc3545;">[단말기 미연결]</span>
+                                                            </div>
+                                                            <div th:if="${user.device}">
+                                                                <span th:text="|단말기 상태: ${!user.device.error}|">단말기 상태</span>
+                                                                <span> // </span>
+                                                                <span th:text="|긴급 유무: ${user.device.emergency}|">긴급 유무</span>
+                                                            </div>
+                                                            <br>
+                                                            <!-- Chart -->
+                                                            <div class="col-md-7">
+                                                                <canvas id="userChart" th:id="|userChart_${i.index}|" width="400" height="400"></canvas>
+                                                                <script th:inline="javascript">
+                                                                    var alertCnt = [[${user.alertList.size()}]];
+                                                                    var chartId = "userChart_" + [[${i.index}]];
+                                                                    var userCtx = document.getElementById(chartId).getContext('2d');
+                                                                    var userChart = new Chart(userCtx, {
+                                                                        type: 'bar',
+                                                                        data: {
+                                                                            labels: ['긴급호출'],
+                                                                            datasets: [{
+                                                                                data: [alertCnt],
+                                                                                backgroundColor: [
+                                                                                    'rgba(255, 99, 132, 0.3)'
+                                                                                ],
+                                                                                borderColor: [
+                                                                                    'rgba(255, 99, 132, 1)'
+                                                                                ],
+                                                                                borderWidth: 1
+                                                                            }]
+                                                                        },
+                                                                        options: {
+                                                                            plugins: {
+                                                                                title: {
+                                                                                    display: true,
+                                                                                    text: '마을 주민 차트'
+                                                                                },
+                                                                                legend: {
+                                                                                    display: false
+                                                                                }
+                                                                            },
+                                                                            responsive: true,
+                                                                            scales: {
+                                                                                y: {
+                                                                                    beginAtZero: true,
+                                                                                    ticks: {
+                                                                                        stepSize: 1
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    });
+                                                                </script>
+                                                            </div>
+                                                            <!-- /Chart -->
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                                <!-- /Card -->
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -552,6 +703,8 @@
 <script type="text/javascript" th:inline="javascript">
     $(document).ready(function () {
         let formObj = $("#formObj");
+
+        $("#adminTable").dataTable();
 
         $("#townDeleteBtn").on("click", function() {
             if (confirm("마을을 삭제하시겠습니까? (주의:해당 마을에 주민이 존재하는 경우 삭제가 불가능합니다.)")) {
@@ -592,19 +745,34 @@
         });
 
         $("#showUserTableBtn").on("click", function() {
-            alert("이런! 아직 구현이 안되었어요");
+            $("#userTable").dataTable();
+            $("#userDiv").css('display', '');
+            $("#adminDiv").css('display', 'none');
+            $("#announceDiv").css('display', 'none');
+            $("#alertDiv").css('display', 'none');
         });
 
         $("#showAdminTableBtn").on("click", function() {
-            alert("이런! 아직 구현이 안되었어요");
+            $("#userDiv").css('display', 'none');
+            $("#adminDiv").css('display', '');
+            $("#announceDiv").css('display', 'none');
+            $("#alertDiv").css('display', 'none');
         });
 
         $("#showAnnounceTableBtn").on("click", function() {
-            alert("이런! 아직 구현이 안되었어요");
+            $("#announceTable").dataTable();
+            $("#userDiv").css('display', 'none');
+            $("#adminDiv").css('display', 'none');
+            $("#announceDiv").css('display', '');
+            $("#alertDiv").css('display', 'none');
         });
 
         $("#showAlertTableBtn").on("click", function() {
-            alert("이런! 아직 구현이 안되었어요");
+            $("#alertTable").dataTable();
+            $("#userDiv").css('display', 'none');
+            $("#adminDiv").css('display', 'none');
+            $("#announceDiv").css('display', 'none');
+            $("#alertDiv").css('display', '');
         });
     });
 </script>
