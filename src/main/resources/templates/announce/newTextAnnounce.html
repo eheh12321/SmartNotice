@@ -8,7 +8,7 @@
             content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
 
-    <title>마을 관리자 등록</title>
+    <title>문자 방송 페이지</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/resources/img/favicon/favicon.ico"/>
@@ -43,14 +43,13 @@
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="/resources/js/config.js"></script>
 
-    <!--JQuery -->
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"
+            integrity="sha512-QSkVNOCYLtj73J4hbmVoOV6KVZuMluZlioC+trLpewV8qMjsWqlIQvkn1KGX2StWvPMdWGBqim1xlC8krl1EKQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!--JQuery-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
-    <!-- DataTables(JQuery required) -->
-    <script type="text/javascript" src="https://cdn.datatables.net/1.12.0/js/jquery.dataTables.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.12.0/js/dataTables.bootstrap5.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.0/css/dataTables.bootstrap5.min.css">
-
 </head>
 
 <body>
@@ -128,7 +127,6 @@
             <div class="menu-inner-shadow"></div>
 
             <ul class="menu-inner py-1">
-
                 <!-- 로그인 정보 -->
                 <li class="menu-item mb-3">
                     <a class="menu-link">
@@ -156,7 +154,7 @@
                 </li>
 
                 <!-- 마을 현황 -->
-                <li class="menu-item active">
+                <li class="menu-item">
                     <a href="/towns" class="menu-link">
                         <i class="menu-icon tf-icons bx bx-building-house"></i>
                         <div data-i18n="Basic">마을 현황</div>
@@ -199,13 +197,13 @@
                 </li>
 
                 <!-- 방송 -->
-                <li class="menu-item">
+                <li class="menu-item active open">
                     <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <i class="menu-icon tf-icons bx bx-broadcast"></i>
                         <div data-i18n="Account Settings">방송하기</div>
                     </a>
                     <ul class="menu-sub">
-                        <li class="menu-item">
+                        <li class="menu-item active">
                             <a href="/announces/text" class="menu-link">
                                 <div data-i18n="Account">문자 방송</div>
                             </a>
@@ -290,67 +288,50 @@
                             <div class="card">
                                 <div class="d-flex align-items-end row">
                                     <div class="card-header">
-                                        <h2 class="d-inline ms-2">마을 관리자 추가</h2>
+                                        <h2 class="d-inline ms-2">문자 방송</h2>
                                         <button class="btn bg-transparent pt-0 pb-0" style="float: right"
-                                                th:onclick="|location.href='@{/towns/{id}(id=${townId})}'|">
+                                                th:onclick="|location.href='/announces'|">
                                             <i class='bx bxs-left-arrow-circle bx-md'></i>
                                         </button>
                                         <hr>
                                     </div>
-                                    <div class="card-body ms-2">
-                                        <h2>[마을 주민을 마을 관리자로 등록]</h2>
-                                        <hr><br>
-                                        <table class="table table-bordered table-hover" id="userTable">
-                                            <thead class="table-secondary">
-                                            <tr>
-                                                <th>#</th>
-                                                <th>이름</th>
-                                                <th>전화번호</th>
-                                                <th>등록</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr th:each="user : ${userList}">
-                                                <td th:text="${user.id}"></td>
-                                                <td th:text="${user.name}"></td>
-                                                <td th:text="${user.tel}"></td>
-                                                <td>
-                                                    <form action="" method="post" th:if="${!user.isAdmin()}">
-                                                        <input type="hidden" name="userId" th:value="${user.id}"/>
-                                                        <button class="btn btn-primary adminRegister" type="submit"
-                                                                onclick="if(!confirm('관리자로 등록하시겠습니까?')){return false;}">등록</button>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                        <br><br>
-                                        <h2>[관리자를 마을 관리자로 등록]</h2>
-                                        <hr><br>
-                                        <table class="table table-bordered table-hover" id="adminTable">
-                                            <thead class="table-secondary">
-                                            <tr>
-                                                <th>#</th>
-                                                <th>이름</th>
-                                                <th>전화번호</th>
-                                                <th>등록</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr th:each="admin : ${adminList}">
-                                                <td th:text="${admin.id}"></td>
-                                                <td th:text="${admin.name}"></td>
-                                                <td th:text="${admin.tel}"></td>
-                                                <td>
-                                                    <form action="" method="post">
-                                                        <input type="hidden" name="adminId" th:value="${admin.id}"/>
-                                                        <button class="btn btn-primary" type="submit"
-                                                                onclick="if(!confirm('관리자로 등록하시겠습니까?')){return false;}">등록</button>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
+                                    <div class="card-body">
+                                        <form method="post" action="/announces/text" role="form">
+                                            <label for="title">제목</label>
+                                            <input type="text" id="title" name="title" class="form-control" placeholder="방송 제목 입력">
+                                            <hr>
+                                            <label for="inputText">내용</label>
+                                            <input type="text" id="inputText" name="textData" class="form-control" placeholder="방송 내용 입력 (1000자 제한)">
+                                            <hr>
+                                            <p>재난 유무 선택</p>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="category" id="radio1" value="NORMAL" checked>
+                                                <label class="form-check-label" for="radio1">
+                                                    일반
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="category" id="radio2" value="DISASTER">
+                                                <label class="form-check-label" for="radio2" style="color: red">
+                                                    재난
+                                                </label>
+                                            </div>
+                                            <hr>
+                                            <p>방송 대상 마을 선택</p>
+                                            <ul>
+                                                <li th:each="town : ${townList}">
+                                                    <label th:text="*{town.name}">마을 이름</label>
+                                                    <input type="checkbox" th:value="*{town.id}" name="townId">
+                                                </li>
+                                            </ul>
+                                            <input type="hidden" th:value="${admin.getId()}" name="adminId">
+                                            <input type="hidden" name="category" value="NORMAL">
+                                            <input type="hidden" name="type" value="TEXT">
+                                            <hr>
+                                            <button type="submit" class="btn btn-danger" id="makeAnnounce">방송하기</button>
+                                            <button type="button" class="btn btn-warning" id="testAnnounce">미리 듣기</button>
+                                            <hr>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -386,16 +367,92 @@
 </div>
 <!-- / Layout wrapper -->
 <script type="text/javascript">
-    $(document).ready(function() {
-       $("#userTable").dataTable();
-       $("#adminTable").dataTable();
-    });
-</script>
+    $(document).ready(function () {
+        var lastData;
+        var lastInputText;
+        var test1 = $('#test1');
 
+        $('#testAnnounce').on("click", function (e) {
+            e.preventDefault();
+            console.log("미리듣기 click");
+
+            inputText = document.getElementById("inputText").value;
+            test1.html("입력 내용: " + inputText);
+
+            if(inputText.length == 0) {
+                alert("내용을 입력해주세요");
+            } else {
+                $.ajax({
+                    type:"POST",
+                    url:"/announces/text/api",
+                    data: {text:inputText},
+                    dataType:"json",
+                    success: function (result) {
+                        alert("방송 생성 성공");
+
+                        lastInputText = inputText; // 저장용
+                        console.log(lastInputText);
+                        lastData = result.audioContents;
+                        console.log(lastData);
+
+                        let snd = new Audio("data:audio/mp3;base64," + result.audioContents);
+                        snd.play();
+
+                    },
+                    error: function (xhr) {
+                        alert("방송 생성 실패");
+                    }
+                });
+            }
+        });
+
+        var formObj = $("form[role='form']");
+        $('#makeAnnounce').on("click", function (e) {
+            e.preventDefault();
+            console.log("방송하기 click");
+            inputText = document.getElementById("inputText").value;
+            let title = document.getElementById("title");
+            var len = $("input[name='townId']:checked").length;
+            if(inputText.length == 0) {
+                alert("내용을 입력해주세요");
+                return;
+            }
+            if(title.value.length == 0) {
+                title.innerText = "제목";
+            }
+            if(len == 0) {
+                alert("방송할 마을을 선택해주세요");
+                return;
+            }
+
+            if(confirm("문자 방송 하시겠습니까?")) {
+                console.log(lastInputText);
+                if(lastInputText != null && inputText == lastInputText) {
+                    formObj.append($('<input/>', {type:'hidden', name:'voiceData', value:lastData}));
+                }
+                formObj.submit();
+            }
+        })
+    });
+
+    function stringToUint(string) {
+        var charList = string.split('');
+        var uintArray = [];
+        for (var i = 0; i < charList.length; i++) {
+            uintArray.push(charList[i].charCodeAt(0));
+        }
+        console.log(uintArray);
+        return new Uint8Array(uintArray);
+    }
+</script>
+<!-- Core JS -->
+<!-- build:js assets/vendor/js/core.js -->
 <script src="/resources/vendor/libs/popper/popper.js"></script>
 <script src="/resources/vendor/js/bootstrap.js"></script>
 <script src="/resources/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+
 <script src="/resources/vendor/js/menu.js"></script>
+<!-- endbuild -->
 
 <!-- Vendors JS -->
 <script src="/resources/vendor/libs/apex-charts/apexcharts.js"></script>

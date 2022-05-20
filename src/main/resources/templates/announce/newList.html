@@ -8,7 +8,7 @@
             content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
 
-    <title>마을 관리자 등록</title>
+    <title>관제 메인 페이지</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/resources/img/favicon/favicon.ico"/>
@@ -43,6 +43,11 @@
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="/resources/js/config.js"></script>
 
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"
+            integrity="sha512-QSkVNOCYLtj73J4hbmVoOV6KVZuMluZlioC+trLpewV8qMjsWqlIQvkn1KGX2StWvPMdWGBqim1xlC8krl1EKQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <!--JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
@@ -50,7 +55,6 @@
     <script type="text/javascript" src="https://cdn.datatables.net/1.12.0/js/jquery.dataTables.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.12.0/js/dataTables.bootstrap5.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.0/css/dataTables.bootstrap5.min.css">
-
 </head>
 
 <body>
@@ -128,7 +132,6 @@
             <div class="menu-inner-shadow"></div>
 
             <ul class="menu-inner py-1">
-
                 <!-- 로그인 정보 -->
                 <li class="menu-item mb-3">
                     <a class="menu-link">
@@ -156,7 +159,7 @@
                 </li>
 
                 <!-- 마을 현황 -->
-                <li class="menu-item active">
+                <li class="menu-item">
                     <a href="/towns" class="menu-link">
                         <i class="menu-icon tf-icons bx bx-building-house"></i>
                         <div data-i18n="Basic">마을 현황</div>
@@ -219,7 +222,7 @@
                 </li>
 
                 <!-- 방송 목록 조회 -->
-                <li class="menu-item">
+                <li class="menu-item active">
                     <a href="/announces" class="menu-link">
                         <i class="menu-icon tf-icons bx bx-dock-top"></i>
                         <div data-i18n="Basic">방송 목록 조회</div>
@@ -290,63 +293,38 @@
                             <div class="card">
                                 <div class="d-flex align-items-end row">
                                     <div class="card-header">
-                                        <h2 class="d-inline ms-2">마을 관리자 추가</h2>
+                                        <h2 class="d-inline ms-2">방송 목록 조회</h2>
                                         <button class="btn bg-transparent pt-0 pb-0" style="float: right"
-                                                th:onclick="|location.href='@{/towns/{id}(id=${townId})}'|">
+                                                th:onclick="|location.href='/'|">
                                             <i class='bx bxs-left-arrow-circle bx-md'></i>
                                         </button>
                                         <hr>
                                     </div>
-                                    <div class="card-body ms-2">
-                                        <h2>[마을 주민을 마을 관리자로 등록]</h2>
-                                        <hr><br>
-                                        <table class="table table-bordered table-hover" id="userTable">
-                                            <thead class="table-secondary">
+                                    <div class="card-body">
+                                        <table class="table table-responsive table-hover" id="announceTable">
+                                            <thead>
                                             <tr>
                                                 <th>#</th>
-                                                <th>이름</th>
-                                                <th>전화번호</th>
-                                                <th>등록</th>
+                                                <th>방송자</th>
+                                                <th>방송 내용</th>
+                                                <th>방송 시각</th>
+                                                <th>관리</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr th:each="user : ${userList}">
-                                                <td th:text="${user.id}"></td>
-                                                <td th:text="${user.name}"></td>
-                                                <td th:text="${user.tel}"></td>
+                                            <tr th:each="announce : ${announceList}">
+                                                <td th:text="${announce.getId()}"></td>
+                                                <td th:text="${announce.getProducer()}"></td>
+                                                <td th:text="${announce.getContents()}"></td>
+                                                <td th:text="${#temporals.format(announce.getTime(), 'yy/MM/dd HH:mm:ss')}"></td>
                                                 <td>
-                                                    <form action="" method="post" th:if="${!user.isAdmin()}">
-                                                        <input type="hidden" name="userId" th:value="${user.id}"/>
-                                                        <button class="btn btn-primary adminRegister" type="submit"
-                                                                onclick="if(!confirm('관리자로 등록하시겠습니까?')){return false;}">등록</button>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                        <br><br>
-                                        <h2>[관리자를 마을 관리자로 등록]</h2>
-                                        <hr><br>
-                                        <table class="table table-bordered table-hover" id="adminTable">
-                                            <thead class="table-secondary">
-                                            <tr>
-                                                <th>#</th>
-                                                <th>이름</th>
-                                                <th>전화번호</th>
-                                                <th>등록</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr th:each="admin : ${adminList}">
-                                                <td th:text="${admin.id}"></td>
-                                                <td th:text="${admin.name}"></td>
-                                                <td th:text="${admin.tel}"></td>
-                                                <td>
-                                                    <form action="" method="post">
-                                                        <input type="hidden" name="adminId" th:value="${admin.id}"/>
-                                                        <button class="btn btn-primary" type="submit"
-                                                                onclick="if(!confirm('관리자로 등록하시겠습니까?')){return false;}">등록</button>
-                                                    </form>
+                                                    <!-- Vertically Centered Modal -->
+                                                    <div class="col-lg-4 col-md-6">
+                                                        <!-- Button trigger modal -->
+                                                        <button type="button" class="btn btn-link modalBtn" data-bs-toggle="modal" data-bs-target="#modalCenter" th:index="${announce.getId()}">
+                                                            <i class='bx bx-play-circle bx-lg'></i>
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                             </tbody>
@@ -357,6 +335,42 @@
                         </div>
                     </div>
                     <!-- /마을 Card-->
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="modalCenter" tabindex="-1"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalCenterTitle">방송 듣기</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col mb-3">
+                                            <audio id="modal_src" src="" controls>방송</audio>
+                                            <hr>
+                                            <p id="modal_title">방송 제목</p>
+                                            <p id="modal_producer">방송자</p>
+                                            <p id="modal_contents">내용</p>
+                                            <p id="modal_time">방송 시각</p>
+                                            <hr>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <form action="" method="post" id="deleteForm">
+                                        <input type="hidden" name="id" value="" id="deleteFormId"/>
+                                        <input type="hidden" name="_method" value="DELETE"/>
+                                        <button id="deleteBtn" class="btn btn-danger" type="submit">삭제</button>
+                                    </form>
+                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">닫기
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <!-- / Content -->
 
@@ -385,17 +399,50 @@
     <div class="layout-overlay layout-menu-toggle"></div>
 </div>
 <!-- / Layout wrapper -->
-<script type="text/javascript">
-    $(document).ready(function() {
-       $("#userTable").dataTable();
-       $("#adminTable").dataTable();
+<!-- 방송 모달 -->
+<script type="text/javascript" th:inline="javascript">
+    $(document).ready(function (){
+        $("#announceTable").dataTable();
+        $('.modalBtn').on("click", function (e){
+            e.preventDefault();
+            var idx = $(this).attr('index');
+            console.log("click: " + idx);
+            $.ajax({
+                type:"GET",
+                url:"/announces/"+idx,
+                success: function(result) {
+                    console.log("방송을 가져왔습니다");
+                    $("#modal_src").attr('src', result.src);
+                    $("#modal_title").text("방송 제목: " + result.title);
+                    $("#modal_producer").text("방송자: " + result.producer);
+                    $("#modal_contents").text("방송 내용: " + result.contents);
+                    $("#modal_time").text("방송 시각: " + result.time);
+
+                    $("#deleteFormId").attr('value', idx)
+                    $("#deleteForm").attr('action', '/announces/' + idx);
+                },
+                error: function(xhr) {
+                    alert("방송을 가져오는데 실패했습니다");
+                }
+            });
+        });
+        $("#deleteBtn").on("click", function (e){
+            e.preventDefault();
+            if(confirm("방송을 삭제하시겠습니까?")) {
+                var formObj = $("#deleteForm");
+                formObj.submit();
+            }
+        });
     });
 </script>
 
+<!-- Core JS -->
 <script src="/resources/vendor/libs/popper/popper.js"></script>
 <script src="/resources/vendor/js/bootstrap.js"></script>
 <script src="/resources/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+
 <script src="/resources/vendor/js/menu.js"></script>
+<!-- endbuild -->
 
 <!-- Vendors JS -->
 <script src="/resources/vendor/libs/apex-charts/apexcharts.js"></script>

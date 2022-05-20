@@ -42,16 +42,15 @@ public class AnnounceController {
                 return o2.getId().compareTo(o1.getId());
             }
         });
-        model.addAttribute("separator", File.separator);
         model.addAttribute("announceList", announceList);
-        return "announce/list";
+        return "announce/newList";
     }
 
     @GetMapping("/text")
     public String getTextAnnounceForm(@AuthenticationPrincipal Admin admin, Model model) {
         model.addAttribute("admin", admin);
         model.addAttribute("townList", adminService.getTownList(admin));
-        return "announce/textAnnounce";
+        return "announce/newTextAnnounce";
     }
 
     @PostMapping("/text")
@@ -70,7 +69,7 @@ public class AnnounceController {
     public String getVoiceAnnounceForm(@AuthenticationPrincipal Admin admin, Model model) {
         model.addAttribute("admin", admin);
         model.addAttribute("townList", adminService.getTownList(admin));
-        return "announce/voiceAnnounce";
+        return "announce/newVoiceAnnounce";
     }
 
     @PostMapping("/voice")
