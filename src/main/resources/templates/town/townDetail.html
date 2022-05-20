@@ -136,7 +136,11 @@
                 <!-- 시계 -->
                 <li class="menu-item">
                     <a class="menu-link" style="background-color: #333333">
-                        <div style="color:white;">2022년 05월 17일<br>AM 12:57:00</div>
+                        <div style="color:white;">
+                            <span id="date" class="date">-</span>
+                            <br>
+                            <span id="time" class="time">-</span>
+                        </div>
                     </a>
                 </li>
 
@@ -599,7 +603,7 @@
                                         <div class="row" style="display: flex; justify-content: center;">
                                             <div class="col-md-11 text-center">
                                                 <!-- 주민 별 Card-->
-                                                <a th:href="@{/users/{id}(id=${user.id})}" th:each="user, i : ${dto.userList}" style="color: black;">
+                                                <a th:href="@{/users/{id}(id=${user.id})}" th:each="user, i : ${dto.getUserList()}" style="color: black;">
                                                     <div class="col-lg-5 card border border-secondary mb-5 ms-5 d-inline-block" style="min-width: 330px">
                                                         <div class="card-header">
                                                             <p th:text="|주민 ${user.name} 정보|">이름 카드</p>
@@ -776,6 +780,9 @@
         });
     });
 </script>
+<!-- 시계 -->
+<script src="/resources/custom/clock.js"></script>
+
 <script src="/resources/vendor/libs/popper/popper.js"></script>
 <script src="/resources/vendor/js/bootstrap.js"></script>
 <script src="/resources/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>

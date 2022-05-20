@@ -131,7 +131,11 @@
                 <!-- 시계 -->
                 <li class="menu-item">
                     <a class="menu-link" style="background-color: #333333">
-                        <div style="color:white;">2022년 05월 17일<br>AM 12:57:00</div>
+                        <div style="color:white;">
+                            <span id="date" class="date">-</span>
+                            <br>
+                            <span id="time" class="time">-</span>
+                        </div>
                     </a>
                 </li>
 
@@ -397,6 +401,9 @@
        $("#adminTable").DataTable();
     });
 </script>
+<!-- 시계 -->
+<script src="/resources/custom/clock.js"></script>
+
 <script src="/resources/vendor/libs/popper/popper.js"></script>
 <script src="/resources/vendor/js/bootstrap.js"></script>
 <script src="/resources/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
