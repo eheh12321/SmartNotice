@@ -35,13 +35,6 @@ public class AnnounceController {
     @GetMapping
     public String getAnnounceList(Model model) {
         List<Announce> announceList = announceService.findAll();
-        // 내림차순 정렬(임시)
-        Collections.sort(announceList, new Comparator<Announce>() {
-            @Override
-            public int compare(Announce o1, Announce o2) {
-                return o2.getId().compareTo(o1.getId());
-            }
-        });
         model.addAttribute("announceList", announceList);
         return "announce/newList";
     }

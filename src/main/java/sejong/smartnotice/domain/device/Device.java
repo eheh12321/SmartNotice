@@ -27,24 +27,18 @@ public class Device {
     private User user;
 
     @ColumnDefault("false")
-    private boolean error;
+    private boolean error_sensor; // 센서 장애
 
     @ColumnDefault("false")
-    private boolean emergency;
+    private boolean error_mqtt; // 통신 장애
+
+    @ColumnDefault("true")
+    private boolean available; // 사용 가능 유무
 
     private String mac;
 
-    @ColumnDefault("false")
-    private boolean available;
-
     // 단말기 연결상태 점검
     public Long checkError() {
-        return this.getId();
-    }
-
-    // 단말기 긴급유무
-    public Long doAlert() {
-        this.error = true;
         return this.getId();
     }
 

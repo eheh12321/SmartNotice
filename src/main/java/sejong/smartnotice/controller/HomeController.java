@@ -52,8 +52,8 @@ public class HomeController {
         List<Admin> adminList = em.createQuery("select distinct a from Admin a join fetch a.atList at join fetch at.town", Admin.class)
                 .getResultList();
 
-        // (3) 마을 + 주민 + 긴급알림 fetch
-        List<User> userList = em.createQuery("select distinct u from User u left join fetch u.alertList", User.class)
+        // (3) 마을 + 주민 + 단말기 + 긴급알림 fetch
+        List<User> userList = em.createQuery("select distinct u from User u left join fetch u.alertList left join fetch u.device", User.class)
                 .getResultList();
 
         // (4) 마을 + 방송 fetch
@@ -84,11 +84,24 @@ public class HomeController {
 
             List<User> ul = new ArrayList<>();
             List<EmergencyAlert> el = new ArrayList<>();
+            int mqttErrorCnt = 0;
+            int sensorErrorCnt = 0;
+            int notConnectedCnt = 0;
             for (User user : userList) {
                 if(user.getTown().equals(town)) {
                     ul.add(user);
                     for (EmergencyAlert alert : user.getAlertList()) {
                         el.add(alert);
+                    }
+                    if(user.getDevice() != null) {
+                        if(user.getDevice().isError_sensor()) {
+                            sensorErrorCnt++;
+                        }
+                        if(user.getDevice().isError_mqtt()) {
+                            mqttErrorCnt++;
+                        }
+                    } else {
+                        notConnectedCnt++;
                     }
                 }
             }
@@ -102,9 +115,9 @@ public class HomeController {
                     .alert_fire(0)
                     .alert_user(el.size())
                     .alert_motion(0)
-                    .status_ok(ul.size())
-                    .status_emergency(0)
-                    .status_error(0).build();
+                    .status_notConnected(notConnectedCnt)
+                    .status_error_sensor(sensorErrorCnt)
+                    .status_error_mqtt(mqttErrorCnt).build();
             complexDTOList.add(dto);
         }
 

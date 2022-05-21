@@ -84,10 +84,23 @@ public class TownController {
                 .setParameter("town", town)
                 .getResultList();
 
+        int notConnectedCnt = 0;
+        int mqttErrorCnt = 0;
+        int sensorErrorCnt = 0;
         List<EmergencyAlert> alertList = new ArrayList<>();
         for (User user : userList) {
             for (EmergencyAlert alert : user.getAlertList()) {
                 alertList.add(alert);
+            }
+            if(user.getDevice() != null) {
+                if(user.getDevice().isError_sensor()) {
+                    sensorErrorCnt++;
+                }
+                if(user.getDevice().isError_mqtt()) {
+                    mqttErrorCnt++;
+                }
+            } else {
+                notConnectedCnt++;
             }
         }
 
@@ -100,9 +113,9 @@ public class TownController {
                 .alert_fire(0)
                 .alert_user(alertList.size())
                 .alert_motion(0)
-                .status_ok(userList.size())
-                .status_error(0)
-                .status_emergency(0).build();
+                .status_notConnected(notConnectedCnt)
+                .status_error_mqtt(mqttErrorCnt)
+                .status_error_sensor(sensorErrorCnt).build();
 
         List<Region> regionList = em.createQuery("select r from Region r", Region.class).getResultList();
 
