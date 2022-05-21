@@ -299,7 +299,7 @@
                                             <tr th:each="announce : ${dto.getAnnounceList()}">
                                                 <td th:text="${announce.id}">#</td>
                                                 <td th:text="${announce.title}">제목</td>
-                                                <td th:text="${announce.category} == 'NORMAL' ? '일반' : '재난'">타입</td>
+                                                <td th:text="${announce.category.toString() == 'NORMAL' ? '일반' : '재난'}">타입</td>
                                                 <td th:text="${announce.producer}">이름</td>
                                                 <td th:text="${#temporals.format(announce.time, 'yy/MM/dd HH:mm:ss')}"></td>
                                             </tr>

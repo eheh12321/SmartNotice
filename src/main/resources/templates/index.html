@@ -174,7 +174,7 @@
                                                             <tbody>
                                                             <tr th:each="admin, i : ${dto.getAdminList()}"
                                                                 th:if="${i.index < 3}">
-                                                                <td th:text="${admin.type} == 'ADMIN' ? '마을 관리자' : '최고 관리자'">이장</td>
+                                                                <td th:text="${admin.type.toString() == 'ADMIN' ? '마을 관리자' : '최고 관리자'} ">이장</td>
                                                                 <td th:text="${admin.name}">홍길동</td>
                                                                 <td th:text="${admin.tel}">010-1234-1234</td>
                                                             </tr>
