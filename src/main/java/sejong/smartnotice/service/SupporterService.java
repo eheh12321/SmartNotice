@@ -63,13 +63,8 @@ public class SupporterService implements UserDetailsService {
     // 보호자 정보 수정
     public Long modifySupporterInfo(SupporterModifyDTO modifyDTO) {
         log.info("== 보호자 정보 수정 ==");
-        if(findByTel(modifyDTO.getTel()) != null) { // 전화번호 중복 검증
-            log.warn("중복된 전화번호가 존재합니다");
-            throw new IllegalStateException("중복된 전화번호가 존재합니다");
-        }
         // 보호자 찾기
         Supporter supporter = findById(modifyDTO.getId());
-        
         // 보호자 정보 변경
         supporter.modifySupporterInfo(modifyDTO.getName(), modifyDTO.getTel());
         return supporter.getId();

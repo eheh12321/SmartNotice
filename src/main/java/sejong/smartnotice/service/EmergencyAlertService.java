@@ -92,10 +92,9 @@ public class EmergencyAlertService {
     }
 
     @Transactional(readOnly = true)
-    public List<EmergencyAlert> findAllWithUser() {
-        log.info("== 긴급 호출 목록 조회(fetch) ==");
-//        return emRepository.findAllWithUser();
-        return emRepository.findAll();
+    public List<EmergencyAlert> findWithUserByUserId(Long userId) {
+        log.info("== 주민별 호출 목록 조회(fetch) ==");
+        return emRepository.findWithUserByUserId(userId);
     }
 
     @Transactional(readOnly = true)

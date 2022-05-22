@@ -46,8 +46,8 @@ public class SupporterController {
         return "supporter/modify";
     }
 
-    @PutMapping("/{id}")
-    public String modify(@PathVariable Long id, @Validated @ModelAttribute("supporter") SupporterModifyDTO modifyDTO,
+    @PutMapping
+    public String modify(@Validated @ModelAttribute("supporter") SupporterModifyDTO modifyDTO,
                          BindingResult bindingResult) {
         log.info("== 관리자 정보 수정 ==");
         Supporter findSupporter = supporterService.findByTel(modifyDTO.getTel());
