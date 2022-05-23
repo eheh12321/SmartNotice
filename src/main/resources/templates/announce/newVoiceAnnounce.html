@@ -40,17 +40,20 @@
                                     <div class="card-body">
                                         <form method="post" action="/announces/voice" role="form" id="formObj">
                                             <label for="title">제목</label>
-                                            <input type="text" id="title" name="title" class="form-control" placeholder="방송 제목 입력" value="[임시 제목]">
+                                            <input type="text" id="title" name="title" class="form-control"
+                                                   placeholder="방송 제목 입력" value="[임시 제목]">
                                             <hr>
                                             <p>재난 유무 선택</p>
                                             <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="category" id="radio1" value="NORMAL" checked>
+                                                <input class="form-check-input" type="radio" name="category" id="radio1"
+                                                       value="NORMAL" checked>
                                                 <label class="form-check-label" for="radio1">
                                                     일반
                                                 </label>
                                             </div>
                                             <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="category" id="radio2" value="DISASTER">
+                                                <input class="form-check-input" type="radio" name="category" id="radio2"
+                                                       value="DISASTER">
                                                 <label class="form-check-label" for="radio2" style="color: red">
                                                     재난
                                                 </label>
@@ -76,35 +79,51 @@
                                                 </div>
                                                 <div class="card-body">
                                                     <section class="main-controls">
-                                                        <h3 id="timerText"><time>00:00:00</time></h3>
+                                                        <h3 id="timerText">
+                                                            <time>00:00:00</time>
+                                                        </h3>
                                                         <canvas class="visualizer" height="60px"></canvas>
                                                         <hr>
                                                         <div id="buttons">
-                                                            <button class="btn btn-success" id="recordBtn" type="button">Record</button>
-                                                            <button class="btn btn-danger" id="stopBtn" type="button">Stop</button>
+                                                            <button class="btn btn-success" id="recordBtn"
+                                                                    type="button">Record
+                                                            </button>
+                                                            <button class="btn btn-danger" id="stopBtn" type="button">
+                                                                Stop
+                                                            </button>
                                                         </div>
                                                     </section>
                                                     <hr>
-                                                    <button type="button" class="btn btn-warning" id="testPlayBtn">미리 듣기</button>
-                                                    <button type="button" class="btn btn-danger" id="saveRecordBtn">방송하기</button>
+                                                    <button type="button" class="btn btn-warning"
+                                                            id="testPlayByRecordBtn">미리 듣기
+                                                    </button>
+                                                    <button type="button" class="btn btn-danger" id="saveByRecordBtn">
+                                                        방송하기
+                                                    </button>
                                                     <ol id="recordingsList"></ol>
                                                 </div>
                                             </div>
                                             <hr>
                                             <div class="card shadow mb-4">
                                                 <div class="card-header py-3">
-                                                    <p class="font-weight-bold text-primary" style="font-size: 1.5em; margin-bottom: 0;">음성 파일 업로드</p>
+                                                    <p class="font-weight-bold text-primary"
+                                                       style="font-size: 1.5em; margin-bottom: 0;">음성 파일 업로드</p>
                                                 </div>
                                                 <div class="card-body">
                                                     <div class="form-group uploadDiv">
-                                                        <input class="btn btn-primary" type="file" name="uploadFile" id="files">
+                                                        <input class="btn btn-primary" type="file" name="uploadFile"
+                                                               id="files" accept="audio/mpeg">
                                                     </div>
                                                     <div class="uploadResult">
 
                                                     </div>
                                                     <hr>
-                                                    <button type="button" class="btn btn-warning" id="uploadPreview">미리 듣기</button>
-                                                    <button type="submit" class="btn btn-danger" id="AnnounceByUpload">방송하기</button>
+                                                    <button type="button" class="btn btn-warning"
+                                                            id="testPlayByUploadBtn">미리 듣기
+                                                    </button>
+                                                    <button type="button" class="btn btn-danger" id="saveByUploadBtn">
+                                                        방송하기
+                                                    </button>
                                                 </div>
                                             </div>
                                             <hr>
@@ -144,12 +163,13 @@
     var audioContext;
 
     const canvasCtx = canvas.getContext("2d")
-    let audioContents;
 
     var recordButton = document.getElementById("recordBtn");
     var stopButton = document.getElementById("stopBtn");
-    var testPlayButton = document.getElementById("testPlayBtn");
-    var saveBtn = document.getElementById("saveRecordBtn");
+    var testPlayByRecordButton = document.getElementById("testPlayByRecordBtn");
+    var saveRecordBtn = document.getElementById("saveByRecordBtn");
+    var testPlayByUploadButton = document.getElementById("testPlayByUploadBtn");
+    var saveUploadBtn = document.getElementById("saveByUploadBtn");
 
     var lastBlob; // 가장 마지막에 녹음된 파일을 담은 blob
 
@@ -163,10 +183,12 @@
     //add events to those 2 buttons
     recordButton.addEventListener("click", startRecording);
     stopButton.addEventListener("click", stopRecording);
-    testPlayButton.addEventListener("click", testPlaying);
-    saveBtn.addEventListener("click", saveRecording);
+    testPlayByRecordButton.addEventListener("click", testPlaying);
+    saveRecordBtn.addEventListener("click", saveRecording);
+    testPlayByUploadButton.addEventListener("click", testPlayingByUpload);
+    saveUploadBtn.addEventListener("click", saveByUpload);
 
-    let onSuccess = function(stream) {
+    let onSuccess = function (stream) {
         console.log("getUserMedia() Success");
         audioContext = new AudioContext();
         // 음성 파장 시각화
@@ -174,15 +196,15 @@
 
         // 버튼 비활성화
         stopButton.disabled = true;
-        testPlayButton.disabled = true;
+        testPlayByRecordButton.disabled = true;
     };
-    let onError = function(err) {
+    let onError = function (err) {
         console.log('The following error occurred: ' + err);
     };
-    navigator.mediaDevices.getUserMedia({ audio: true, video:false }).then(onSuccess, onError);
+    navigator.mediaDevices.getUserMedia({audio: true, video: false}).then(onSuccess, onError);
 
     function startRecording() {
-        navigator.mediaDevices.getUserMedia({ audio: true, video:false }).then(function(stream) {
+        navigator.mediaDevices.getUserMedia({audio: true, video: false}).then(function (stream) {
             console.log("startRecording() called");
 
             audioContext = new AudioContext();
@@ -199,24 +221,24 @@
             recorder = new WebAudioRecorder(input, {
                 workerDir: "/resources/js/", // must end with slash
                 encoding: encodingType,
-                numChannels:2, //2 is the default, mp3 encoding supports only 2
-                onEncoderLoading: function(recorder, encoding) {
+                numChannels: 2, //2 is the default, mp3 encoding supports only 2
+                onEncoderLoading: function (recorder, encoding) {
                     // show "loading encoder..." display
-                    console.log("Loading "+encoding+" encoder...");
+                    console.log("Loading " + encoding + " encoder...");
                 },
-                onEncoderLoaded: function(recorder, encoding) {
+                onEncoderLoaded: function (recorder, encoding) {
                     // hide "loading encoder..." display
-                    console.log(encoding+" encoder loaded");
+                    console.log(encoding + " encoder loaded");
                 }
             });
-            recorder.onComplete = function(recorder, blob) {
+            recorder.onComplete = function (recorder, blob) {
                 console.log("Encoding complete: " + blob);
                 lastBlob = blob;
-                testPlayButton.disabled = false;
+                testPlayByRecordButton.disabled = false;
             }
             recorder.setOptions({
-                timeLimit:120,
-                encodeAfterRecord:encodeAfterRecord,
+                timeLimit: 120,
+                encodeAfterRecord: encodeAfterRecord,
                 ogg: {quality: 0.5},
                 mp3: {bitRate: 160}
             });
@@ -233,7 +255,7 @@
             recorder.startRecording();
             console.log("Recording started");
 
-        }).catch(function(err) {
+        }).catch(function (err) {
             //enable the record button if getUSerMedia() fails
             recordButton.disabled = false;
             stopButton.disabled = true;
@@ -241,7 +263,7 @@
         //disable the record button
         recordButton.disabled = true;
         stopButton.disabled = false;
-        testPlayButton.disabled = true; // 미리듣기는 encoding 완료 이후 클릭가능
+        testPlayByRecordButton.disabled = true; // 미리듣기는 encoding 완료 이후 클릭가능
     }
 
     function stopRecording() {
@@ -270,7 +292,6 @@
         });
     }
 
-    // 파일 재생 (arrayBuffer)
     function playSound(arraybuffer) {
         audioContext.decodeAudioData(arraybuffer, function (buf) {
             var source = audioContext.createBufferSource();
@@ -282,16 +303,16 @@
 
     function saveRecording() {
         let townIdList = document.querySelectorAll("input[name='townId']:checked");
-        if(townIdList.length == 0) {
+        if (townIdList.length == 0) {
             alert("마을을 선택해주세요");
             return;
         }
-        if(lastBlob == null) {
+        if (lastBlob == null) {
             alert("녹음된 파일이 없습니다!");
             return false;
         }
         blobToBase64(lastBlob).then(result => {
-            if(confirm("녹음한 파일로 방송 하시겠습니까??")) {
+            if (confirm("녹음한 파일로 방송 하시겠습니까??")) {
                 var input = document.createElement('input');
                 input.type = 'hidden';
                 input.name = 'voiceData';
@@ -320,6 +341,7 @@
 
         source.connect(analyser);
         draw()
+
         function draw() {
             const WIDTH = canvas.width
             const HEIGHT = canvas.height;
@@ -340,12 +362,12 @@
             let x = 0;
 
 
-            for(let i = 0; i < bufferLength; i++) {
+            for (let i = 0; i < bufferLength; i++) {
 
                 let v = dataArray[i] / 128.0;
-                let y = v * HEIGHT/2;
+                let y = v * HEIGHT / 2;
 
-                if(i === 0) {
+                if (i === 0) {
                     canvasCtx.moveTo(x, y);
                 } else {
                     canvasCtx.lineTo(x, y);
@@ -354,60 +376,103 @@
                 x += sliceWidth;
             }
 
-            canvasCtx.lineTo(canvas.width, canvas.height/2);
+            canvasCtx.lineTo(canvas.width, canvas.height / 2);
             canvasCtx.stroke();
 
         }
     }
 
-    // // 파일 용량 및 확장자 검사
-    // var regex = new RegExp("(.*?)\.(mp3)$");
-    // var maxSize = 1048576;
-    // function checkExtension(fileName, fileSize) {
-    //     if (fileSize > maxSize) {
-    //         alert("파일 사이즈 초과");
-    //         return false;
-    //     }
-    //     if (!regex.test(fileName)) {
-    //         alert("mp3 확장자만 업로드 할 수 있습니다.");
-    //         return false;
-    //     }
-    //     return true;
-    // }
-    //
-    //
-    // // 파일 읽기 -> arrayBuffer 꺼내오기 -> base64 변환
-    // // flag (1: 재생 o / 1: 재생 x)
-    // function playFile(file, flag) {
-    //     var freader = new FileReader();
-    //     freader.onload = function (e) {
-    //         console.log(e.target.result);
-    //         audioContents = _arrayBufferToBase64(e.target.result);
-    //         if(flag === 1) {
-    //             playSound(e.target.result);
-    //         }
-    //     };
-    //     freader.readAsArrayBuffer(file);
-    // }
-    //
-    // function _arrayBufferToBase64( buffer ) {
-    //     var binary = '';
-    //     var bytes = new Uint8Array(buffer);
-    //     var len = bytes.byteLength;
-    //     for (var i = 0; i < len; i++) {
-    //         binary += String.fromCharCode(bytes[i]);
-    //     }
-    //     return window.btoa(binary);
-    // }
+    var inputForm = document.getElementById("files");
+    var fileList;
+    var file;
+    var audioContents;
+
+    inputForm.addEventListener('change', function (event) {
+        fileList = inputForm.files || event.target.files;
+        file = fileList[0];
+        if(!checkExtension(file.name, file.size)) {
+            console.log("검증 실패");
+            inputForm.value='';
+            audioContents = '';
+            return false;
+        } else {
+            console.log("검증 성공");
+            var fileReader = new FileReader();
+            fileReader.onload = function (e) {
+                console.log(e.target.result);
+                audioContents = e.target.result;
+            };
+            fileReader.readAsDataURL(file);
+        }
+    });
+
+    function testPlayingByUpload() {
+        console.log("첨부파일 미리듣기 클릭");
+        if (audioContents == undefined || audioContents.length == 0) {
+            alert("업로드된 파일이 없습니다!");
+            return false;
+        }
+        file.arrayBuffer().then(buffer => {
+            playSound(buffer);
+        });
+    }
+
+    function saveByUpload() {
+        console.log("첨부파일 저장 클릭");
+        if (audioContents == undefined || audioContents.length == 0) {
+            alert("업로드된 파일이 없습니다!");
+            return false;
+        }
+        let townIdList = document.querySelectorAll("input[name='townId']:checked");
+        if(townIdList.length == 0) {
+            alert("마을을 선택해주세용");
+            return false;
+        }
+        if(confirm("첨부한 파일로 방송하시겠습니까??")) {
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'voiceData';
+            input.value = audioContents.replace("data:audio/mpeg;base64,", '');
+
+            formObj.appendChild(input);
+            formObj.submit();
+        }
+    }
+
+    // 파일 용량 및 확장자 검사
+    var maxSize = 1048576;
+    var regex = new RegExp("(.*?)\.(mp3)$");
+
+    function checkExtension(fileName, fileSize) {
+        if (fileSize > maxSize) {
+            alert("파일 사이즈 초과");
+            return false;
+        }
+        if (!regex.test(fileName)) {
+            alert("mp3 확장자만 업로드 할 수 있습니다.");
+            return false;
+        }
+        return true;
+    }
+
+    function _arrayBufferToBase64(buffer) {
+        var binary = '';
+        var bytes = new Uint8Array(buffer);
+        var len = bytes.byteLength;
+        for (var i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return window.btoa(binary);
+    }
 
     // uuid 이름 생성
     function uuidv4() {
-        return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+        return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
             (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
         );
     }
 
-    function tick(){
+    function tick() {
         sec++;
         if (sec >= 60) {
             sec = 0;
@@ -431,7 +496,7 @@
         t = setTimeout(add, 1000);
     }
 
-    window.onresize = function() {
+    window.onresize = function () {
         canvas.width = mainSection.offsetWidth;
     }
     window.onresize();
