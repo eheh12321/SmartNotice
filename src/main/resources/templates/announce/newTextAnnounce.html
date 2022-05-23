@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<div th:replace="~{fragment/header :: fragment-header ('문자 방송 페이지')}"></div>
+<head th:replace="~{fragment/header :: fragment-header ('문자 방송 페이지')}"></head>
 <body>
 <!-- Layout wrapper -->
 <div class="layout-wrapper layout-content-navbar">
@@ -43,7 +43,7 @@
                                             <input type="text" id="title" name="title" class="form-control" placeholder="방송 제목 입력">
                                             <hr>
                                             <label for="inputText">내용</label>
-                                            <input type="text" id="inputText" name="textData" class="form-control" placeholder="방송 내용 입력 (1000자 제한)">
+                                            <textarea class="form-control" id="inputText" name="textData" placeholder="방송 내용 입력 (1000자 제한)" rows="6"></textarea>
                                             <hr>
                                             <p>재난 유무 선택</p>
                                             <div class="form-check">

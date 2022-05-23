@@ -36,7 +36,7 @@ public class AnnounceController {
     public String getAnnounceList(Model model) {
         List<Announce> announceList = announceService.findAll();
         model.addAttribute("announceList", announceList);
-        return "announce/newList";
+        return "announce/list";
     }
 
     @GetMapping("/text")

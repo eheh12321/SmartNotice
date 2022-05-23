@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<div th:replace="~{fragment/header :: fragment-header ('마을 상세 페이지')}"></div>
+<head th:replace="~{fragment/header :: fragment-header ('마을 상세 페이지')}"></head>
 <body>
 <!-- Layout wrapper -->
 <div class="layout-wrapper layout-content-navbar">
@@ -306,7 +306,7 @@
                                         <hr>
                                     </div>
                                     <div class="card-body">
-                                        <table class="table table-bordered" id="announceTable">
+                                        <table class="table table-bordered table-hover" id="announceTable">
                                             <thead class="table-secondary">
                                             <tr>
                                                 <th>#</th>
@@ -349,12 +349,14 @@
                                             <tr>
                                                 <th>호출인</th>
                                                 <th>호출시각</th>
+                                                <th>분류</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             <tr th:each="alert : ${dto.getAlertList()}">
                                                 <td th:text="${alert.user.name}">호출인</td>
                                                 <td th:text="${#temporals.format(alert.alertTime, 'yy/MM/dd HH:mm:ss')}"></td>
+                                                <td>사용자 호출</td>
                                             </tr>
                                             </tbody>
                                         </table>

@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<div th:replace="~{fragment/header :: fragment-header ('음성 방송 페이지')}"></div>
+<head th:replace="~{fragment/header :: fragment-header ('음성 방송 페이지')}"></head>
+<head>
+    <style>
+        .accordion-button:not(.collapsed) {
+            background: #C6E2FF;
+            color: #333333;
+        }
+        .accordion-button.collapsed {
+            background: #CCCCCC;
+            color: #333333;
+        }
+    </style>
+</head>
 <body>
 <!-- Layout wrapper -->
 <div class="layout-wrapper layout-content-navbar">
@@ -71,62 +83,63 @@
                                             <input type="hidden" name="type" value="VOICE">
                                             <input type="hidden" name="textData" value="[Voice Message]">
                                             <hr>
-                                            <div class="card shadow mb-4">
-                                                <div class="card-header py-3">
-                                                    <p class="font-weight-bold text-primary" id="recorderTitle"
-                                                       style="font-size: 1.5em; margin-bottom: 0;">녹음기</p>
-                                                    <hr>
-                                                </div>
-                                                <div class="card-body">
-                                                    <section class="main-controls">
-                                                        <h3 id="timerText">
-                                                            <time>00:00:00</time>
-                                                        </h3>
-                                                        <canvas class="visualizer" height="60px"></canvas>
-                                                        <hr>
-                                                        <div id="buttons">
-                                                            <button class="btn btn-success" id="recordBtn"
-                                                                    type="button">Record
+                                            <div class="accordion mt-3" id="accordionExample">
+                                                <div class="card accordion-item active">
+                                                    <h2 class="accordion-header" id="headingOne">
+                                                        <button class="accordion-button mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                            <p class="font-weight-bold" id="recorderTitle" style="font-size: 1.5em; margin-bottom: 0;">녹음을 통해 방송하기</p>
+                                                        </button>
+                                                    </h2>
+                                                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                                        <div class="accordion-body">
+                                                            <section class="main-controls">
+                                                                <h3 id="timerText">
+                                                                    <time>00:00:00</time>
+                                                                </h3>
+                                                                <canvas class="visualizer" height="60px"></canvas>
+                                                                <hr>
+                                                                <div id="buttons">
+                                                                    <button class="btn btn-success" id="recordBtn"
+                                                                            type="button">Record
+                                                                    </button>
+                                                                    <button class="btn btn-danger" id="stopBtn" type="button">
+                                                                        Stop
+                                                                    </button>
+                                                                </div>
+                                                            </section>
+                                                            <hr>
+                                                            <button type="button" class="btn btn-warning"
+                                                                    id="testPlayByRecordBtn">미리 듣기
                                                             </button>
-                                                            <button class="btn btn-danger" id="stopBtn" type="button">
-                                                                Stop
+                                                            <button type="button" class="btn btn-danger" id="saveByRecordBtn">
+                                                                방송하기
                                                             </button>
                                                         </div>
-                                                    </section>
-                                                    <hr>
-                                                    <button type="button" class="btn btn-warning"
-                                                            id="testPlayByRecordBtn">미리 듣기
-                                                    </button>
-                                                    <button type="button" class="btn btn-danger" id="saveByRecordBtn">
-                                                        방송하기
-                                                    </button>
-                                                    <ol id="recordingsList"></ol>
+                                                    </div>
+                                                </div>
+                                                <div class="card accordion-item">
+                                                    <h2 class="accordion-header" id="headingTwo">
+                                                        <button class="accordion-button collapsed mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                            <p class="font-weight-bold " style="font-size: 1.5em; margin-bottom: 0;">음성 파일 업로드를 통해 방송하기</p>
+                                                        </button>
+                                                    </h2>
+                                                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                                        <div class="accordion-body">
+                                                            <div class="form-group uploadDiv">
+                                                                <input class="btn btn-primary" type="file" name="uploadFile"
+                                                                       id="files" accept="audio/mpeg" style="max-width: 90%">
+                                                            </div>
+                                                            <hr>
+                                                            <button type="button" class="btn btn-warning"
+                                                                    id="testPlayByUploadBtn">미리 듣기
+                                                            </button>
+                                                            <button type="button" class="btn btn-danger" id="saveByUploadBtn">
+                                                                방송하기
+                                                            </button>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <hr>
-                                            <div class="card shadow mb-4">
-                                                <div class="card-header py-3">
-                                                    <p class="font-weight-bold text-primary"
-                                                       style="font-size: 1.5em; margin-bottom: 0;">음성 파일 업로드</p>
-                                                </div>
-                                                <div class="card-body">
-                                                    <div class="form-group uploadDiv">
-                                                        <input class="btn btn-primary" type="file" name="uploadFile"
-                                                               id="files" accept="audio/mpeg">
-                                                    </div>
-                                                    <div class="uploadResult">
-
-                                                    </div>
-                                                    <hr>
-                                                    <button type="button" class="btn btn-warning"
-                                                            id="testPlayByUploadBtn">미리 듣기
-                                                    </button>
-                                                    <button type="button" class="btn btn-danger" id="saveByUploadBtn">
-                                                        방송하기
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <hr>
                                         </form>
                                     </div>
                                 </div>
@@ -281,7 +294,7 @@
 
         // 타이머 종료
         clearTimeout(t);
-        header.textContent = "녹음기";
+        header.textContent = "녹음을 통해 방송하기";
 
         console.log('Recording stopped');
     }

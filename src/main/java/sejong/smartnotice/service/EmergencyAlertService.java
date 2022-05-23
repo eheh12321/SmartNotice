@@ -103,4 +103,9 @@ public class EmergencyAlertService {
 //        return emRepository.findAllWithUserByTown(townId);
         return emRepository.findAll();
     }
+
+    public List<EmergencyAlert> findAllWithUser() {
+        log.info("== 전체 긴급 호출 목록 조회(fetch) ==");
+        return emRepository.findAllWithUser();
+    }
 }
