@@ -134,7 +134,8 @@
             </li>
 
             <!-- 사용자 관리 -->
-            <li id="sidebar_admin" class="menu-item">
+            <!-- 최고 관리자만 접근 가능(마을 관리자 관리) -->
+            <li id="sidebar_admin" class="menu-item" sec:authorize="hasRole('SUPER')">
                 <a href="/admin" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-user"></i>
                     <div data-i18n="Basic">마을 관리자 관리</div>

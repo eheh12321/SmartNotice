@@ -2,6 +2,8 @@ package sejong.smartnotice.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -9,10 +11,15 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import sejong.smartnotice.domain.Town;
+import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.dto.UserModifyDTO;
+import sejong.smartnotice.service.AdminService;
+import sejong.smartnotice.service.TownService;
 import sejong.smartnotice.service.UserService;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 @Slf4j
@@ -21,14 +28,22 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
+    private final AdminService adminService;
     private final UserService userService;
+    private final TownService townService;
+    private final EntityManager em;
 
     @GetMapping
-    public String getUserList(Model model, @RequestParam(required = false) String name) {
+    public String getUserList(Authentication auth, Model model, @RequestParam(required = false) String name) {
         log.info("== 마을 주민 목록 조회 ==");
         List<User> userList;
-        if(StringUtils.hasText(name)) {
-            userList = userService.findByName(name);
+        if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPER"))) {
+            // 마을 관리자인 경우 관리 마을 대상으로 한 주민 목록만 조회
+            Admin authAdmin = adminService.findByLoginId(auth.getName());
+            List<Town> managedTownList = townService.findTownByAdmin(authAdmin);
+            userList = em.createQuery("select u from User u join fetch u.town where u.town in(:townList)", User.class)
+                    .setParameter("townList", managedTownList)
+                    .getResultList();
         } else {
             userList = userService.findAllWithTown();
         }

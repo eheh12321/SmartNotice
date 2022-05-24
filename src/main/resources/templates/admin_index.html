@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
-<head th:replace="~{fragment/header :: fragment-header ('마을 주민 메인 페이지')}"></head>
+<head th:replace="~{fragment/header :: fragment-header ('마을 관리자 메인 페이지')}"></head>
 <body>
 <!-- Layout wrapper -->
 <div class="layout-wrapper layout-content-navbar">
@@ -12,7 +12,7 @@
             <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
                  id="layout-navbar">
                 <div class="fw-bold" style="min-width: fit-content">
-                    주민 <span sec:authentication="name"></span> 님
+                    마을 관리자 <span sec:authentication="name"></span> 님
                 </div>
                 <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
                     <ul class="navbar-nav flex-row align-items-center ms-auto">
@@ -23,7 +23,6 @@
                                     <i class='menu-icon bx bx-log-out'></i>
                                     로그아웃
                                 </button>
-                                <input type="hidden" name="loginAuth" value="user">
                             </form>
                         </li>
                     </ul>
@@ -37,8 +36,8 @@
                     <div class="row mb-5 h-100">
                         <div class="col-md-6 col-lg-4 mb-3">
                             <div class="card h-100">
-                                <a href="#" class="card-body" style="background: #dfc2c4">
-                                    <h5 class="card-title">마을 방송 목록</h5>
+                                <a href="/" class="card-body" style="background: #dfc2c4">
+                                    <h5 class="card-title">마을 관리</h5>
                                     <p class="card-text">
                                         이쁜 이미지
                                     </p>
@@ -47,7 +46,13 @@
                         </div>
                         <div class="col-md-6 col-lg-4 mb-3">
                             <div class="card h-100">
-                                <a href="#" class="card-body" style="background: #dfc2c4">
+                                <a href="/announces" class="card-body" style="background: #86b7fe">
+                                    <h5 class="card-title">마을 방송 목록</h5>
+                                    <p class="card-text">
+                                        이쁜 이미지
+                                    </p>
+                                </a>
+                                <a href="/announces" class="card-body" style="background: #dc3545">
                                     <h5 class="card-title">재난 방송 목록</h5>
                                     <p class="card-text">
                                         이쁜 이미지
@@ -57,8 +62,14 @@
                         </div>
                         <div class="col-md-6 col-lg-4 mb-3">
                             <div class="card h-100">
-                                <a href="#" class="card-body" style="background: #dfc2c4">
-                                    <h5 class="card-title">긴급 호출</h5>
+                                <a href="/announces/voice" class="card-body" style="background: #86b7fe">
+                                    <h5 class="card-title">음성 방송하기</h5>
+                                    <p class="card-text">
+                                        이쁜 이미지
+                                    </p>
+                                </a>
+                                <a href="/announces/text" class="card-body" style="background: #dc3545">
+                                    <h5 class="card-title">문자 방송하기</h5>
                                     <p class="card-text">
                                         이쁜 이미지
                                     </p>

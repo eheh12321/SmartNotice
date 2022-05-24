@@ -2,6 +2,8 @@ package sejong.smartnotice.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -41,26 +43,53 @@ public class HomeController {
     private final EntityManager em;
 
     @GetMapping
-    public String indexPage(Model model) {
+    public String indexPage(Authentication auth, Model model) {
 
-        log.info(" (쿼리 시작) ========================");
+        List<Town> townList;
+        List<Admin> adminList;
+        List<User> userList;
+        List<Announce> announceList ;
 
-        // (1) 마을 조회
-        List<Town> townList = townService.findAll();
+        // 최고 관리자는 전체 마을을 모두 조회할 수 있어야 한다
+        if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPER"))) {
+            log.info("# 권한: 최고 관리자=============");
+            // (1) 마을 조회
+            townList = townService.findAll();
+            // (2) 마을 + 관리자 fetch
+            adminList = em.createQuery("select distinct a from Admin a join fetch a.atList at join fetch at.town", Admin.class)
+                    .getResultList();
+            // (3) 마을 + 주민 + 단말기 + 긴급알림 fetch
+            userList = em.createQuery("select distinct u from User u left join fetch u.alertList left join fetch u.device", User.class)
+                    .getResultList();
+            // (4) 마을 + 방송 fetch
+            announceList = em.createQuery("select distinct a from Announce a join fetch a.atList at join fetch at.town order by a.time desc", Announce.class)
+                    .getResultList();
+            // (5) 마을 추가에 들어가는 지역 목록
+            List<Region> regionList = em.createQuery("select r from Region r", Region.class).getResultList();
+            model.addAttribute("regionList", regionList);
+            log.info("쿼리 종료 ===================");
 
-        // (2) 마을 + 관리자 fetch
-        List<Admin> adminList = em.createQuery("select distinct a from Admin a join fetch a.atList at join fetch at.town", Admin.class)
-                .getResultList();
-
-        // (3) 마을 + 주민 + 단말기 + 긴급알림 fetch
-        List<User> userList = em.createQuery("select distinct u from User u left join fetch u.alertList left join fetch u.device", User.class)
-                .getResultList();
-
-        // (4) 마을 + 방송 fetch
-        List<Announce> announceList = em.createQuery("select distinct a from Announce a join fetch a.atList at join fetch at.town order by a.time desc", Announce.class).getResultList();
-
-        log.info(" (쿼리 종료) ========================");
-
+        } 
+        // 마을 관리자는 본인이 관리하는 마을만 접근/조회할 수 있어야 한다
+        else {
+            log.info("# 권한: 마을 관리자===========");
+            // (1) 관리자 조회
+            Admin admin = adminService.findByLoginId(auth.getName());
+            // (2) 마을 조회
+            townList = em.createQuery("select distinct t from Town t join fetch t.region left join t.adminList al where al.admin.id=:adminId", Town.class)
+                    .setParameter("adminId", admin.getId())
+                    .getResultList();
+            // (3) 마을 + 관리자 fetch
+            adminList = em.createQuery("select distinct a from Admin a join fetch a.atList at join fetch at.town", Admin.class)
+                    .getResultList();
+            // (4) 마을 + 주민 + 단말기 + 긴급알림 fetch
+            userList = em.createQuery("select distinct u from User u left join fetch u.alertList left join fetch u.device", User.class)
+                    .getResultList();
+            // (5) 마을 + 방송 fetch
+            announceList = em.createQuery("select distinct a from Announce a join fetch a.atList at join fetch at.town order by a.time desc", Announce.class)
+                    .getResultList();
+            log.info("쿼리 종료 ===================");
+        }
         List<ComplexDTO> complexDTOList = new ArrayList<>();
         for (Town town : townList) {
 
@@ -121,12 +150,14 @@ public class HomeController {
             complexDTOList.add(dto);
         }
 
-        List<Region> regionList = em.createQuery("select r from Region r", Region.class).getResultList();
-
         model.addAttribute("dtoList", complexDTOList);
-        model.addAttribute("regionList", regionList);
 
         return "index";
+    }
+
+    @GetMapping("/index")
+    public String adminIndexPage() {
+        return "admin_index";
     }
 
     @GetMapping("/register")

@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,8 @@ import sejong.smartnotice.dto.TownRegisterDTO;
 import sejong.smartnotice.service.*;
 
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,15 +36,13 @@ public class TownController {
     private final AdminService adminService;
     private final UserService userService;
 
-    @GetMapping
-    public String getTownList() {
-        return "redirect:/";
-    }
-
     @PostMapping
     @ResponseBody
-    public ResponseEntity<String> register(@ModelAttribute("town") TownRegisterDTO registerDTO) {
+    public ResponseEntity<String> register(Authentication auth, @ModelAttribute("town") TownRegisterDTO registerDTO) {
         log.info("== 마을 등록 ==");
+        if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPER"))) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("접근 권한이 없습니다");
+        }
         if(registerDTO.getRegionCode() == 1L) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("마을을 선택해주세요");
         }
@@ -55,7 +57,7 @@ public class TownController {
     private final EntityManager em;
 
     @GetMapping("/{id}")
-    public String getTownDetail(@PathVariable Long id, Model model) {
+    public String getTownDetail(Authentication auth, @PathVariable Long id, Model model, HttpServletResponse response) throws IOException {
         log.info("== 마을 상세 조회 ==");
 
         // (1) 마을 조회
@@ -68,6 +70,17 @@ public class TownController {
         List<Admin> adminList = new ArrayList<>();
         for (Admin_Town at : atList) {
             adminList.add(at.getAdmin());
+        }
+
+        // (3) 관리자 권한 조회
+        if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPER"))) {
+            // 마을 관리자인 경우
+            Admin authAdmin = adminService.findByLoginId(auth.getName());
+            if(!adminList.contains(authAdmin)) {
+                log.warn("마을 접근 권한이 없습니다!");
+                response.sendError(403); // 403 Error page 이동
+                return null;
+            }
         }
 
         // (3) 방송 조회

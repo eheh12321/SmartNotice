@@ -4,11 +4,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.announce.Announce;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.dto.AnnounceModalDTO;
@@ -16,7 +19,9 @@ import sejong.smartnotice.dto.AnnounceOutputDTO;
 import sejong.smartnotice.dto.AnnounceRegisterDTO;
 import sejong.smartnotice.service.AdminService;
 import sejong.smartnotice.service.AnnounceService;
+import sejong.smartnotice.service.TownService;
 
+import javax.persistence.EntityManager;
 import javax.validation.Valid;
 import java.io.File;
 import java.util.Collections;
@@ -30,11 +35,24 @@ import java.util.List;
 public class AnnounceController {
 
     private final AnnounceService announceService;
+    private final TownService townService;
     private final AdminService adminService;
+    private final EntityManager em;
 
     @GetMapping
-    public String getAnnounceList(Model model) {
-        List<Announce> announceList = announceService.findAll();
+    public String getAnnounceList(Authentication auth, Model model) {
+        List<Announce> announceList;
+        if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPER"))) {
+            // 마을 관리자인 경우 관리 마을 대상으로 한 방송 목록만 조회
+            Admin authAdmin = adminService.findByLoginId(auth.getName());
+            List<Town> managedTownList = townService.findTownByAdmin(authAdmin);
+
+            announceList = em.createQuery("select distinct a from Announce a join fetch a.atList at join fetch at.town where at.town in(:townList)", Announce.class)
+                    .setParameter("townList", managedTownList)
+                    .getResultList();
+        } else {
+            announceList = announceService.findAll();
+        }
         model.addAttribute("announceList", announceList);
         return "announce/list";
     }

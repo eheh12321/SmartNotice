@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head th:replace="~{fragment/header :: fragment-header ('마을 상세 페이지')}"></head>
 <body>
 <!-- Layout wrapper -->
@@ -180,7 +181,8 @@
                                                                         </div>
                                                                     </td>
                                                                 </tr>
-                                                                <tr>
+                                                                <!-- 최고 관리자만 접근 가능 -->
+                                                                <tr sec:authorize="hasRole('SUPER')">
                                                                     <td class="text-end">
                                                                         <button type="button" class="btn btn-primary"
                                                                                 id="townSaveBtn">저장
@@ -192,7 +194,6 @@
                                                                                 th:onclick="|location.href='@{/towns/{id}/admin/new(id=${dto.town.id})}'|">
                                                                             관리자 추가
                                                                         </button>
-
                                                                         <input id="forRestApi" type="hidden"
                                                                                name="_method" value=""/>
                                                                     </td>

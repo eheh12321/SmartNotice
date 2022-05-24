@@ -147,6 +147,14 @@ public class TownService {
         return region;
     }
 
+    // 관리자 관리 마을 목록 조회
+    @Transactional(readOnly = true)
+    public List<Town> findTownByAdmin(Admin admin) {
+        return em.createQuery("select t from Town t join fetch t.adminList at where at.admin.id=:adminId", Town.class)
+                .setParameter("adminId", admin.getId())
+                .getResultList();
+    }
+
     // 지역 목록 반환
     @Transactional(readOnly = true)
     public List<Region> findAllRegion() {

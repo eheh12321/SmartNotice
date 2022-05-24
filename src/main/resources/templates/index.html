@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head th:replace="~{fragment/header :: fragment-header ('관제 메인 페이지')}"></head>
 <body>
 <!-- Layout wrapper -->
@@ -20,7 +21,8 @@
                     </a>
                 </div>
 
-                <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+                <!--최고 관리자만 접근 가능 (마을 추가)-->
+                <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse" sec:authorize="hasRole('SUPER')">
                     <ul class="navbar-nav flex-row align-items-center ms-auto">
                         <li class="nav-item">
                             <button type="button" class="btn btn-primary" data-bs-toggle="modal"
