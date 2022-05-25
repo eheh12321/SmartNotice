@@ -85,6 +85,8 @@ public class AnnounceController {
 
     @PostMapping("/voice")
     public String getVoiceAnnounce(@Valid @ModelAttribute AnnounceRegisterDTO registerDTO, BindingResult bindingResult) {
+        log.info("data: {}", registerDTO);
+
         announceService.registerAnnounce(registerDTO);
         return "redirect:/announces";
     }

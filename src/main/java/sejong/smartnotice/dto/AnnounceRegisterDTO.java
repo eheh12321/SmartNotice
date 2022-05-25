@@ -33,4 +33,17 @@ public class AnnounceRegisterDTO {
     private String title; // 방송 제목
 
     private String textData;
+
+    @Override
+    public String toString() {
+        return "AnnounceRegisterDTO{" +
+                "adminId=" + adminId +
+                ", category=" + category +
+                ", type=" + type +
+                ", townId=" + townId +
+                ", voiceData='" + voiceData + '\'' +
+                ", title='" + title + '\'' +
+                ", textData='" + textData + '\'' +
+                '}';
+    }
 }

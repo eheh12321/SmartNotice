@@ -37,9 +37,10 @@ public class AnnounceService {
     private final AnnounceRepository announceRepository;
 
     public Long registerAnnounce(AnnounceRegisterDTO registerDTO) {
-        log.info("== 문자 방송 등록 ==");
+        log.info("== 방송 등록 ==");
 
         Admin admin = adminService.findById(registerDTO.getAdminId());
+
 
         // 1. 방송 파일 저장
         String fileName = UUID.randomUUID().toString();

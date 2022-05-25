@@ -50,7 +50,7 @@
                                         <hr>
                                     </div>
                                     <div class="card-body">
-                                        <form method="post" action="/announces/voice" role="form" id="formObj">
+                                        <form method="post" action="/announces/voice" role="form" id="formObj" enctype="multipart/form-data">
                                             <label for="title">제목</label>
                                             <input type="text" id="title" name="title" class="form-control"
                                                    placeholder="방송 제목 입력" value="[임시 제목]">
@@ -453,7 +453,7 @@
     }
 
     // 파일 용량 및 확장자 검사
-    var maxSize = 1048576;
+    var maxSize = 10485760; // 10MB
     var regex = new RegExp("(.*?)\.(mp3)$");
 
     function checkExtension(fileName, fileSize) {
