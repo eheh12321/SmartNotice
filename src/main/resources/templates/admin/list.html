@@ -43,18 +43,19 @@
                                             <tr>
                                                 <th>#</th>
                                                 <th>이름</th>
-                                                <th>권한</th>
                                                 <th>전화번호</th>
                                                 <th>관리 마을</th>
+                                                <th style="display: none">관리 마을 번호</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr th:each="admin : ${adminList}">
-                                                <td th:text="${admin.id}"></td>
-                                                <td th:text="${admin.name}"></td>
-                                                <td th:text="${admin.type == 'ADMIN' ? '마을 관리자' : '최고 관리자'}"></td>
-                                                <td th:text="${admin.tel}"></td>
-                                                <td th:text="${admin.atList}"></td>
+                                            <tr th:each="dto : ${dtoList}"
+                                                th:if="${dto.admin.type.toString() == 'ADMIN'}">
+                                                <td th:text="${dto.admin.id}"></td>
+                                                <td th:text="${dto.admin.name}"></td>
+                                                <td th:text="${dto.admin.tel}"></td>
+                                                <td th:text="${dto.admin.atList}"></td>
+                                                <td style="display: none" th:text="${dto.adminTownIdList}"></td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -64,6 +65,45 @@
                         </div>
                     </div>
                     <!-- /마을 Card-->
+                    <!-- Modal -->
+                    <div class="modal fade" id="adminModal" tabindex="-1"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalCenterTitle">관리자 정보 수정</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+                                <form action="" method="post" id="modalForm">
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col mb-3">
+                                                <p id="modal_name">이름</p>
+                                                <p id="modal_tel">전화번호</p>
+                                                <p>관리 마을</p>
+                                                <div th:each="town : ${townList}">
+                                                    <input type="checkbox" th:id="|town_${town.id}|" name="town"
+                                                           th:value="${town.id}">
+                                                    <label th:for="|town_${town.id}|" th:text="*{town.name}">이름</label>
+                                                </div>
+                                                <hr>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <input type="hidden" name="id" value="" id="adminId"/>
+                                        <input type="hidden" name="_method" value="" id="modalFormMethod"/>
+                                        <button id="deleteBtn" class="btn btn-danger" type="button">삭제</button>
+                                        <button id="updateBtn" class="btn btn-success" type="button">수정</button>
+                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">닫기
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Modal -->
                 </div>
                 <!-- / Content -->
                 <!-- footer -->
@@ -78,9 +118,45 @@
     <div class="layout-overlay layout-menu-toggle"></div>
 </div>
 <!-- / Layout wrapper -->
-<script type="text/javascript">
-    $(document).ready(function() {
-       $("#adminTable").DataTable();
+<script type="text/javascript" th:inline="javascript">
+    $(document).ready(function () {
+        var table = $("#adminTable").DataTable();
+
+        $("#adminTable tbody").on("click", "tr", function () {
+            var data = table.row(this).data();
+            console.log("click: " + data);
+            $("#adminModal").modal("show");
+
+            $("#modal_name").text("이름: " + data[1]);
+            $("#modal_tel").text("전화번호: " + data[2]);
+
+            var towns = data[4].replace('[', '').replace(']', '').split(', ');
+            towns.forEach(town => {
+                console.log(town);
+                $("input:checkbox[id='town_" + town + "']").attr("checked", true);
+            });
+
+            $("#adminId").val(data[0]);
+        });
+
+        $("#adminModal").on("hidden.bs.modal", function () {
+            console.log("모달 창 종료(form reset)")
+            $("input[type=checkbox]").attr("checked", false);
+        })
+
+        $("#deleteBtn").on("click", function () {
+            if (confirm("관리자를 삭제하시겠습니까?")) {
+                $("#modalFormMethod").val("DELETE");
+                $("#modalForm").submit();
+            }
+        });
+
+        $("#updateBtn").on("click", function () {
+            if (confirm("정보를 수정하시겠습니까?")) {
+                $("#modalFormMethod").val("PUT");
+                $("#modalForm").submit();
+            }
+        });
     });
 </script>
 <div th:replace="~{fragment/header :: fragment-bottom-script}"></div>

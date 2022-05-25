@@ -20,6 +20,7 @@ import sejong.smartnotice.repository.AdminRepository;
 import javax.persistence.EntityManager;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -64,6 +65,7 @@ public class AdminService implements UserDetailsService {
         admin.modifyAdminInfo(modifyDTO.getName(), modifyDTO.getTel());
         return admin.getId();
     }
+
 
     // 관리자 삭제
     public void delete(Long id) {

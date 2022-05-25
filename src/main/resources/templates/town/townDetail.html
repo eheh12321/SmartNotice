@@ -230,7 +230,8 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                <tr th:each="admin : ${dto.getAdminList}">
+                                                <tr th:each="admin : ${dto.getAdminList}"
+                                                    th:if="${admin.type.toString() == 'ADMIN'}">
                                                     <td th:text="${admin.name}">이름</td>
                                                     <td th:text="${admin.tel}">전화번호</td>
                                                 </tr>

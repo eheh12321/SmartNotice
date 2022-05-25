@@ -92,7 +92,7 @@ public class TownService {
         // 3. 관리자가 현재 관리하는 마을 명단에 현재 마을이 있으면 등록 취소
         if(adminService.getTownList(admin).contains(town)) {
             log.warn("이미 관리자로 등록되어 있습니다!");
-            throw new IllegalStateException("이미 관리자로 등록되어 있습니다!");
+            return;
         }
 
         // 4. 마을 관리자 등록

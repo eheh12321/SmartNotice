@@ -77,7 +77,8 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr th:each="admin : ${adminList}">
+                                            <tr th:each="admin : ${adminList}"
+                                                th:if="${admin.type.toString() == 'ADMIN'}">
                                                 <td th:text="${admin.id}"></td>
                                                 <td th:text="${admin.name}"></td>
                                                 <td th:text="${admin.tel}"></td>

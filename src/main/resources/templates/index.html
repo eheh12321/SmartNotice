@@ -168,15 +168,13 @@
                                                         <table class="table table-bordered">
                                                             <thead class="table-secondary">
                                                             <tr>
-                                                                <th>관리자</th>
                                                                 <th>이름</th>
                                                                 <th>연락처</th>
                                                             </tr>
                                                             </thead>
                                                             <tbody>
-                                                            <tr th:each="admin, i : ${dto.getAdminList()}"
-                                                                th:if="${i.index < 3}">
-                                                                <td th:text="${admin.type.toString() == 'ADMIN' ? '마을 관리자' : '최고 관리자'} ">이장</td>
+                                                            <tr th:each="admin : ${dto.getAdminList()}"
+                                                                th:if="${admin.type.toString() == 'ADMIN'}">
                                                                 <td th:text="${admin.name}">홍길동</td>
                                                                 <td th:text="${admin.tel}">010-1234-1234</td>
                                                             </tr>

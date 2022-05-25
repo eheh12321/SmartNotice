@@ -45,6 +45,7 @@
                                                 <th>호출인</th>
                                                 <th>호출 시각</th>
                                                 <th>분류</th>
+                                                <th>소속 마을</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -53,6 +54,7 @@
                                                 <td th:text="${alert.user.name}"></td>
                                                 <td th:text="${#temporals.format(alert.alertTime, 'yy/MM/dd HH:mm:ss')}"></td>
                                                 <td>사용자 호출</td>
+                                                <td th:text="${alert.user.town.name}"></td>
                                             </tr>
                                             </tbody>
                                         </table>
