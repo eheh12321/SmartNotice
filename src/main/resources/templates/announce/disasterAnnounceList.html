@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragment/header :: fragment-header ('재난 방송 목록 페이지')}"></head>
+<body>
+<!-- Layout wrapper -->
+<div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+        <!-- Sidebar fragment -->
+        <div th:replace="~{fragment/sidebar :: fragment-sidebar('sidebar_announce_list', 'sidebar_announce_list_disaster')}"></div>
+        <!-- /Sidebar -->
+        <!-- Layout container -->
+        <div class="layout-page">
+            <!-- Navbar(검색창) -->
+            <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+                 id="layout-navbar">
+                <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+                    <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+                        <i class="bx bx-menu bx-sm"></i>
+                    </a>
+                </div>
+            </nav>
+            <!-- / Navbar(검색창) -->
+            <!-- Content wrapper -->
+            <div class="content-wrapper">
+                <!-- Content -->
+                <div class="container-xxl flex-grow-1 container-p-y">
+                    <!-- 마을 Card -->
+                    <div class="row">
+                        <div class="col mb-4">
+                            <div class="card">
+                                <div class="d-flex align-items-end row">
+                                    <div class="card-header">
+                                        <h2 class="d-inline ms-2">재난 방송 목록 조회</h2>
+                                        <button class="btn bg-transparent pt-0 pb-0" style="float: right"
+                                                th:onclick="|location.href='/'|">
+                                            <i class='bx bxs-left-arrow-circle bx-md'></i>
+                                        </button>
+                                        <hr>
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-responsive table-hover" id="announceTable">
+                                            <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>방송자</th>
+                                                <th>방송 제목</th>
+                                                <th>방송 내용</th>
+                                                <th>대상 마을</th>
+                                                <th>방송 시각</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="announce : ${announceList}" th:if="${announce.category.toString() == 'DISASTER'}">
+                                                <td th:text="${announce.getId()}"></td>
+                                                <td th:text="${announce.getProducer()}"></td>
+                                                <td th:text="${announce.getTitle()}"></td>
+                                                <td th:text="${announce.getContents()}"></td>
+                                                <td th:text="${announce.getAtList()}"></td>
+                                                <td th:text="${#temporals.format(announce.getTime(), 'yy/MM/dd HH:mm:ss')}"></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /마을 Card-->
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="announceModal" tabindex="-1"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalCenterTitle">방송 듣기</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col mb-3">
+                                            <audio id="modal_src" src="" controls>방송</audio>
+                                            <hr>
+                                            <p id="modal_title">방송 제목</p>
+                                            <p id="modal_producer">방송자</p>
+                                            <p id="modal_contents">내용</p>
+                                            <p id="modal_time">방송 시각</p>
+                                            <hr>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <form action="" method="post" id="deleteForm">
+                                        <input type="hidden" name="id" value="" id="deleteFormId"/>
+                                        <input type="hidden" name="_method" value="DELETE"/>
+                                        <button id="deleteBtn" class="btn btn-danger" type="submit">삭제</button>
+                                    </form>
+                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">닫기
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Modal -->
+                </div>
+                <!-- / Content -->
+                <!-- footer -->
+                <div th:replace="~{fragment/footer.html :: fragment-footer}"></div>
+                <!-- / footer -->
+            </div>
+            <!-- Content wrapper -->
+        </div>
+        <!-- / Layout page -->
+    </div>
+    <!-- Overlay -->
+    <div class="layout-overlay layout-menu-toggle"></div>
+</div>
+<!-- / Layout wrapper -->
+<!-- 방송 모달 -->
+<script type="text/javascript" th:inline="javascript">
+    $(document).ready(function () {
+
+        var table = $("#announceTable").DataTable({
+            "order": [ [0, "desc"] ]
+        });
+
+        $("#announceTable tbody").on("click", "tr", function () {
+            var data = table.row(this).data();
+            console.log("click: " + data);
+            $("#announceModal").modal("show");
+
+            $.ajax({
+                type:"GET",
+                url:"/announces/"+data[0],
+                success: function(result) {
+                    console.log("방송을 가져왔습니다");
+                    $("#modal_src").attr('src', result.src);
+                    $("#modal_title").text("방송 제목: " + result.title);
+                    $("#modal_producer").text("방송자: " + result.producer);
+                    $("#modal_contents").text("방송 내용: " + result.contents);
+                    $("#modal_time").text("방송 시각: " + result.time);
+
+                    $("#deleteFormId").attr('value', data[0])
+                    $("#deleteForm").attr('action', '/announces/' + data[0]);
+                },
+                error: function(xhr) {
+                    alert("방송을 가져오는데 실패했습니다");
+                }
+            });
+        });
+
+        $("#deleteBtn").on("click", function (e) {
+            e.preventDefault();
+            if (confirm("방송을 삭제하시겠습니까?")) {
+                var formObj = $("#deleteForm");
+                formObj.submit();
+            }
+        });
+    });
+</script>
+<div th:replace="~{fragment/header :: fragment-bottom-script}"></div>
+</body>
+</html>

@@ -37,7 +37,7 @@
                     <div class="row mb-5 h-100">
                         <div class="col-md-6 col-lg-4 mb-3">
                             <div class="card h-100">
-                                <a href="#" class="card-body" style="background: #dfc2c4">
+                                <a href="u/announces/normal" class="card-body" style="background: #dfc2c4">
                                     <h5 class="card-title">마을 방송 목록</h5>
                                     <p class="card-text">
                                         이쁜 이미지
@@ -47,7 +47,7 @@
                         </div>
                         <div class="col-md-6 col-lg-4 mb-3">
                             <div class="card h-100">
-                                <a href="#" class="card-body" style="background: #dfc2c4">
+                                <a href="u/announces/emergency" class="card-body" style="background: #dfc2c4">
                                     <h5 class="card-title">재난 방송 목록</h5>
                                     <p class="card-text">
                                         이쁜 이미지
@@ -57,7 +57,7 @@
                         </div>
                         <div class="col-md-6 col-lg-4 mb-3">
                             <div class="card h-100">
-                                <a href="#" class="card-body" style="background: #dfc2c4">
+                                <a href="#" class="card-body" style="background: #dfc2c4" onclick="makeAlert()">
                                     <h5 class="card-title">긴급 호출</h5>
                                     <p class="card-text">
                                         이쁜 이미지
@@ -78,6 +78,26 @@
     </div>
     <!-- Overlay -->
 </div>
+<script type="text/javascript">
+    function makeAlert() {
+        if(confirm("정말 긴급호출 하시겠습니까??")) {
+            $.ajax({
+                type:"POST",
+                url:"/u",
+                dataType:"text",
+                success: function(result){
+                    console.log(result);
+                    alert(result);
+                },
+                error: function(xhr) {
+                    alert("긴급호출에 실패했습니다");
+                }
+            });
+        } else {
+            return false;
+        }
+    }
+</script>
 <div th:replace="~{fragment/header :: fragment-bottom-script}"></div>
 </body>
 </html>

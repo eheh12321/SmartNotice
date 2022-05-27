@@ -41,7 +41,6 @@ public class AnnounceService {
 
         Admin admin = adminService.findById(registerDTO.getAdminId());
 
-
         // 1. 방송 파일 저장
         String fileName = UUID.randomUUID().toString();
         String path = getDirectory(); // 폴더 생성

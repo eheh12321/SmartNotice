@@ -46,143 +46,13 @@
                                     <div class="card-body ms-2">
                                         <div class="row mb-4">
                                             <!-- Chart -->
-                                            <div class="col-md">
-                                                <canvas id="myChart" width="90vw" height="30vh"></canvas>
-                                                <script th:inline="javascript">
-                                                    var DATA_COUNT = 7;
-                                                    var NUMBER_CFG = {count: DATA_COUNT, min: -100, max: 100};
-                                                    var labels = ['월', '화', '수', '목', '금', '토', '일'];
-                                                    var data = {
-                                                        labels: labels,
-                                                        datasets: [
-                                                            {
-                                                                label: 'Unfilled',
-                                                                fill: false,
-                                                                backgroundColor: 'rgb(54, 162, 235)',
-                                                                borderColor: 'rgb(54, 162, 235)',
-                                                                data: [1, 3, 5, 7, 9, 7, 2],
-                                                            }, {
-                                                                label: 'Dashed',
-                                                                fill: false,
-                                                                backgroundColor: 'rgb(75, 192, 192)',
-                                                                borderColor: 'rgb(75, 192, 192)',
-                                                                borderDash: [5, 5],
-                                                                data: [7, 6, 5, 4, 3, 2, 1],
-                                                            }, {
-                                                                label: 'Filled',
-                                                                backgroundColor: 'rgb(255, 99, 132)',
-                                                                borderColor: 'rgb(255, 99, 132)',
-                                                                data: [1, 2, 3, 2, 1, 2, 3],
-                                                                fill: true,
-                                                            }
-                                                        ]
-                                                    };
-                                                    const ctx = document.getElementById('myChart').getContext('2d');
-                                                    const myChart = new Chart(ctx, {
-                                                        type: 'line',
-                                                        data: data,
-                                                        options: {
-                                                            responsive: true,
-                                                            plugins: {
-                                                                title: {
-                                                                    display: true,
-                                                                    text: 'Chart.js Line Chart'
-                                                                },
-                                                            },
-                                                            interaction: {
-                                                                mode: 'index',
-                                                                intersect: false
-                                                            },
-                                                            scales: {
-                                                                x: {
-                                                                    display: true,
-                                                                    title: {
-                                                                        display: true,
-                                                                        text: 'Month'
-                                                                    }
-                                                                },
-                                                                y: {
-                                                                    display: true,
-                                                                    title: {
-                                                                        display: true,
-                                                                        text: 'Value'
-                                                                    }
-                                                                }
-                                                            }
-                                                        },
-                                                    });
-                                                </script>
+                                            <div class="col-md-12">
+                                                <canvas id="myChart" width="100%" height="30vh" ></canvas>
                                             </div>
                                             <!-- /Chart -->
-                                            <!-- Chart -->
-                                            <div class="col-md">
-                                                <canvas id="myChart2" width="90vw" height="30vh"></canvas>
-                                                <script th:inline="javascript">
-                                                    var DATA_COUNT = 7;
-                                                    var NUMBER_CFG = {count: DATA_COUNT, min: -100, max: 100};
-                                                    var labels = ['월', '화', '수', '목', '금', '토', '일'];
-                                                    var data = {
-                                                        labels: labels,
-                                                        datasets: [
-                                                            {
-                                                                label: 'Unfilled',
-                                                                fill: false,
-                                                                backgroundColor: 'rgb(54, 162, 235)',
-                                                                borderColor: 'rgb(54, 162, 235)',
-                                                                data: [1, 3, 5, 7, 9, 7, 2],
-                                                            }, {
-                                                                label: 'Dashed',
-                                                                fill: false,
-                                                                backgroundColor: 'rgb(75, 192, 192)',
-                                                                borderColor: 'rgb(75, 192, 192)',
-                                                                borderDash: [5, 5],
-                                                                data: [7, 6, 5, 4, 3, 2, 1],
-                                                            }, {
-                                                                label: 'Filled',
-                                                                backgroundColor: 'rgb(255, 99, 132)',
-                                                                borderColor: 'rgb(255, 99, 132)',
-                                                                data: [1, 2, 3, 2, 1, 2, 3],
-                                                                fill: true,
-                                                            }
-                                                        ]
-                                                    };
-                                                    const ctx2 = document.getElementById('myChart2').getContext('2d');
-                                                    const myChart2 = new Chart(ctx2, {
-                                                        type: 'line',
-                                                        data: data,
-                                                        options: {
-                                                            responsive: true,
-                                                            plugins: {
-                                                                title: {
-                                                                    display: true,
-                                                                    text: 'Chart.js Line Chart'
-                                                                },
-                                                            },
-                                                            interaction: {
-                                                                mode: 'index',
-                                                                intersect: false
-                                                            },
-                                                            scales: {
-                                                                x: {
-                                                                    display: true,
-                                                                    title: {
-                                                                        display: true,
-                                                                        text: 'Month'
-                                                                    }
-                                                                },
-                                                                y: {
-                                                                    display: true,
-                                                                    title: {
-                                                                        display: true,
-                                                                        text: 'Value'
-                                                                    }
-                                                                }
-                                                            }
-                                                        },
-                                                    });
-                                                </script>
+                                            <div class="col-md-12">
+                                                <canvas id="myChart2" width="100%" height="30vh"></canvas>
                                             </div>
-                                            <!-- /Chart -->
                                         </div>
                                     </div>
                                 </div>
@@ -312,12 +182,16 @@
 <script type="text/javascript" th:inline="javascript">
     $(document).ready(function () {
         $("#alertTable").DataTable();
+        getChart(); // 주민 센서 데이터 조회
+
         $("#supporterUpdateBtn").on("click", function () {
             $("#supporterUpdateModal").modal('show');
         });
+
         $("#userUpdateBtn").on("click", function () {
             $("#userUpdateModal").modal('show');
         });
+
         $("#supporterModalSaveBtn").on("click", function () {
             var id = [[${supporter.id}]];
             var name = $("input[name='name']").val();
@@ -386,6 +260,130 @@
             }
         });
     });
+
+    function getChart() {
+        let timeList = [];
+        let tempList = [];
+        let co2List = [];
+        let oxygenList = [];
+
+        $.ajax({
+            url:"/s/sensor",
+            type:"GET",
+            dataType:"json",
+            success: function(result) {
+                for(i = 0; i < result.length; i++) {
+                    timeList.push(result[i].receiveTime);
+                    tempList.push(result[i].temp);
+                    co2List.push(result[i].co2);
+                    oxygenList.push(result[i].oxygen);
+                }
+                const ctx = document.getElementById('myChart').getContext('2d');
+                const myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                            labels: timeList,
+                            datasets: [
+                                {
+                                    label: '온도',
+                                    fill: true,
+                                    backgroundColor: 'rgb(54, 162, 235)',
+                                    borderColor: 'rgb(54, 162, 235)',
+                                    data: tempList,
+                                }
+                            ]
+                        },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Chart.js Line Chart'
+                            },
+                        },
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        scales: {
+                            x: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'TimeLine'
+                                }
+                            },
+                            y: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'Value'
+                                }
+                            }
+                        },
+                        pointStyle:'line'
+                    },
+                });
+
+                const ctx2 = document.getElementById('myChart2').getContext('2d');
+                const myChart2 = new Chart(ctx2, {
+                    type: 'line',
+                    data: {
+                        labels: timeList,
+                        datasets: [
+                            {
+                                label: 'co2',
+                                fill: false,
+                                backgroundColor: 'rgb(0, 0, 235)',
+                                borderColor: 'rgb(0, 0, 235)',
+                                data: co2List,
+                            },
+                            {
+                                label: 'oxygen',
+                                fill: false,
+                                backgroundColor: 'rgb(0, 162, 0)',
+                                borderColor: 'rgb(0, 162, 0)',
+                                data: oxygenList,
+                            },
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Chart.js Line Chart'
+                            },
+                        },
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        scales: {
+                            x: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'TimeLine'
+                                }
+                            },
+                            y: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'Value'
+                                }
+                            }
+                        },
+                        pointStyle:'line'
+                    },
+                });
+            },
+            error: function (xhr) {
+                alert("센서 데이터를 가져오는데 실패했습니다 :P");
+            }
+        });
+    }
 </script>
 <div th:replace="~{fragment/header :: fragment-bottom-script}"></div>
 </body>

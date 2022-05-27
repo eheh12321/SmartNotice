@@ -57,6 +57,42 @@ public class AnnounceController {
         return "announce/list";
     }
 
+    @GetMapping("/normal")
+    public String getNormalAnnounceListPage(Authentication auth, Model model) {
+        List<Announce> announceList;
+        if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPER"))) {
+            // 마을 관리자인 경우 관리 마을 대상으로 한 방송 목록만 조회
+            Admin authAdmin = adminService.findByLoginId(auth.getName());
+            List<Town> managedTownList = townService.findTownByAdmin(authAdmin);
+
+            announceList = em.createQuery("select distinct a from Announce a join fetch a.atList at join fetch at.town where at.town in(:townList)", Announce.class)
+                    .setParameter("townList", managedTownList)
+                    .getResultList();
+        } else {
+            announceList = announceService.findAll();
+        }
+        model.addAttribute("announceList", announceList);
+        return "announce/normalAnnounceList";
+    }
+
+    @GetMapping("/disaster")
+    public String getDisasterAnnounceListPage(Authentication auth, Model model) {
+        List<Announce> announceList;
+        if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPER"))) {
+            // 마을 관리자인 경우 관리 마을 대상으로 한 방송 목록만 조회
+            Admin authAdmin = adminService.findByLoginId(auth.getName());
+            List<Town> managedTownList = townService.findTownByAdmin(authAdmin);
+
+            announceList = em.createQuery("select distinct a from Announce a join fetch a.atList at join fetch at.town where at.town in(:townList)", Announce.class)
+                    .setParameter("townList", managedTownList)
+                    .getResultList();
+        } else {
+            announceList = announceService.findAll();
+        }
+        model.addAttribute("announceList", announceList);
+        return "announce/disasterAnnounceList";
+    }
+
     @GetMapping("/text")
     public String getTextAnnounceForm(@AuthenticationPrincipal Admin admin, Model model) {
         model.addAttribute("admin", admin);
@@ -85,8 +121,6 @@ public class AnnounceController {
 
     @PostMapping("/voice")
     public String getVoiceAnnounce(@Valid @ModelAttribute AnnounceRegisterDTO registerDTO, BindingResult bindingResult) {
-        log.info("data: {}", registerDTO);
-
         announceService.registerAnnounce(registerDTO);
         return "redirect:/announces";
     }

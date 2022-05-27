@@ -49,7 +49,7 @@ public class User implements UserDetails {
     private boolean isAdmin; // 마을 주민이 관리자인지?
 
     // Device의 생명주기가 User에 의해 정해진다
-    @OneToOne(fetch = LAZY, cascade = ALL)
+    @OneToOne(fetch = LAZY)
     @JoinColumn(name = "device_id")
     private Device device;
 
