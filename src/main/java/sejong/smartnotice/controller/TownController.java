@@ -68,8 +68,13 @@ public class TownController {
                 .setParameter("town", town)
                 .getResultList();
         List<Admin> adminList = new ArrayList<>();
+        int townAdminCnt = 0;
         for (Admin_Town at : atList) {
-            adminList.add(at.getAdmin());
+            Admin admin = at.getAdmin();
+            if(admin.getType() == AdminType.ADMIN) {
+                townAdminCnt++;
+            }
+            adminList.add(admin);
         }
 
         // (3) 관리자 권한 조회
@@ -123,6 +128,7 @@ public class TownController {
                 .adminList(adminList)
                 .announceList(announceList)
                 .alertList(alertList)
+                .townAdminCnt(townAdminCnt)
                 .alert_fire(0)
                 .alert_user(alertList.size())
                 .alert_motion(0)

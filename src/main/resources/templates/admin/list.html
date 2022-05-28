@@ -146,8 +146,18 @@
 
         $("#deleteBtn").on("click", function () {
             if (confirm("관리자를 삭제하시겠습니까?")) {
-                $("#modalFormMethod").val("DELETE");
-                $("#modalForm").submit();
+                $.ajax({
+                    method:"DELETE",
+                    url:"/admin/" + $("#adminId").val(),
+                    dataType:"text",
+                    success: function(result){
+                        alert("성공적으로 관리자를 삭제했습니다");
+                        window.location.href="/admin";
+                    },
+                    error: function(result){
+                        alert("실패!");
+                    }
+                });
             }
         });
 

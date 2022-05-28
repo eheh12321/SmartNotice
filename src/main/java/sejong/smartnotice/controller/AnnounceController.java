@@ -24,6 +24,7 @@ import sejong.smartnotice.service.TownService;
 import javax.persistence.EntityManager;
 import javax.validation.Valid;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -89,6 +90,7 @@ public class AnnounceController {
         } else {
             announceList = announceService.findAll();
         }
+
         model.addAttribute("announceList", announceList);
         return "announce/disasterAnnounceList";
     }

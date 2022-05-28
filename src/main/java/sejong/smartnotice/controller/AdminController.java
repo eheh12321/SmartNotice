@@ -2,6 +2,7 @@ package sejong.smartnotice.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -51,11 +52,12 @@ public class AdminController {
         return "admin/list";
     }
 
-    @DeleteMapping
-    public String deleteAdmin(@RequestParam Long id) {
+    @DeleteMapping("/{id}")
+    @ResponseBody
+    public ResponseEntity<String> deleteAdmin(@PathVariable Long id) {
         log.info("== 관리자 삭제 ==");
         adminService.delete(id);
-        return "redirect:/admin";
+        return ResponseEntity.ok().body("관리자를 성공적으로 삭제했습니다");
     }
 
     @PutMapping
@@ -109,14 +111,6 @@ public class AdminController {
             return "admin/modify";
         }
         adminService.modifyAdminInfo(modifyDTO);
-        return "redirect:/admin";
-    }
-
-    @DeleteMapping("/{id}")
-    public String remove(@PathVariable Long id) {
-        log.info("== 관리자 삭제 ==");
-        adminService.delete(id);
-
         return "redirect:/admin";
     }
 }

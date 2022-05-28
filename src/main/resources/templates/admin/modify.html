@@ -1,54 +1,132 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>관리자 정보 수정</title>
-    <meta charset="UTF-8">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <style>
-        .container {
-            max-width: 560px;
-        }
-        .field-error {
-            border-color: #dc3545;
-            color: #dc3545;
-        }
-    </style>
-</head>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head th:replace="~{fragment/header :: fragment-header ('사용자 정보 수정')}"></head>
 <body>
-<h1>관리자 정보 수정</h1>
-<hr><br>
-
-<div class="container">
-    <form th:action="@{/admin/{id}(id=${admin.id})}" method="post" th:object="${admin}">
-        <div class="form-group mb-3">
-            <label for="name">이름</label>
-            <input type="text" class="form-control" id="name" placeholder="name"
-                   th:field="*{name}" th:errorclass="field-error">
-            <div class="field-error" th:errors="*{name}">아이디 입력 오류</div>
+<!-- Layout wrapper -->
+<div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+        <!-- Sidebar fragment -->
+        <div th:replace="~{fragment/sidebar :: fragment-sidebar('sidebar_edit', '')}"></div>
+        <!-- /Sidebar -->
+        <!-- Layout container -->
+        <div class="layout-page">
+            <!-- Navbar(검색창) -->
+            <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+                 id="layout-navbar">
+                <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+                    <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+                        <i class="bx bx-menu bx-sm"></i>
+                    </a>
+                </div>
+                <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+                    <ul class="navbar-nav flex-row align-items-center ms-auto">
+                        <li class="nav-item">
+                            <button id="withdrawalBtn" class="btn btn-danger" type="button">회원 탈퇴</button>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <!-- / Navbar(검색창) -->
+            <!-- Content wrapper -->
+            <div class="content-wrapper">
+                <!-- Content -->
+                <div class="container-xxl flex-grow-1 container-p-y">
+                    <!-- 마을 Card -->
+                    <div class="row">
+                        <div class="col mb-4">
+                            <div class="card">
+                                <div class="d-flex align-items-end row">
+                                    <div class="card-header">
+                                        <h2 class="d-inline ms-2">사용자 정보 수정</h2>
+                                        <button class="btn bg-transparent pt-0 pb-0" style="float: right"
+                                                th:onclick="|location.href='/'|">
+                                            <i class='bx bxs-left-arrow-circle bx-md'></i>
+                                        </button>
+                                        <hr>
+                                    </div>
+                                    <div class="card-body">
+                                        <form method="post" action="">
+                                            <div class="form-group mb-3">
+                                                <label for="name">이름</label>
+                                                <input type="text" id="name" name="name" th:value="${admin.name}" class="form-control" placeholder="이름을 입력하세요">
+                                            </div>
+                                            <div class="form-group mb-3">
+                                                <label for="tel">전화번호</label>
+                                                <input type="text" id="tel" name="tel" th:value="${admin.tel}" class="form-control" placeholder="전화번호를 입력하세요">
+                                            </div>
+                                            <div class="form-group mb-3" sec:authorize="hasRole('SUPER')">
+                                                <p>관리 마을</p>
+                                                <div th:each="town : ${townList}">
+                                                    <input type="checkbox" th:id="|town_${town.id}|" name="town"
+                                                           th:value="${town.id}">
+                                                    <label th:for="|town_${town.id}|" th:text="*{town.name}">이름</label>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <button type="submit" class="btn btn-success" onclick="if(!confirm('정보를 수정하시겠습니까?'))return false;">수정</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /마을 Card-->
+                </div>
+                <!-- / Content -->
+                <!-- footer -->
+                <div th:replace="~{fragment/footer.html :: fragment-footer}"></div>
+                <!-- / footer -->
+            </div>
+            <!-- Content wrapper -->
         </div>
-        <div class="form-group mb-3">
-            <label for="tel">전화번호</label>
-            <input type="text" class="form-control" id="tel" placeholder="tel"
-                   th:field="*{tel}" th:errorclass="field-error">
-            <div class="field-error" th:errors="*{tel}">아이디 입력 오류</div>
-        </div>
-        <div class="form-group mb-3">
-            <label for="type">권한</label>
-            <input type="text" class="form-control"
-                   id="type" placeholder="type" th:field="*{type}" readonly>
-        </div>
-
-        <input type="hidden" name="_method" value="PUT"/>
-        <button class="btn btn-primary" type="button" onclick="location.href='/admin'">뒤로가기</button>
-        <button class="btn btn-primary" type="submit">수정</button>
-    </form>
-
-    <form th:action="@{/admin/{id}(id=${admin.id})}" method="post" th:object="${admin}">
-        <input type="hidden" name="_method" value="DELETE"/>
-        <button class="btn btn-danger" type="submit">삭제</button>
-    </form>
+        <!-- / Layout page -->
+    </div>
+    <!-- Overlay -->
+    <div class="layout-overlay layout-menu-toggle"></div>
 </div>
+<script type="text/javascript" th:inline="javascript">
+    $(document).ready(function(){
+        var towns = [[${managedTownIdList}]];
+        towns.forEach(town => {
+            $("input:checkbox[id='town_" + town + "']").attr("checked", true);
+        });
 
+        $("#withdrawalBtn").on("click", function(){
+            if(confirm("정말로 회원탈퇴 하시겠습니까..?")){
+                if(confirm("정말요....???")) {
+                    if(confirm("진짜요.........???")) {
+                        if(confirm("돌이킬 수 없습니다...........?????")) {
+                            $.ajax({
+                                method:"DELETE",
+                                url:"/admin/" + [[${admin.id}]],
+                                dataType:"text",
+                                success: function(result){
+                                    alert("성공적으로 탈퇴를 완료했습니다");
+                                    window.location.href="/logout";
+                                },
+                                error: function(result){
+                                    alert("실패!");
+                                }
+                            });
+                        } else {
+                            alert("휴!");
+                            return false;
+                        }
+                    } else {
+                        alert("휴!");
+                        return false;
+                    }
+                } else {
+                    alert("휴!");
+                    return false;
+                }
+            } else return false;
+        });
+    });
+
+</script>
+<!-- / Layout wrapper -->
+<div th:replace="~{fragment/header :: fragment-bottom-script}"></div>
 </body>
 </html>

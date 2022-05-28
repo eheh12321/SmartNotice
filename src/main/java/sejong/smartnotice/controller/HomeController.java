@@ -16,11 +16,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sejong.smartnotice.domain.*;
 import sejong.smartnotice.domain.announce.Announce;
 import sejong.smartnotice.domain.member.Admin;
+import sejong.smartnotice.domain.member.AdminType;
 import sejong.smartnotice.domain.member.User;
-import sejong.smartnotice.dto.AdminRegisterDTO;
-import sejong.smartnotice.dto.ComplexDTO;
-import sejong.smartnotice.dto.SupporterRegisterDTO;
-import sejong.smartnotice.dto.UserRegisterDTO;
+import sejong.smartnotice.dto.*;
 import sejong.smartnotice.service.*;
 
 import javax.persistence.EntityManager;
@@ -94,10 +92,14 @@ public class HomeController {
         for (Town town : townList) {
 
             List<Admin> al = new ArrayList<>();
+            int townAdminCnt = 0;
             for (Admin admin : adminList) {
                 for (Admin_Town at : admin.getAtList()) {
                     if(at.getTown().equals(town)) {
                         al.add(admin);
+                        if(admin.getType() == AdminType.ADMIN) {
+                            townAdminCnt++;
+                        }
                     }
                 }
             }
@@ -141,6 +143,7 @@ public class HomeController {
                     .adminList(al)
                     .announceList(aal)
                     .alertList(el)
+                    .townAdminCnt(townAdminCnt)
                     .alert_fire(0)
                     .alert_user(el.size())
                     .alert_motion(0)
@@ -158,6 +161,40 @@ public class HomeController {
     @GetMapping("/index")
     public String adminIndexPage() {
         return "admin_index";
+    }
+
+    @GetMapping("/edit")
+    public String adminModifyPage(Authentication auth, Model model) {
+        Admin authAdmin = adminService.findByLoginId(auth.getName());
+        List<Town> townList = townService.findAll();
+        List<Town> managedTownList = townService.findTownByAdmin(authAdmin);
+        List<Long> managedTownIdList = new ArrayList<>();
+        for (Town town : managedTownList) {
+            managedTownIdList.add(town.getId());
+        }
+        model.addAttribute("admin", authAdmin);
+        model.addAttribute("townList", townList);
+        model.addAttribute("managedTownIdList", managedTownIdList);
+        return "admin/modify";
+    }
+
+    @PostMapping("/edit")
+    public String adminModify(Authentication auth, String name, String tel, @RequestParam(required = false, value = "town") List<Long> townIdList) {
+        Admin admin = adminService.findByLoginId(auth.getName());
+        adminService.modifyAdminInfo(new AdminModifyDTO(admin.getId(), name, tel));
+        // 현재 관리 마을 목록
+        List<Town> townList = adminService.getTownList(admin);
+
+        // 현재 관리중인 마을 전체 취소 후 새로 생성
+        for (Town town : townList) {
+            townService.removeTownAdmin(town.getId(), admin.getId());
+        }
+        if (townIdList != null) {
+            for (Long townId : townIdList) {
+                townService.addTownAdmin(townId, admin.getId());
+            }
+        }
+        return "redirect:/edit";
     }
 
     @GetMapping("/register")

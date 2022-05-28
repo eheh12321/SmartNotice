@@ -22,6 +22,8 @@ public class ComplexDTO {
     private List<Announce> announceList;
     private List<EmergencyAlert> alertList;
 
+    private int townAdminCnt; // 마을 관리자 수
+    
     private int alert_fire;
     private int alert_user;
     private int alert_motion;
