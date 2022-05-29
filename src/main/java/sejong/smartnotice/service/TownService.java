@@ -13,6 +13,7 @@ import sejong.smartnotice.dto.TownRegisterDTO;
 import sejong.smartnotice.repository.TownRepository;
 
 import javax.persistence.EntityManager;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,7 +60,7 @@ public class TownService {
     }
 
     // 마을 정보 수정
-    public Long modifyTownInfo(TownModifyDTO modifyDTO) {
+    public void modifyTownInfo(TownModifyDTO modifyDTO) {
         log.info("== 마을 정보 수정 ==");
         // 1. 마을 조회 및 검증
         Town town = findById(modifyDTO.getId());
@@ -69,7 +70,7 @@ public class TownService {
 
         // 3. 바뀐 정보가 없으면 아무것도 하지 않음
         if(town.getName().equals(modifyDTO.getName()) && town.getRegion().equals(region)) {
-            return town.getId();
+            return;
         }
 
         // 4. 중복 검증
@@ -77,7 +78,35 @@ public class TownService {
 
         // 5. 마을 정보 수정
         town.modifyTownInfo(modifyDTO.getName(), region);
-        return town.getId();
+    }
+
+    // 관리자 관리 마을 목록 수정
+    public void modifyAdminManagedTownList(Long adminId, List<Long> townIdList) {
+        log.info("관리자 관리 마을 목록 수정");
+
+        Admin admin = adminService.findById(adminId);
+        // 현재 관리 마을 목록
+        List<Town> managedTownList = adminService.getTownList(admin);
+
+        HashMap<Long, Integer> map = new HashMap<>();
+        for (Long tId : townIdList) {
+            map.put(tId, 1);
+        }
+        for (Town town : managedTownList) {
+            if(!map.containsKey(town.getId())) {
+                // 마을 관리 삭제
+                removeTownAdmin(town.getId(), adminId);
+            } else {
+                // 유지
+                map.remove(town.getId());
+            }
+        }
+        if(!map.isEmpty()) {
+            for (Long key : map.keySet()) {
+                // 신규 관리 마을 추가
+                addTownAdmin(key, adminId);
+            }
+        }
     }
 
     // 마을 관리자 등록
@@ -85,18 +114,15 @@ public class TownService {
         log.info("== 마을 관리자 등록 ==");
         // 1. 마을 조회
         Town town = findById(townId);
-        
+
         // 2. 관리자 조회
         Admin admin = adminService.findById(adminId);
 
-        // 3. 관리자가 현재 관리하는 마을 명단에 현재 마을이 있으면 등록 취소
-        if(adminService.getTownList(admin).contains(town)) {
-            log.warn("이미 관리자로 등록되어 있습니다!");
-            return;
-        }
-
-        // 4. 마을 관리자 등록
-        town.addTownAdmin(admin);
+        // 3. 마을 관리자 등록
+        Admin_Town at = Admin_Town.builder().admin(admin).town(town).build();
+        town.getAtList().add(at);
+        admin.getAtList().add(at);
+        em.persist(at);
     }
 
     // 마을 관리자 삭제
@@ -106,18 +132,18 @@ public class TownService {
         Town town = findById(townId);
 
         // 2. 관리자 조회
-        Admin admin = adminService.findById(adminId);
+        Admin admin = adminService.findAdminWithTown(adminId);
 
         // 3. 데이터 조회
         log.info("== 삭제 데이터 조회 ==");
-        Admin_Town at = em.createQuery("select at from Admin_Town at " +
-                "where at.town=:town and at.admin=:admin", Admin_Town.class)
+        Admin_Town at = em.createQuery("select at from Admin_Town at where at.town=:town and at.admin=:admin", Admin_Town.class)
                 .setParameter("town", town)
                 .setParameter("admin", admin).getSingleResult();
 
         // 4. 데이터 삭제
-        town.removeTownAdmin(at);
         em.remove(at);
+        admin.getAtList().remove(at);
+        town.getAtList().remove(at);
     }
 
     // 마을 조회
@@ -150,16 +176,7 @@ public class TownService {
     // 관리자 관리 마을 목록 조회
     @Transactional(readOnly = true)
     public List<Town> findTownByAdmin(Admin admin) {
-        return em.createQuery("select t from Town t join fetch t.adminList at where at.admin.id=:adminId", Town.class)
-                .setParameter("adminId", admin.getId())
-                .getResultList();
-    }
-
-    // 지역 목록 반환
-    @Transactional(readOnly = true)
-    public List<Region> findAllRegion() {
-        return em.createQuery("select r from Region r", Region.class)
-                .getResultList();
+        return townRepository.findTownsByAdmin(admin.getId());
     }
 
     // 마을ID 검증
@@ -178,7 +195,7 @@ public class TownService {
         log.info("== 마을 중복 검증 ==");
         if(townRepository.existsByRegionAndName(region, townName)) {
             log.warn("같은 지역에 동일한 마을이 존재합니다");
-            throw new IllegalStateException("같은 지역에 동일한 마을이 존재합니다");
+            throw new IllegalArgumentException("같은 지역에 동일한 마을이 존재합니다");
         }
     }
 }

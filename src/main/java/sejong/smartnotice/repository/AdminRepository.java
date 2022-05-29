@@ -19,6 +19,9 @@ public interface AdminRepository extends JpaRepository<Admin, Long> {
     @Query("select distinct a from Admin a join fetch a.atList at where at.town.id=?1")
     List<Admin> findAdminByTown(Long townId);
 
+    @Query("select a from Admin a join fetch a.atList at join fetch at.town where at.admin.id=?1")
+    Admin findAdminWithTown(Long id);
+
     Admin findByName(String name);
 
     Admin findByAccountLoginId(String loginId);

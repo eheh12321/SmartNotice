@@ -20,6 +20,9 @@ public interface TownRepository extends JpaRepository<Town, Long> {
     @Query("select t from Town t join fetch t.region")
     List<Town> findAllWithRegion();
 
+    @Query("select t from Town t join fetch t.atList at where at.admin.id=?1")
+    List<Town> findTownsByAdmin(Long adminId);
+
     @Query("select t from Town t join fetch t.region where t.id=?1")
-    Optional<Town> findById(Long townId);
+    List<Town> findByIdWithRegion(Long townId);
 }

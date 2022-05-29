@@ -38,7 +38,7 @@ public class Admin implements UserDetails {
 
     // Admin 커밋 시 자동으로 딸려감
     @OneToMany(mappedBy = "admin", cascade = ALL)
-    private List<Admin_Town> atList = new ArrayList<>();
+    private List<Admin_Town> atList;
 
     @Enumerated(value = EnumType.STRING)
     private AdminType type; // 관리자 타입

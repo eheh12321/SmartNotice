@@ -10,12 +10,9 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AdminModifyDTO {
-
     private Long id;
-
     @NotBlank
     private String name;
-
     @NotBlank
     private String tel;
 }

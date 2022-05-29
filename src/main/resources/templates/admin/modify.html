@@ -46,7 +46,7 @@
                                         <hr>
                                     </div>
                                     <div class="card-body">
-                                        <form method="post" action="">
+                                        <form method="post" action="" id="formObj">
                                             <div class="form-group mb-3">
                                                 <label for="name">이름</label>
                                                 <input type="text" id="name" name="name" th:value="${admin.name}" class="form-control" placeholder="이름을 입력하세요">
@@ -58,13 +58,12 @@
                                             <div class="form-group mb-3" sec:authorize="hasRole('SUPER')">
                                                 <p>관리 마을</p>
                                                 <div th:each="town : ${townList}">
-                                                    <input type="checkbox" th:id="|town_${town.id}|" name="town"
-                                                           th:value="${town.id}">
+                                                    <input type="checkbox" th:id="|town_${town.id}|" name="town" th:value="${town.id}">
                                                     <label th:for="|town_${town.id}|" th:text="*{town.name}">이름</label>
                                                 </div>
                                             </div>
                                             <hr>
-                                            <button type="submit" class="btn btn-success" onclick="if(!confirm('정보를 수정하시겠습니까?'))return false;">수정</button>
+                                            <button type="button" class="btn btn-success" id="modifyBtn">수정</button>
                                         </form>
                                     </div>
                                 </div>
@@ -122,6 +121,26 @@
                     return false;
                 }
             } else return false;
+        });
+
+        $("#modifyBtn").on("click", function (){
+           if(confirm("정보를 수정하시겠습니까?")) {
+               var data = $("#formObj").serialize();
+               $.ajax({
+                   method:"PUT",
+                   url:"/admin/" + [[${admin.id}]],
+                   data:data,
+                   dataType:"text",
+                   success: function(result){
+                       alert(result);
+                       window.location.reload(); // 현재 페이지 새로고침
+                   },
+                   error: function(xhr){
+                       var result = JSON.parse(xhr.responseText);
+                       alert(result.message);
+                   }
+               });
+           }
         });
     });
 

@@ -74,7 +74,7 @@ public class HomeController {
             // (1) 관리자 조회
             Admin admin = adminService.findByLoginId(auth.getName());
             // (2) 마을 조회
-            townList = em.createQuery("select distinct t from Town t join fetch t.region left join t.adminList al where al.admin.id=:adminId", Town.class)
+            townList = em.createQuery("select distinct t from Town t join fetch t.region left join t.atList at where at.admin.id=:adminId", Town.class)
                     .setParameter("adminId", admin.getId())
                     .getResultList();
             // (3) 마을 + 관리자 fetch
@@ -176,25 +176,6 @@ public class HomeController {
         model.addAttribute("townList", townList);
         model.addAttribute("managedTownIdList", managedTownIdList);
         return "admin/modify";
-    }
-
-    @PostMapping("/edit")
-    public String adminModify(Authentication auth, String name, String tel, @RequestParam(required = false, value = "town") List<Long> townIdList) {
-        Admin admin = adminService.findByLoginId(auth.getName());
-        adminService.modifyAdminInfo(new AdminModifyDTO(admin.getId(), name, tel));
-        // 현재 관리 마을 목록
-        List<Town> townList = adminService.getTownList(admin);
-
-        // 현재 관리중인 마을 전체 취소 후 새로 생성
-        for (Town town : townList) {
-            townService.removeTownAdmin(town.getId(), admin.getId());
-        }
-        if (townIdList != null) {
-            for (Long townId : townIdList) {
-                townService.addTownAdmin(townId, admin.getId());
-            }
-        }
-        return "redirect:/edit";
     }
 
     @GetMapping("/register")

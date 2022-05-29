@@ -79,8 +79,14 @@
                                     <div class="modal-body">
                                         <div class="row">
                                             <div class="col mb-3">
-                                                <p id="modal_name">이름</p>
-                                                <p id="modal_tel">전화번호</p>
+                                                <div class="form-group mb-3">
+                                                    <label for="name">이름</label>
+                                                    <input type="text" id="name" name="name" class="form-control" readonly>
+                                                </div>
+                                                <div class="form-group mb-3">
+                                                    <label for="tel">전화번호</label>
+                                                    <input type="text" id="tel" name="tel" class="form-control" readonly>
+                                                </div>
                                                 <p>관리 마을</p>
                                                 <div th:each="town : ${townList}">
                                                     <input type="checkbox" th:id="|town_${town.id}|" name="town"
@@ -93,7 +99,6 @@
                                     </div>
                                     <div class="modal-footer">
                                         <input type="hidden" name="id" value="" id="adminId"/>
-                                        <input type="hidden" name="_method" value="" id="modalFormMethod"/>
                                         <button id="deleteBtn" class="btn btn-danger" type="button">삭제</button>
                                         <button id="updateBtn" class="btn btn-success" type="button">수정</button>
                                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">닫기
@@ -127,16 +132,15 @@
             console.log("click: " + data);
             $("#adminModal").modal("show");
 
-            $("#modal_name").text("이름: " + data[1]);
-            $("#modal_tel").text("전화번호: " + data[2]);
+            $("#adminId").val(data[0]);
+            $("input[id='name']").val(data[1]);
+            $("input[id='tel']").val(data[2]);
 
             var towns = data[4].replace('[', '').replace(']', '').split(', ');
             towns.forEach(town => {
                 console.log(town);
                 $("input:checkbox[id='town_" + town + "']").attr("checked", true);
             });
-
-            $("#adminId").val(data[0]);
         });
 
         $("#adminModal").on("hidden.bs.modal", function () {
@@ -163,8 +167,20 @@
 
         $("#updateBtn").on("click", function () {
             if (confirm("정보를 수정하시겠습니까?")) {
-                $("#modalFormMethod").val("PUT");
-                $("#modalForm").submit();
+                var data = $("#modalForm").serialize();
+                $.ajax({
+                    method:"PUT",
+                    url:"/admin/" + $("#adminId").val(),
+                    data:data,
+                    dataType:"text",
+                    success: function(result){
+                        alert(result);
+                        window.location.href="/admin";
+                    },
+                    error: function(result){
+                        alert("실패!");
+                    }
+                });
             }
         });
     });

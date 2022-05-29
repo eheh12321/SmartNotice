@@ -9,7 +9,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sejong.smartnotice.domain.Admin_Town;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.member.Account;
 import sejong.smartnotice.domain.member.Admin;
@@ -19,8 +18,6 @@ import sejong.smartnotice.repository.AdminRepository;
 
 import javax.persistence.EntityManager;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -53,10 +50,10 @@ public class AdminService implements UserDetailsService {
         log.info("== 관리자 정보 수정 ==");
         // 1. 관리자 조회
         Admin admin = findById(modifyDTO.getId());
-        
+
         // 2. 전화번호 중복 검증 (전화번호가 이미 존재하고, 동일 인물이 아닌 경우)
         Admin findAdmin = findByTel(modifyDTO.getTel());
-        if(findAdmin != null && !findAdmin.getId().equals(admin.getId())) {
+        if(findAdmin != null && !findAdmin.equals(admin)) {
             log.warn("중복된 전화번호가 존재합니다");
             throw new IllegalStateException("중복된 전화번호가 존재합니다");
         }
@@ -65,7 +62,6 @@ public class AdminService implements UserDetailsService {
         admin.modifyAdminInfo(modifyDTO.getName(), modifyDTO.getTel());
         return admin.getId();
     }
-
 
     // 관리자 삭제
     public void delete(Long id) {
@@ -134,13 +130,14 @@ public class AdminService implements UserDetailsService {
     @Transactional(readOnly = true)
     public List<Town> getTownList(Admin admin) {
         log.info("== 관리자 관리 마을 목록 조회 ==");
-        List<Admin_Town> atList = em.createQuery("select at from Admin_Town at where at.admin=:admin", Admin_Town.class)
+        List<Town> townList = em.createQuery("select distinct t from Town t join fetch t.atList at where at.admin=:admin", Town.class)
                 .setParameter("admin", admin).getResultList();
-        List<Town> townList = new ArrayList<>();
-        for (Admin_Town at : atList) {
-            townList.add(at.getTown());
-        }
         return townList;
+    }
+
+    // 마을 정보와 관리자 함께 조회
+    public Admin findAdminWithTown(Long id) {
+        return adminRepository.findAdminWithTown(id);
     }
 
     private Admin validateAdminId(Long id) {
