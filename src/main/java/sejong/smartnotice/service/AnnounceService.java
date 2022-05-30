@@ -33,7 +33,7 @@ public class AnnounceService {
 
     private final AdminService adminService;
     private final TownService townService;
-    private final MqttService mqttService;
+    private final MqttConfig.MyGateway mqttGateway;
     private final AnnounceRepository announceRepository;
 
     public Long registerAnnounce(AnnounceRegisterDTO registerDTO) {
@@ -69,7 +69,7 @@ public class AnnounceService {
             MqttAnnounceJson json = new MqttAnnounceJson(admin.getName(), registerDTO.getTitle(), registerDTO.getTextData(),
                     Base64.getEncoder().encodeToString(audioContents), registerDTO.getType().toString(), registerDTO.getCategory().toString(), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:ss:ss")));
             String jsonInString = mapper.writeValueAsString(json);
-            mqttService.sendToMqtt(jsonInString, "announce");
+            mqttGateway.sendToMqtt(jsonInString, "announce");
         } catch (Exception e) {
             e.printStackTrace();
             log.error("JSON 변환 실패!!");
@@ -146,9 +146,15 @@ public class AnnounceService {
     }
 
     @Transactional(readOnly = true)
-    public List<Announce> findAllAnnounceToTown(Long townId) {
+    public List<Announce> findAllAnnounceToTownById(Long townId) {
         log.info("== 방송 목록 전체 조회(fetch) ==");
-        return announceRepository.findAllAnnounceToTown(townId);
+        return announceRepository.findAllAnnounceToTownById(townId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Announce> findAllAnnounceToTown(List<Town> townList) {
+        log.info("== 특정 마을 대상 방송 목록 조회 ==");
+        return announceRepository.findAllAnnounceToTown(townList);
     }
 
     // 문자 -> 음성파일 변환

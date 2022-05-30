@@ -9,7 +9,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.announce.Announce;
@@ -23,10 +22,6 @@ import sejong.smartnotice.service.TownService;
 
 import javax.persistence.EntityManager;
 import javax.validation.Valid;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
@@ -38,7 +33,6 @@ public class AnnounceController {
     private final AnnounceService announceService;
     private final TownService townService;
     private final AdminService adminService;
-    private final EntityManager em;
 
     @GetMapping
     public String getAnnounceList(Authentication auth, Model model) {
@@ -47,10 +41,7 @@ public class AnnounceController {
             // 마을 관리자인 경우 관리 마을 대상으로 한 방송 목록만 조회
             Admin authAdmin = adminService.findByLoginId(auth.getName());
             List<Town> managedTownList = townService.findTownByAdmin(authAdmin);
-
-            announceList = em.createQuery("select distinct a from Announce a join fetch a.atList at join fetch at.town where at.town in(:townList)", Announce.class)
-                    .setParameter("townList", managedTownList)
-                    .getResultList();
+            announceList = announceService.findAllAnnounceToTown(managedTownList);
         } else {
             announceList = announceService.findAll();
         }
@@ -65,10 +56,7 @@ public class AnnounceController {
             // 마을 관리자인 경우 관리 마을 대상으로 한 방송 목록만 조회
             Admin authAdmin = adminService.findByLoginId(auth.getName());
             List<Town> managedTownList = townService.findTownByAdmin(authAdmin);
-
-            announceList = em.createQuery("select distinct a from Announce a join fetch a.atList at join fetch at.town where at.town in(:townList)", Announce.class)
-                    .setParameter("townList", managedTownList)
-                    .getResultList();
+            announceList = announceService.findAllAnnounceToTown(managedTownList);
         } else {
             announceList = announceService.findAll();
         }
@@ -83,10 +71,7 @@ public class AnnounceController {
             // 마을 관리자인 경우 관리 마을 대상으로 한 방송 목록만 조회
             Admin authAdmin = adminService.findByLoginId(auth.getName());
             List<Town> managedTownList = townService.findTownByAdmin(authAdmin);
-
-            announceList = em.createQuery("select distinct a from Announce a join fetch a.atList at join fetch at.town where at.town in(:townList)", Announce.class)
-                    .setParameter("townList", managedTownList)
-                    .getResultList();
+            announceList = announceService.findAllAnnounceToTown(managedTownList);
         } else {
             announceList = announceService.findAll();
         }
@@ -103,7 +88,7 @@ public class AnnounceController {
     }
 
     @PostMapping("/text")
-    public String getTextAnnounce(@Valid @ModelAttribute AnnounceRegisterDTO announceRegisterDTO, BindingResult bindingResult) {
+    public String getTextAnnounce(@Valid @ModelAttribute AnnounceRegisterDTO announceRegisterDTO) {
         announceService.registerAnnounce(announceRegisterDTO);
         return "redirect:/announces";
     }
@@ -122,7 +107,7 @@ public class AnnounceController {
     }
 
     @PostMapping("/voice")
-    public String getVoiceAnnounce(@Valid @ModelAttribute AnnounceRegisterDTO registerDTO, BindingResult bindingResult) {
+    public String getVoiceAnnounce(@Valid @ModelAttribute AnnounceRegisterDTO registerDTO) {
         announceService.registerAnnounce(registerDTO);
         return "redirect:/announces";
     }

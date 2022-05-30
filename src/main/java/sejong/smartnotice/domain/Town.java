@@ -35,6 +35,9 @@ public class Town {
     private List<User> userList; // 소속 마을 주민 목록
 
     @OneToMany(mappedBy = "town", cascade = ALL)
+    private List<Announce_Town> announceList;
+
+    @OneToMany(mappedBy = "town", cascade = ALL)
     private List<Admin_Town> atList;
 
     // 마을 생성
@@ -43,6 +46,7 @@ public class Town {
                 .name(name)
                 .region(region)
                 .userList(new ArrayList<>())
+                .announceList(new ArrayList<>())
                 .atList(new ArrayList<>()).build();
     }
 

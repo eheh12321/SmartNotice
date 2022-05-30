@@ -23,7 +23,6 @@ import java.util.List;
 public class AdminController {
     private final AdminService adminService;
     private final TownService townService;
-
     @GetMapping
     public String getAdminList(Model model) {
         log.info("== 관리자 목록 조회 ==");

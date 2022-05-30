@@ -194,8 +194,6 @@
                                                                                 th:onclick="|location.href='@{/towns/{id}/admin/new(id=${dto.town.id})}'|">
                                                                             관리자 추가
                                                                         </button>
-                                                                        <input id="forRestApi" type="hidden"
-                                                                               name="_method" value=""/>
                                                                     </td>
                                                                 </tr>
                                                             </form>
@@ -507,12 +505,12 @@
 <!-- / Layout wrapper -->
 <script type="text/javascript" th:inline="javascript">
     $(document).ready(function () {
-        let formObj = $("#formObj");
-
         $("#adminTable").DataTable();
         $("#userTable").DataTable();
         $("#announceTable").DataTable();
         $("#alertTable").DataTable();
+
+        var townId = [[${dto.town.id}]];
 
         $("#townDeleteBtn").on("click", function () {
             if (confirm("마을을 삭제하시겠습니까? (주의:해당 마을에 주민이 존재하는 경우 삭제가 불가능합니다.)")) {
@@ -520,14 +518,25 @@
                     alert("마을 주민이 존재하면 마을을 삭제할 수 없습니다");
                     return false;
                 }
-                $("#forRestApi").attr('value', 'DELETE');
-                formObj.submit();
+                $.ajax({
+                    type:"DELETE",
+                    url:"/towns/" + townId,
+                    dataType:"text",
+                    success: function (result) {
+                        alert(result);
+                        window.location.href = "/";
+                    },
+                    error: function (xhr) {
+                        var result = JSON.parse(xhr.responseText);
+                        alert(result.message);
+                        window.location.reload();
+                    }
+                });
             } else {
                 return false;
             }
         });
 
-        var townId = [[${dto.town.id}]];
         $("#townSaveBtn").on("click", function () {
             if (confirm("수정된 정보를 저장하시겠습니까?")) {
                 var name = $("input[name='name']").val();
@@ -535,15 +544,17 @@
 
                 $.ajax({
                     type: "PUT",
-                    url: "/towns/" + townId,
-                    data: {name: name, regionCode: regionCode},
+                    url: "/towns/",
+                    data: {id: townId, name: name, regionCode: regionCode},
                     dataType: "text",
                     success: function (result) {
                         alert(result);
                         window.location.href = "/towns/" + townId;
                     },
                     error: function (xhr) {
-                        alert(xhr.responseText);
+                        var result = JSON.parse(xhr.responseText);
+                        alert(result.message);
+                        window.location.reload();
                     }
                 });
             } else {

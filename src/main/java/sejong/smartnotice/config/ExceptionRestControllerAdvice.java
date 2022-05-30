@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.ModelAndView;
 import sejong.smartnotice.handler.ErrorResult;
 
 @Slf4j
@@ -32,6 +33,14 @@ public class ExceptionRestControllerAdvice {
     public ErrorResult handleNullPointerException(NullPointerException e) {
         log.error("[NullPointerException e]", e);
         return new ErrorResult("NullPointerException", e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler
+    public ErrorResult handleSecurityException(SecurityException e) {
+        // 리소스 접근 권한이 없는 경우
+        log.error("[SecurityException e]", e);
+        return new ErrorResult("SecurityException", e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

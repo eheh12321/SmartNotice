@@ -25,6 +25,13 @@ public class ExceptionControllerAdvice {
         return new ModelAndView("error/400");
     }
 
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler
+    public ModelAndView handleSecurityException(SecurityException e) {
+        log.error("[SecurityException e]", e);
+        return new ModelAndView("error/403");
+    }
+
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler
     public ModelAndView handleException(Exception e) {

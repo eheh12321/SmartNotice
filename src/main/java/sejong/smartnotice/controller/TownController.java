@@ -2,8 +2,7 @@ package sejong.smartnotice.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
@@ -17,7 +16,6 @@ import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.dto.AdminRegisterDTO;
 import sejong.smartnotice.dto.ComplexDTO;
 import sejong.smartnotice.dto.TownModifyDTO;
-import sejong.smartnotice.dto.TownRegisterDTO;
 import sejong.smartnotice.service.*;
 
 import javax.persistence.EntityManager;
@@ -28,32 +26,13 @@ import java.util.List;
 
 @Slf4j
 @Controller
-@RequestMapping("/towns")
+@RequestMapping(value = "/towns", produces = MediaType.TEXT_HTML_VALUE)
 @RequiredArgsConstructor
 public class TownController {
 
     private final TownService townService;
     private final AdminService adminService;
     private final UserService userService;
-
-    @PostMapping
-    @ResponseBody
-    public ResponseEntity<String> register(Authentication auth, @ModelAttribute("town") TownRegisterDTO registerDTO) {
-        log.info("== 마을 등록 ==");
-        if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPER"))) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("접근 권한이 없습니다");
-        }
-        if(registerDTO.getRegionCode() == 1L) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("마을을 선택해주세요");
-        }
-        try {
-            townService.register(registerDTO);
-            return ResponseEntity.ok("마을을 추가하였습니다");
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("동일한 지역에 동일한 마을 이름이 존재합니다");
-        }
-    }
-
     private final EntityManager em;
 
     @GetMapping("/{id}")
@@ -142,28 +121,6 @@ public class TownController {
         model.addAttribute("regionList", regionList);
         model.addAttribute("town", new TownModifyDTO(town.getId(), town.getName(), town.getRegion().getRegionCode()));
         return "town/townDetail";
-    }
-
-    @PutMapping("/{id}")
-    @ResponseBody
-    public ResponseEntity<String> modify(@ModelAttribute("town") TownModifyDTO modifyDTO) {
-        log.info("== 마을 수정 ==");
-        if(modifyDTO.getRegionCode() == 1L) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("마을을 선택해주세요");
-        }
-        try {
-            townService.modifyTownInfo(modifyDTO);
-            return ResponseEntity.ok("수정을 완료했습니다");
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("동일한 지역에 동일한 마을 이름이 존재합니다");
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public String remove(@PathVariable Long id) {
-        log.info("== 마을 삭제 ==");
-        townService.delete(id);
-        return "redirect:/";
     }
 
     // 마을 관리자 목록 조회
