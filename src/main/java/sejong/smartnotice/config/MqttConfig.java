@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.annotation.MessagingGateway;
@@ -38,6 +39,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MqttConfig {
 
+    @Value("${mosquitto.clientId}")
+    private String clientId;
+
+    @Value("${mosquitto.password}")
+    private String password;
+
     @Bean
     public MessageChannel mqttInputChannel() {
         return new DirectChannel();
@@ -46,7 +53,7 @@ public class MqttConfig {
     @Bean
     public MessageProducer inbound() {
         MqttPahoMessageDrivenChannelAdapter adapter =
-                new MqttPahoMessageDrivenChannelAdapter("tcp://localhost:1883", "testClient", "init", "announce", "emergency");
+                new MqttPahoMessageDrivenChannelAdapter("tcp://localhost:1883", clientId, "init", "announce", "emergency");
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(1);
@@ -57,7 +64,11 @@ public class MqttConfig {
     private final EmergencyAlertService alertService;
     private final UserService userService;
 
-    @Bean // MQTT 수신(Subscribe)
+    /**
+     * MQTT 수신 (Subscribe)
+     * mosquitto_sub
+     */
+    @Bean
     @ServiceActivator(inputChannel = "mqttInputChannel")
     public MessageHandler handler() {
         return new MessageHandler() {
@@ -72,28 +83,35 @@ public class MqttConfig {
                 // 수신한 토픽에 맞는 JSON 파싱
                 ObjectMapper objectMapper = new ObjectMapper();
                 try {
-                    if(receivedTopic.equals("announce")) {
-                        log.info("announce 토픽 처리");
-                        MqttAnnounceJson json = objectMapper.readValue(message.getPayload().toString(), MqttAnnounceJson.class);
+                    switch (receivedTopic) {
+                        case "announce": {
+                            log.info("announce 토픽 처리");
+                            MqttAnnounceJson json = objectMapper.readValue(message.getPayload().toString(), MqttAnnounceJson.class);
 
-                        MqttInboundDTO inboundDTO = new MqttInboundDTO(receivedTopic, json.getProducer(), json.getTitle()
-                                ,json.getTextData(), json.getVoiceData(), json.getType(), json.getStatus(), json.getAnnounceTime());
-                        mqttInboundDTOList().add(inboundDTO);
-                    } else if (receivedTopic.equals("init")) {
-                        log.info("init 토픽 처리");
-                        MqttInitJson json = objectMapper.readValue(message.getPayload().toString(), MqttInitJson.class);
-                        log.info("client: {}, MAC: {}", json.getClient(), json.getMac());
-                    } else if (receivedTopic.equals("emergency")) {
-                        log.info("emergency 토픽 처리");
-                        // JSON 파싱
-                        MqttAlertJson json = objectMapper.readValue(message.getPayload().toString(), MqttAlertJson.class);
-                        log.info("client: {}, emergency: {}", json.getClient(), json.getEmergency());
+                            MqttInboundDTO inboundDTO = new MqttInboundDTO(receivedTopic, json.getProducer(), json.getTitle()
+                                    , json.getTextData(), json.getVoiceData(), json.getType(), json.getStatus(), json.getAnnounceTime());
+                            mqttInboundDTOList().add(inboundDTO);
+                            break;
+                        }
+                        case "init": {
+                            log.info("init 토픽 처리");
+                            MqttInitJson json = objectMapper.readValue(message.getPayload().toString(), MqttInitJson.class);
+                            log.info("client: {}, MAC: {}", json.getClient(), json.getMac());
+                            break;
+                        }
+                        case "emergency": {
+                            log.info("emergency 토픽 처리");
+                            // JSON 파싱
+                            MqttAlertJson json = objectMapper.readValue(message.getPayload().toString(), MqttAlertJson.class);
+                            log.info("client: {}, emergency: {}", json.getClient(), json.getEmergency());
 
-                        // 주민 조회 (주민 연락처 이용)
-                        User user = userService.findByTel(json.getClient());
-                        
-                        // 긴급 호출 생성
-                        alertService.createAlert(user);
+                            // 주민 조회 (주민 연락처 이용)
+                            User user = userService.findByTel(json.getClient());
+
+                            // 긴급 호출 생성
+                            alertService.createAlert(user);
+                            break;
+                        }
                     }
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
@@ -114,8 +132,8 @@ public class MqttConfig {
         MqttConnectOptions options = new MqttConnectOptions();
         options.setCleanSession(true);
         options.setServerURIs(new String[] {"tcp://localhost:1883"});
-        options.setUserName("username");
-        options.setPassword("password".toCharArray());
+        options.setUserName(clientId);
+        options.setPassword(password.toCharArray());
         return options;
     }
 
@@ -133,8 +151,10 @@ public class MqttConfig {
         return new DirectChannel();
     }
 
-    // MyGateway 인터페이스의 구현체를 런타임 시에 생성해라
-    // 메소드 호출로 생성된 메시지가 defaultRequestChannel 채널으로 전송된다.
+    /**
+     * MQTT 발신 (Publish)
+     * mosquitto_pub
+     */
     @MessagingGateway(defaultRequestChannel = "mqttOutboundChannel")
     public interface MyGateway {
         void sendToMqtt(String data, @Header(MqttHeaders.TOPIC) String topic);
