@@ -78,12 +78,6 @@ public class Announce {
                     .town(town).build();
             announce.atList.add(at);
             at.setTown(town); // 양방향 맺어주기
-
-            // 2-1. 마을에 속한 주민에게 방송 전파
-            List<User> userList = town.getUserList();
-            for (User user : userList) {
-                user.receiveAnnounce(announce);
-            }
         }
         return announce;
     }

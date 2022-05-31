@@ -24,20 +24,22 @@ import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.handler.annotation.Header;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.dto.MqttAlertJson;
-import sejong.smartnotice.dto.MqttAnnounceJson;
-import sejong.smartnotice.dto.MqttInboundDTO;
 import sejong.smartnotice.dto.MqttInitJson;
 import sejong.smartnotice.service.EmergencyAlertService;
 import sejong.smartnotice.service.UserService;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class MqttConfig {
 
+    private final EmergencyAlertService alertService;
+    private final UserService userService;
+
+    /**
+     * publish와 Subscribe cilentId가 동일하게 사용하면 publish 시 subscribe 중이던 client가 일시적으로 연결이 끊어지게 됨
+     * 이에 clientId 뒤에 _pub, _sub를 별도로 붙여 구분함. (username, password는 동일함)
+     */
     @Value("${mosquitto.clientId}")
     private String clientId;
 
@@ -49,19 +51,28 @@ public class MqttConfig {
         return new DirectChannel();
     }
 
+    /**
+     * Inbound 설정
+     * url: MQTT Broker 주소 (localhost)
+     * Subscribe Topic + Qos 설정
+     */
     @Bean
     public MessageProducer inbound() {
         MqttPahoMessageDrivenChannelAdapter adapter =
-                new MqttPahoMessageDrivenChannelAdapter("tcp://localhost:1883", defaultMqttPahoClientFactory(), "init", "announce", "emergency");
+                new MqttPahoMessageDrivenChannelAdapter(clientId+ "_sub", defaultMqttPahoClientFactory());
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
-        adapter.setQos(1);
+        
+        // Subscribe Topic 및 QOS 설정
+        adapter.addTopic("init", 1);
+        adapter.addTopic("sensor", 1);
+        adapter.addTopic("emergency", 2);
+
+        // Subscribe Topic 수신 시 MessageHandler 통해 처리
         adapter.setOutputChannel(mqttInputChannel());
         return adapter;
     }
 
-    private final EmergencyAlertService alertService;
-    private final UserService userService;
 
     /**
      * MQTT 수신 (Subscribe)
@@ -83,19 +94,14 @@ public class MqttConfig {
                 ObjectMapper objectMapper = new ObjectMapper();
                 try {
                     switch (receivedTopic) {
-                        case "announce": {
-                            log.info("announce 토픽 처리");
-                            MqttAnnounceJson json = objectMapper.readValue(message.getPayload().toString(), MqttAnnounceJson.class);
-
-                            MqttInboundDTO inboundDTO = new MqttInboundDTO(receivedTopic, json.getProducer(), json.getTitle()
-                                    , json.getTextData(), json.getVoiceData(), json.getType(), json.getStatus(), json.getAnnounceTime());
-                            mqttInboundDTOList().add(inboundDTO);
-                            break;
-                        }
                         case "init": {
                             log.info("init 토픽 처리");
                             MqttInitJson json = objectMapper.readValue(message.getPayload().toString(), MqttInitJson.class);
                             log.info("client: {}, MAC: {}", json.getClient(), json.getMac());
+                            break;
+                        }
+                        case "sensor": {
+                            log.info("sensor 토픽 처리");
                             break;
                         }
                         case "emergency": {
@@ -127,6 +133,12 @@ public class MqttConfig {
         return clientFactory;
     }
 
+    /**
+     * Option 설정
+     * URI: MQTT Broker 주소 (localhost)
+     * UserName == ClientId
+     * mosquitto_passwd 통해 설정한 id/pw와 일치해야 연결 가능
+     */
     private MqttConnectOptions connectOptions() {
         MqttConnectOptions options = new MqttConnectOptions();
         options.setCleanSession(true);
@@ -139,7 +151,7 @@ public class MqttConfig {
     @Bean
     @ServiceActivator(inputChannel = "mqttOutboundChannel")
     public MessageHandler mqttOutbound(DefaultMqttPahoClientFactory clientFactory) {
-        MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler(clientId, clientFactory);
+        MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler(clientId + "_pub", clientFactory);
         messageHandler.setAsync(true);
         messageHandler.setDefaultQos(1);
         return messageHandler;
@@ -152,15 +164,11 @@ public class MqttConfig {
 
     /**
      * MQTT 발신 (Publish)
-     * mosquitto_pub
+     * Data: String 변환된 json 타입 데이터
+     * publish할 topic, qos 설정
      */
     @MessagingGateway(defaultRequestChannel = "mqttOutboundChannel")
     public interface MyGateway {
-        void sendToMqtt(String data, @Header(MqttHeaders.TOPIC) String topic);
-    }
-
-    @Bean
-    public List<MqttInboundDTO> mqttInboundDTOList() {
-        return new ArrayList<>();
+        void sendToMqtt(String data, @Header(MqttHeaders.TOPIC) String topic, @Header(MqttHeaders.QOS) int qos);
     }
 }
