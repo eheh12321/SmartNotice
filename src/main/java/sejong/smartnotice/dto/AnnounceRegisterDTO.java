@@ -27,10 +27,8 @@ public class AnnounceRegisterDTO {
     private List<Long> townId;
 
     @NotNull
-    private String voiceData;
-
-    @NotNull
     private String title; // 방송 제목
 
+    private String voiceData;
     private String textData;
 }
