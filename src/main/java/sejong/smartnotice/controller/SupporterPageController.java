@@ -100,7 +100,7 @@ public class SupporterPageController {
 
         List<SensorDataDTO> dtoList = new ArrayList<>();
         sensorList.stream().forEach(sensor -> {
-            SensorDataDTO dto = new SensorDataDTO(sensor.getReceiveTime(), sensor.getTemp(), sensor.getMotion(), sensor.getLumi(), sensor.getOxygen(), sensor.getCo2());
+            SensorDataDTO dto = new SensorDataDTO(sensor.getId(), sensor.getMeasureTime(), sensor.getTemp(), sensor.getCo2(), sensor.getLumnc(), sensor.getOxy(), sensor.getCo2());
             dtoList.add(dto);
         });
 

@@ -1,15 +1,17 @@
 package sejong.smartnotice.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Builder
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SensorDataDTO {
-    private Long deviceId;
+public class MqttSensorJson {
+    private String client;
     private LocalDateTime measureTime;
     private double temp;
     private double co2;

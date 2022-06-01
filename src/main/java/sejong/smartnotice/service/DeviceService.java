@@ -3,11 +3,15 @@ package sejong.smartnotice.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.device.Device;
 import sejong.smartnotice.domain.device.Sensor;
 import sejong.smartnotice.dto.DeviceRegisterDTO;
+import sejong.smartnotice.dto.MqttSensorJson;
+import sejong.smartnotice.dto.SensorDataDTO;
 import sejong.smartnotice.repository.DeviceRepository;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -17,6 +21,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class DeviceService {
 
+    private final EntityManager em;
     private final DeviceRepository deviceRepository;
 
     public Long register(DeviceRegisterDTO registerDTO) {
@@ -32,11 +37,20 @@ public class DeviceService {
         return validateDeviceId(deviceId);
     }
 
-//    public Map<String, Double> getRecentData(Long deviceId) {
-//        Device device = validateDeviceId(deviceId);
-//        Sensor sensor = device.getSensor();
-//        return sensor.getRecentData();
-//    }
+    @Transactional
+    public void addSensorData(Long id, MqttSensorJson json) {
+        Device device = findDeviceById(id);
+        Sensor sensor = Sensor.builder()
+                .device(device)
+                .measureTime(json.getMeasureTime())
+                .action(json.getAction())
+                .temp(json.getTemp())
+                .lumnc(json.getLumnc())
+                .oxy(json.getOxy())
+                .co2(json.getCo2()).build();
+
+        em.persist(sensor);
+    }
 
     private Device validateDeviceId(Long deviceId) {
         Optional<Device> opt = deviceRepository.findById(deviceId);

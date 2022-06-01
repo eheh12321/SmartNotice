@@ -1,12 +1,18 @@
 package sejong.smartnotice.domain.device;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 @Getter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Sensor {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,23 +24,11 @@ public class Sensor {
     private Device device;
 
     private Double temp;
-    private Double motion;
-    private Double lumi;
-    private Double oxygen;
+    private Double action;
+    private Double lumnc;
+    private Double oxy;
     private Double co2;
 
-    private LocalDateTime receiveTime;
+    private LocalDateTime measureTime;
 
-    @Override
-    public String toString() {
-        return "Sensor{" +
-                "id=" + id +
-                ", temp=" + temp +
-                ", motion=" + motion +
-                ", lumi=" + lumi +
-                ", oxygen=" + oxygen +
-                ", co2=" + co2 +
-                ", receiveTime=" + receiveTime +
-                '}';
-    }
 }

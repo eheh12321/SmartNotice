@@ -2,6 +2,7 @@ package sejong.smartnotice.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -22,9 +23,12 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.handler.annotation.Header;
+import sejong.smartnotice.domain.device.Device;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.dto.MqttAlertJson;
 import sejong.smartnotice.dto.MqttInitJson;
+import sejong.smartnotice.dto.MqttSensorJson;
+import sejong.smartnotice.service.DeviceService;
 import sejong.smartnotice.service.EmergencyAlertService;
 import sejong.smartnotice.service.UserService;
 
@@ -35,6 +39,7 @@ public class MqttConfig {
 
     private final EmergencyAlertService alertService;
     private final UserService userService;
+    private final DeviceService deviceService;
 
     /**
      * publish와 Subscribe cilentId가 동일하게 사용하면 publish 시 subscribe 중이던 client가 일시적으로 연결이 끊어지게 됨
@@ -102,6 +107,14 @@ public class MqttConfig {
                         }
                         case "sensor": {
                             log.info("sensor 토픽 처리");
+                            MqttSensorJson json = objectMapper
+                                    .registerModule(new JavaTimeModule())
+                                    .readValue(message.getPayload().toString(), MqttSensorJson.class);
+                            log.info("client: {}, measureTime: {}", json.getClient(), json.getMeasureTime().toString());
+
+                            User user = userService.findByTel(json.getClient());
+                            Device device = user.getDevice();
+                            deviceService.addSensorData(device.getId(), json);
                             break;
                         }
                         case "emergency": {
