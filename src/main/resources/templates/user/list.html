@@ -82,7 +82,12 @@
 <!-- / Layout wrapper -->
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#userTable").DataTable();
+        var table = $("#userTable").DataTable();
+
+        $("#userTable tbody").on("click", "tr", function (){
+            var data = table.row(this).data();
+            window.location.href="/users/" + data[0];
+        });
     });
 </script>
 <div th:replace="~{fragment/header :: fragment-bottom-script}"></div>

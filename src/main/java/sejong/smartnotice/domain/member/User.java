@@ -75,11 +75,12 @@ public class User implements UserDetails {
                 .town(town).build();
     }
 
-    public void modifyUserInfo(String name, String tel, String address, String info) {
+    public void modifyUserInfo(String name, String tel, String address, String info, String birth) {
         this.name = name;
         this.tel = tel;
         this.address = address;
         this.info = info;
+        this.birth = birth;
     }
 
     public void modifyDevice(Device device) {

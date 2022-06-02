@@ -27,7 +27,22 @@ public class Device {
     private User user;
 
     @ColumnDefault("false")
-    private boolean error_sensor; // 센서 장애
+    private boolean error_sensor; // 온도 센서 장애
+
+    @ColumnDefault("false")
+    private boolean error_temp; // 온도 센서 장애
+
+    @ColumnDefault("false")
+    private boolean error_co2; // 온도 센서 장애
+
+    @ColumnDefault("false")
+    private boolean error_oxy; // 온도 센서 장애
+
+    @ColumnDefault("false")
+    private boolean error_lumnc; // 온도 센서 장애
+
+    @ColumnDefault("false")
+    private boolean error_action; // 온도 센서 장애
 
     @ColumnDefault("false")
     private boolean error_mqtt; // 통신 장애

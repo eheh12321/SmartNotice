@@ -93,14 +93,14 @@ public class SupporterPageController {
         Device device = user.getDevice();
 
         log.info("=============");
-        List<Sensor> sensorList = em.createQuery("select s from Sensor s where s.device=:device and mod(s.id, 12) = 0", Sensor.class)
+        List<Sensor> sensorList = em.createQuery("select s from Sensor s where s.device=:device and mod(s.id, 6) = 0", Sensor.class)
                 .setParameter("device", device)
                 .setMaxResults(360)
                 .getResultList();
 
         List<SensorDataDTO> dtoList = new ArrayList<>();
         sensorList.stream().forEach(sensor -> {
-            SensorDataDTO dto = new SensorDataDTO(sensor.getId(), sensor.getMeasureTime(), sensor.getTemp(), sensor.getCo2(), sensor.getLumnc(), sensor.getOxy(), sensor.getCo2());
+            SensorDataDTO dto = new SensorDataDTO(sensor.getId(), sensor.getMeasureTime(), sensor.getTemp(), sensor.getCo2(), sensor.getOxy(), sensor.getLumnc(), sensor.getCo2());
             dtoList.add(dto);
         });
 

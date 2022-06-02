@@ -2,6 +2,7 @@ package sejong.smartnotice.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
@@ -57,6 +58,7 @@ public class UserController {
         User user = userService.findById(id);
         model.addAttribute("user", user);
         model.addAttribute("supporterList", user.getSupporterList());
+        model.addAttribute("alertList", user.getAlertList());
         return "user/detail";
     }
 
@@ -69,21 +71,11 @@ public class UserController {
         return "user/modify";
     }
 
-    @PutMapping("/{id}")
-    public String modify(@PathVariable Long id, @Validated @ModelAttribute("user") UserModifyDTO modifyDTO,
-                         BindingResult bindingResult) {
+    @PutMapping
+    public ResponseEntity<String> modify(@ModelAttribute UserModifyDTO modifyDTO) {
         log.info("== 마을 주민 정보 수정 ==");
-        User findUser = userService.findByTel(modifyDTO.getTel());
-        if(findUser != null && findUser.getId() != modifyDTO.getId()) {
-            bindingResult.addError(new FieldError("user", "tel", modifyDTO.getTel(), false, null, null, "중복된 전화번호가 존재합니다"));
-        }
-        if(bindingResult.hasErrors()) {
-            log.warn("검증 오류 발생: {}", bindingResult);
-            return "user/modify";
-        }
         userService.modifyUserInfo(modifyDTO);
-
-        return "redirect:/";
+        return ResponseEntity.ok().body("수정을 완료했습니다");
     }
 
     @DeleteMapping("/{id}")

@@ -70,7 +70,7 @@ public class UserService implements UserDetailsService {
         }
 
         // 3. 정보 수정
-        user.modifyUserInfo(modifyDTO.getName(), modifyDTO.getTel(), modifyDTO.getAddress(), modifyDTO.getInfo());
+        user.modifyUserInfo(modifyDTO.getName(), modifyDTO.getTel(), modifyDTO.getAddress(), modifyDTO.getInfo(), modifyDTO.getBirth());
 
         return user.getId();
     }
