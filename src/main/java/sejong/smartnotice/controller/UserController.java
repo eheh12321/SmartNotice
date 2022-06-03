@@ -13,6 +13,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.Town;
+import sejong.smartnotice.domain.device.Device;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.dto.UserModifyDTO;
@@ -56,7 +57,9 @@ public class UserController {
     public String getUser(@PathVariable Long id, Model model) {
         log.info("== 마을 주민 조회 ==");
         User user = userService.findById(id);
+        Device device = user.getDevice();
         model.addAttribute("user", user);
+        model.addAttribute("device", device);
         model.addAttribute("supporterList", user.getSupporterList());
         model.addAttribute("alertList", user.getAlertList());
         return "user/detail";

@@ -83,11 +83,6 @@ public class User implements UserDetails {
         this.birth = birth;
     }
 
-    public void modifyDevice(Device device) {
-        this.device = device;
-        device.changeUser(this);
-    }
-
     public void modifyTown(Town town) {
         this.town.getUserList().remove(this); // 기존 마을 정보 삭제
         this.town = town;

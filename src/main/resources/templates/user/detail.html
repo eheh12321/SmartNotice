@@ -3,242 +3,498 @@
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head th:replace="~{fragment/header :: fragment-header ('마을 주민 상세 페이지')}"></head>
 <body>
-    <div class="layout-wrapper layout-content-navbar">
-        <div class="layout-container">
-            <!-- Sidebar fragment -->
-            <div th:replace="~{fragment/sidebar :: fragment-sidebar('sidebar_user', '')}"></div>
-            <!-- /Sidebar -->
-            <!-- main content -->
-            <div class="layout-page">
-                <!-- Navbar(검색창) -->
-                <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
-                     id="layout-navbar">
-                    <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
-                        <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
-                            <i class="bx bx-menu bx-sm"></i>
-                        </a>
-                    </div>
-                </nav>
-                <!-- / Navbar(검색창) -->
-                <div class="content-wrapper">
-                    <div class="container-xxl flex-grow-1 container-p-y">
-                        <!-- user name -->
-                        <h4 class="fw-bold py-3 mb-4">
-                            <span class="text-muted fw-light" th:text="${user.town.name}">어디어디마을</span>
-                            / <span th:text="${user.name}">홍길동</span> 님
-                        </h4>
-                        <!-- user name -->
-                        <!-- Content -->
-                        <div class="row">
-                            <!-- user info -->
-                            <div class="col-xxl">
-                                <div class="card mb-4">
-                                    <div class="card-header d-flex align-items-center justify-content-between">
-                                        <h5 class="mb-0">사용자 정보</h5>
-                                        <button type="button" class="btn rounded-pill btn-primary" id="userUpdateBtn">저장</button>
-                                    </div>
-                                    <div class="card-body">
-                                        <form id="formObj">
-                                            <input type="hidden" id="id" th:field="${user.id}">
-                                            <div class="row mb-3 justify-content-between">
-                                                <label class="col-sm-2 col-form-label" for="name">이름</label>
-                                                <div class="col-sm-10">
-                                                    <input type="text" id="name" class="form-control" th:field="${user.name}"/>
-                                                </div>
-                                            </div>
-                                            <div class="row mb-3 justify-content-between">
-                                                <label class="col-sm-2 col-form-label" for="tel">전화번호</label>
-                                                <div class="col-sm-10">
-                                                    <input type="text" id="tel" class="form-control phone-mask" th:field="${user.tel}" />
-                                                </div>
-                                            </div>
-                                            <div class="row mb-3 justify-content-between">
-                                                <label class="col-sm-2 col-form-label" for="birth">생년월일</label>
-                                                <div class="col-sm-10">
-                                                    <input type="date" id="birth" class="form-control" th:field="${user.birth}" />
-                                                </div>
-                                            </div>
-                                            <div class="row mb-3 justify-content-between">
-                                                <label class="col-sm-2 col-form-label" for="address">주소</label>
-                                                <div class="col-sm-10">
-                                                    <input type="text" id="address" class="form-control" th:field="${user.address}"/>
-                                                </div>
-                                            </div>
-                                            <div class="row mb-3 justify-content-between">
-                                                <label class="col-sm-2 col-form-label" for="info">메모</label>
-                                                <div class="col-sm-10">
-                                                    <textarea id="info" class="form-control" th:field="${user.info}"></textarea>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
+<div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+        <!-- Sidebar fragment -->
+        <div th:replace="~{fragment/sidebar :: fragment-sidebar('sidebar_user', '')}"></div>
+        <!-- /Sidebar -->
+        <!-- main content -->
+        <div class="layout-page">
+            <!-- Navbar(검색창) -->
+            <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+                 id="layout-navbar">
+                <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+                    <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+                        <i class="bx bx-menu bx-sm"></i>
+                    </a>
+                </div>
+            </nav>
+            <!-- / Navbar(검색창) -->
+            <div class="content-wrapper">
+                <div class="container-xxl flex-grow-1 container-p-y">
+                    <!-- user name -->
+                    <h4 class="fw-bold py-3 mb-4">
+                        <span class="text-muted fw-light" th:text="${user.town.name}">어디어디마을</span>
+                        / <span th:text="${user.name}">홍길동</span> 님
+                    </h4>
+                    <!-- user name -->
+                    <!-- Content -->
+                    <div class="row">
+                        <!-- user info -->
+                        <div class="col-xxl">
+                            <div class="card mb-4">
+                                <div class="card-header d-flex align-items-center justify-content-between">
+                                    <h5 class="mb-0">사용자 정보</h5>
+                                    <button type="button" class="btn rounded-pill btn-primary" id="userUpdateBtn">저장
+                                    </button>
                                 </div>
-                            </div>
-                            <!-- user info -->
-                            <!-- user's terminal info -->
-                            <div class="col-xxl">
-                                <div class="card mb-4">
-                                    <div class="card-header d-flex align-items-center justify-content-between">
-                                        <h5 class="mb-0">단말기 정보</h5>
-                                    </div>
-                                    <div class="card-body" th:if="${user.device}">
+                                <div class="card-body">
+                                    <form id="formObj">
+                                        <input type="hidden" id="id" th:field="${user.id}">
                                         <div class="row mb-3 justify-content-between">
-                                            <label class="col-sm-2 col-form-label">단말기 ID</label>
+                                            <label class="col-sm-2 col-form-label" for="name">이름</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control" th:value="${user.device.mac}" readonly>
+                                                <input type="text" id="name" class="form-control"
+                                                       th:field="${user.name}"/>
                                             </div>
                                         </div>
                                         <div class="row mb-3 justify-content-between">
-                                            <label class="col-sm-4 col-form-label">통신 상태</label>
-                                            <div class="col-sm-10 align-self-center">
-                                                <label class="badge rounded-pill bg-success col-form-label" th:unless="${user.device.error_mqtt}">정상</label>
-                                                <label class="badge rounded-pill bg-danger col-form-label" th:if="${user.device.error_mqtt}">장애</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-2 col-form-label">
-                                            <h6>센서 상태</h6>
-                                        </div>
-                                        <div>
-                                            <div class="row mb-3 justify-content-between">
-                                                <label class="col-sm-3 col-form-label">동작 감지 센서</label>
-                                                <div class="col-sm-3 align-self-center">
-                                                    <label class="badge rounded-pill bg-success col-form-label" th:unless="${user.device.error_action}">정상</label>
-                                                    <label class="badge rounded-pill bg-danger col-form-label" th:if="${user.device.error_action}">장애</label>
-                                                </div>
-                                                <label class="col-sm-3 col-form-label">조도 감지 센서</label>
-                                                <div class="col-sm-3 align-self-center">
-                                                    <label class="badge rounded-pill bg-success col-form-label" th:unless="${user.device.error_lumnc}">정상</label>
-                                                    <label class="badge rounded-pill bg-danger col-form-label" th:if="${user.device.error_lumnc}">장애</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="row mb-3 justify-content-between">
-                                                <label class="col-sm-3 col-form-label">온도 감지 센서</label>
-                                                <div class="col-sm-3 align-self-center">
-                                                    <label class="badge rounded-pill bg-success col-form-label" th:unless="${user.device.error_temp}">정상</label>
-                                                    <label class="badge rounded-pill bg-danger col-form-label" th:if="${user.device.error_temp}">장애</label>
-                                                </div>
-                                                <label class="col-sm-3 col-form-label">산소 감지 센서</label>
-                                                <div class="col-sm-3 align-self-center">
-                                                    <label class="badge rounded-pill bg-success col-form-label" th:unless="${user.device.error_oxy}">정상</label>
-                                                    <label class="badge rounded-pill bg-danger col-form-label" th:if="${user.device.error_oxy}">장애</label>
-                                                </div>
+                                            <label class="col-sm-2 col-form-label" for="tel">전화번호</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" id="tel" class="form-control phone-mask"
+                                                       th:field="${user.tel}"/>
                                             </div>
                                         </div>
                                         <div class="row mb-3 justify-content-between">
-                                            <label class="col-sm-1 col-form-label">이산화탄소 감지 센서</label>
-                                            <div class="col-sm-9 align-self-center">
-                                                <label class="badge rounded-pill bg-success col-form-label" th:unless="${user.device.error_co2}">정상</label>
-                                                <label class="badge rounded-pill bg-danger col-form-label" th:if="${user.device.error_co2}">장애</label>
+                                            <label class="col-sm-2 col-form-label" for="birth">생년월일</label>
+                                            <div class="col-sm-10">
+                                                <input type="date" id="birth" class="form-control"
+                                                       th:field="${user.birth}"/>
                                             </div>
                                         </div>
-                                    </div>
+                                        <div class="row mb-3 justify-content-between">
+                                            <label class="col-sm-2 col-form-label" for="address">주소</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" id="address" class="form-control"
+                                                       th:field="${user.address}"/>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3 justify-content-between">
+                                            <label class="col-sm-2 col-form-label" for="info">메모</label>
+                                            <div class="col-sm-10">
+                                                <textarea id="info" class="form-control"
+                                                          th:field="${user.info}"></textarea>
+                                            </div>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
-                            <!-- user's terminal info -->
                         </div>
-
-                        <div class="row">
-                            <!-- user's supporter list -->
-                            <div class="col-xxl">
-                                <div class="card mb-4">
-                                    <div class="card-header d-flex align-items-center justify-content-between">
-                                        <h5 class="mb-0">보호자 정보</h5>
+                        <!-- user info -->
+                        <!-- user's terminal info -->
+                        <div class="col-xxl">
+                            <div class="card mb-4">
+                                <div class="card-header d-flex align-items-center justify-content-between">
+                                    <h5 class="mb-0">단말기 정보</h5>
+                                </div>
+                                <div class="card-body" th:if="${device}">
+                                    <div class="row mb-3 justify-content-between">
+                                        <label class="col-sm-2 col-form-label">단말기 일련번호</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" th:value="${device.mac}"
+                                                   readonly>
+                                        </div>
                                     </div>
-                                    <div class="card-body">
-                                        <form>
-                                            <table class="table table-bordered" id="supporterTable">
-                                                <thead class="table-secondary">
-                                                    <tr>
-                                                        <th>#</th>
-                                                        <th>이름</th>
-                                                        <th>전화번호</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr th:each="supporter, i : ${supporterList}">
-                                                        <td th:text="${i.index + 1}"></td>
-                                                        <td th:text="${supporter.name}">이름</td>
-                                                        <td th:text="${supporter.tel}">전화번호</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </form>
+                                    <div class="row mb-3 justify-content-between">
+                                        <label class="col-sm-4 col-form-label">통신 상태</label>
+                                        <div class="col-sm-10 align-self-center">
+                                            <label class="badge rounded-pill bg-success col-form-label"
+                                                   th:unless="${device.error_mqtt}">정상</label>
+                                            <label class="badge rounded-pill bg-danger col-form-label"
+                                                   th:if="${device.error_mqtt}">장애</label>
+                                        </div>
                                     </div>
-
+                                    <div class="col-sm-2 col-form-label">
+                                        <h6>센서 상태</h6>
+                                    </div>
+                                    <div>
+                                        <div class="row mb-3 justify-content-between">
+                                            <label class="col-sm-3 col-form-label">동작 감지 센서</label>
+                                            <div class="col-sm-3 align-self-center">
+                                                <label class="badge rounded-pill bg-success col-form-label"
+                                                       th:unless="${device.error_action}">정상</label>
+                                                <label class="badge rounded-pill bg-danger col-form-label"
+                                                       th:if="${device.error_action}">장애</label>
+                                            </div>
+                                            <label class="col-sm-3 col-form-label">조도 감지 센서</label>
+                                            <div class="col-sm-3 align-self-center">
+                                                <label class="badge rounded-pill bg-success col-form-label"
+                                                       th:unless="${device.error_lumnc}">정상</label>
+                                                <label class="badge rounded-pill bg-danger col-form-label"
+                                                       th:if="${device.error_lumnc}">장애</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="row mb-3 justify-content-between">
+                                            <label class="col-sm-3 col-form-label">온도 감지 센서</label>
+                                            <div class="col-sm-3 align-self-center">
+                                                <label class="badge rounded-pill bg-success col-form-label"
+                                                       th:unless="${device.error_temp}">정상</label>
+                                                <label class="badge rounded-pill bg-danger col-form-label"
+                                                       th:if="${device.error_temp}">장애</label>
+                                            </div>
+                                            <label class="col-sm-3 col-form-label">산소 감지 센서</label>
+                                            <div class="col-sm-3 align-self-center">
+                                                <label class="badge rounded-pill bg-success col-form-label"
+                                                       th:unless="${device.error_oxy}">정상</label>
+                                                <label class="badge rounded-pill bg-danger col-form-label"
+                                                       th:if="${device.error_oxy}">장애</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3 justify-content-between">
+                                        <label class="col-sm-1 col-form-label">이산화탄소 감지 센서</label>
+                                        <div class="col-sm-9 align-self-center">
+                                            <label class="badge rounded-pill bg-success col-form-label"
+                                                   th:unless="${device.error_co2}">정상</label>
+                                            <label class="badge rounded-pill bg-danger col-form-label"
+                                                   th:if="${device.error_co2}">장애</label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <!-- user's supporter list -->
-                            <!-- user's emergency call list -->
-                            <div class="col-xxl">
-                                <div class="card mb-4">
-                                    <div class="card-header d-flex align-items-center justify-content-between">
-                                        <h5 class="mb-0">긴급 호출 내역</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <form>
-                                            <table class="table table-bordered" id="alertTable">
-                                                <thead class="table-secondary">
-                                                    <tr>
-                                                        <th>#</th>
-                                                        <th>분류</th>
-                                                        <th>시각</th>
-                                                        <th>수신 여부</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr th:each="alert, i : ${alertList}">
-                                                        <td th:text="${i.index + 1}"></td>
-                                                        <td>사용자 호출</td>
-                                                        <td th:text="${#temporals.format(alert.alertTime, 'yy/MM/dd HH:mm:ss')}"></td>
-                                                        <td>확인</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </form>
-                                    </div>
+                        </div>
+                        <!-- user's terminal info -->
+                    </div>
+
+                    <div class="row">
+                        <!-- user's supporter list -->
+                        <div class="col-xxl">
+                            <div class="card mb-4">
+                                <div class="card-header d-flex align-items-center justify-content-between">
+                                    <h5 class="mb-0">보호자 정보</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form>
+                                        <table class="table table-bordered" id="supporterTable">
+                                            <thead class="table-secondary">
+                                            <tr>
+                                                <th>#</th>
+                                                <th>이름</th>
+                                                <th>전화번호</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="supporter, i : ${supporterList}">
+                                                <td th:text="${i.index + 1}"></td>
+                                                <td th:text="${supporter.name}">이름</td>
+                                                <td th:text="${supporter.tel}">전화번호</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </form>
+                                </div>
+
+                            </div>
+                        </div>
+                        <!-- user's supporter list -->
+                        <!-- user's emergency call list -->
+                        <div class="col-xxl">
+                            <div class="card mb-4">
+                                <div class="card-header d-flex align-items-center justify-content-between">
+                                    <h5 class="mb-0">긴급 호출 내역</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form>
+                                        <table class="table table-bordered" id="alertTable">
+                                            <thead class="table-secondary">
+                                            <tr>
+                                                <th>#</th>
+                                                <th>분류</th>
+                                                <th>시각</th>
+                                                <th>수신 여부</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="alert, i : ${alertList}">
+                                                <td th:text="${i.index + 1}"></td>
+                                                <td>사용자 호출</td>
+                                                <td th:text="${#temporals.format(alert.alertTime, 'yy/MM/dd HH:mm:ss')}"></td>
+                                                <td>확인</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </form>
                                 </div>
                             </div>
-                            <!-- user's emergency call list -->
+                        </div>
+                        <!-- user's emergency call list -->
+                    </div>
+
+                    <!-- Chart1 -->
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="d-inline ms-2">차트</h5>
+                                    <hr>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="myChart" width="100%" height="30vh"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chart2 -->
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="d-inline ms-2">차트</h5>
+                                    <hr>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="myChart2" width="100%" height="30vh"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chart3 -->
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="d-inline ms-2">차트</h5>
+                                    <hr>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="myChart3" width="100%" height="30vh"></canvas>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <!-- / Content -->
-                <!-- footer -->
-                <div th:replace="~{fragment/footer.html :: fragment-footer}"></div>
-                <!-- / footer -->
             </div>
-            <!-- Content wrapper -->
+            <!-- / Content -->
+            <!-- footer -->
+            <div th:replace="~{fragment/footer.html :: fragment-footer}"></div>
+            <!-- / footer -->
         </div>
+        <!-- Content wrapper -->
     </div>
-    </div>
+</div>
+</div>
 </body>
 <script type="text/javascript" th:inline="javascript">
-    $(document).ready(function(){
-       $("#supporterTable").DataTable();
-       $("#alertTable").DataTable();
 
-       $("#userUpdateBtn").on("click", function () {
-           if(confirm("주민 정보를 수정하시겠습니까?")) {
-               var data = $("#formObj").serialize();
-               $.ajax({
-                   method:"PUT",
-                   url:"/users",
-                   data:data,
-                   dataType:"text",
-                   success: function(result){
-                       alert(result);
-                       window.location.reload(); // 현재 페이지 새로고침
-                   },
-                   error: function(xhr){
-                       var result = JSON.parse(xhr.responseText);
-                       alert(result.message);
-                   }
-               });
-           }
-       });
+</script>
+<script type="text/javascript" th:inline="javascript">
+    $(document).ready(function () {
+        getChart();
+
+        $("#supporterTable").DataTable({
+            pageLength : 3,
+            lengthMenu: [ [3,10,20], [3,10,20] ]
+        });
+        $("#alertTable").DataTable({
+            pageLength : 3,
+            lengthMenu: [ [3,10,20], [3,10,20] ]
+        });
+        $("#userUpdateBtn").on("click", function () {
+            if (confirm("주민 정보를 수정하시겠습니까?")) {
+                var data = $("#formObj").serialize();
+                $.ajax({
+                    method: "PUT",
+                    url: "/users",
+                    data: data,
+                    dataType: "text",
+                    success: function (result) {
+                        alert(result);
+                        window.location.reload(); // 현재 페이지 새로고침
+                    },
+                    error: function (xhr) {
+                        var result = JSON.parse(xhr.responseText);
+                        alert(result.message);
+                    }
+                });
+            }
+        });
     });
+
+    function getChart(id) {
+        let timeList = [];
+        let tempList = [];
+        let co2List = [];
+        let oxygenList = [];
+        let actionList = [];
+        let lumncList = [];
+
+        $.ajax({
+            url:"/devices/" + [[${user.id}]],
+            type:"GET",
+            dataType:"json",
+            success: function(result) {
+                for(i = 0; i < result.length; i++) {
+                    timeList.push(result[i].measureTime);
+                    tempList.push(result[i].temp);
+                    co2List.push(result[i].co2);
+                    lumncList.push(result[i].lumnc);
+                    oxygenList.push(result[i].oxy);
+                    actionList.push(result[i].action);
+                }
+                const ctx = document.getElementById('myChart').getContext('2d');
+                const myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: timeList,
+                        datasets: [
+                            {
+                                label: '온도',
+                                fill: true,
+                                backgroundColor: 'rgb(54, 162, 235)',
+                                borderColor: 'rgb(54, 162, 235)',
+                                data: tempList,
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Chart.js Line Chart'
+                            },
+                        },
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        scales: {
+                            x: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'TimeLine'
+                                }
+                            },
+                            y: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'Value'
+                                }
+                            }
+                        },
+                        pointStyle:'line'
+                    },
+                });
+
+                const ctx2 = document.getElementById('myChart2').getContext('2d');
+                const myChart2 = new Chart(ctx2, {
+                    type: 'line',
+                    data: {
+                        labels: timeList,
+                        datasets: [
+                            {
+                                label: 'co2',
+                                fill: false,
+                                backgroundColor: 'rgb(0, 0, 235)',
+                                borderColor: 'rgb(0, 0, 235)',
+                                data: co2List,
+                            },
+                            {
+                                label: 'oxygen',
+                                fill: false,
+                                backgroundColor: 'rgb(0, 162, 0)',
+                                borderColor: 'rgb(0, 162, 0)',
+                                data: oxygenList,
+                            },
+                            {
+                                label: 'lumnc',
+                                fill: false,
+                                backgroundColor: 'rgb(162, 0, 0)',
+                                borderColor: 'rgb(162, 0, 0)',
+                                data: lumncList,
+                            },
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Chart.js Line Chart'
+                            },
+                        },
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        scales: {
+                            x: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'TimeLine'
+                                }
+                            },
+                            y: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'Value'
+                                }
+                            }
+                        },
+                        pointStyle:'line'
+                    },
+                });
+
+                const ctx3 = document.getElementById('myChart3').getContext('2d');
+                const myChart3 = new Chart(ctx3, {
+                    type: 'line',
+                    data: {
+                        labels: timeList,
+                        datasets: [
+                            {
+                                label: 'action',
+                                fill: true,
+                                backgroundColor: 'rgb(0, 0, 235)',
+                                borderColor: 'rgb(0, 0, 235)',
+                                data: co2List,
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Chart.js Line Chart'
+                            },
+                        },
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        scales: {
+                            x: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'TimeLine'
+                                }
+                            },
+                            y: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'Value'
+                                }
+                            }
+                        },
+                        pointStyle:'line'
+                    },
+                });
+            },
+            error: function (xhr) {
+                alert("센서 데이터를 가져오는데 실패했습니다 :P");
+            }
+        });
+    }
 </script>
 <div th:replace="~{fragment/header :: fragment-bottom-script}"></div>
 </html>
