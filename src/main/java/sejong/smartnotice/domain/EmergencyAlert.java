@@ -30,9 +30,14 @@ public class EmergencyAlert {
     @Column(nullable = false)
     private LocalDateTime alertTime;
 
-    public static EmergencyAlert createAlert(User user) {
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AlertType alertType;
+
+    public static EmergencyAlert createAlert(User user, AlertType alertType) {
         EmergencyAlert alert = EmergencyAlert.builder()
                 .user(user)
+                .alertType(alertType)
                 .alertTime(LocalDateTime.now()).build();
         return alert;
     }

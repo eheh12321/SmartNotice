@@ -84,10 +84,20 @@ public class TownController {
         int notConnectedCnt = 0;
         int mqttErrorCnt = 0;
         int sensorErrorCnt = 0;
+        int userAlertCnt = 0;
+        int fireAlertCnt = 0;
+        int motionAlertCnt = 0;
         List<EmergencyAlert> alertList = new ArrayList<>();
         for (User user : userList) {
             for (EmergencyAlert alert : user.getAlertList()) {
                 alertList.add(alert);
+                if(alert.getAlertType() == AlertType.USER) {
+                    userAlertCnt++;
+                } else if (alert.getAlertType() == AlertType.FIRE) {
+                    fireAlertCnt++;
+                } else {
+                    motionAlertCnt++;
+                }
             }
             if(user.getDevice() != null) {
                 if(user.getDevice().isError_sensor()) {
@@ -108,9 +118,9 @@ public class TownController {
                 .announceList(announceList)
                 .alertList(alertList)
                 .townAdminCnt(townAdminCnt)
-                .alert_fire(0)
-                .alert_user(alertList.size())
-                .alert_motion(0)
+                .alert_fire(fireAlertCnt)
+                .alert_user(userAlertCnt)
+                .alert_motion(motionAlertCnt)
                 .status_notConnected(notConnectedCnt)
                 .status_error_mqtt(mqttErrorCnt)
                 .status_error_sensor(sensorErrorCnt).build();

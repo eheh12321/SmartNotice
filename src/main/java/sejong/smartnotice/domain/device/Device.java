@@ -23,6 +23,9 @@ public class Device {
     @Column(name = "device_id", nullable = false)
     private Long id;
 
+    @OneToOne(mappedBy = "device", fetch = LAZY)
+    private User user;
+
     @ColumnDefault("false")
     private boolean error_sensor; // 온도 센서 장애
 
@@ -46,6 +49,13 @@ public class Device {
 
     @ColumnDefault("true")
     private boolean available; // 사용 가능 유무
+    
+    @ColumnDefault("false")
+    private boolean emergency_fire; // 화재 상황
 
     private String mac;
+
+    public void setDeviceFireEmergencyStatus(boolean status) {
+        this.emergency_fire = status;
+    }
 }

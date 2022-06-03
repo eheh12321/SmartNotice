@@ -23,6 +23,7 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.handler.annotation.Header;
+import sejong.smartnotice.domain.AlertType;
 import sejong.smartnotice.domain.device.Device;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.dto.MqttAlertJson;
@@ -127,7 +128,7 @@ public class MqttConfig {
                             User user = userService.findByTel(json.getClient());
 
                             // 긴급 호출 생성
-                            alertService.createAlert(user);
+                            alertService.createAlert(user, AlertType.USER);
                             break;
                         }
                     }

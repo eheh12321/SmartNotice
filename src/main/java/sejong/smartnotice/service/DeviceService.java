@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class DeviceService {
 
@@ -37,7 +38,6 @@ public class DeviceService {
         return validateDeviceId(deviceId);
     }
 
-    @Transactional
     public void addSensorData(Long id, MqttSensorJson json) {
         Device device = findDeviceById(id);
         Sensor sensor = Sensor.builder()
@@ -50,6 +50,10 @@ public class DeviceService {
                 .co2(json.getCo2()).build();
 
         em.persist(sensor);
+    }
+
+    public List<Long> findByEmergency_fireIsTrue() {
+        return deviceRepository.findByEmergency_fireIsTrue();
     }
 
     private Device validateDeviceId(Long deviceId) {

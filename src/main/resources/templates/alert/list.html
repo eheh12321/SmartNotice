@@ -53,7 +53,7 @@
                                                 <td th:text="${alert.id}"></td>
                                                 <td th:text="${alert.user.name}"></td>
                                                 <td th:text="${#temporals.format(alert.alertTime, 'yy/MM/dd HH:mm:ss')}"></td>
-                                                <td>사용자 호출</td>
+                                                <td th:text="${alert.getAlertType().toString() == 'USER' ? '사용자 호출' : '화재 감지'}"></td>
                                                 <td th:text="${alert.user.town.name}"></td>
                                             </tr>
                                             </tbody>

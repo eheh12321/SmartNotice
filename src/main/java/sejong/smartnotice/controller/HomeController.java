@@ -46,7 +46,8 @@ public class HomeController {
         List<Town> townList;
         List<Admin> adminList;
         List<User> userList;
-        List<Announce> announceList ;
+        List<Announce> announceList;
+        List<EmergencyAlert> alertList;
 
         // 최고 관리자는 전체 마을을 모두 조회할 수 있어야 한다
         if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPER"))) {
@@ -62,9 +63,12 @@ public class HomeController {
             // (4) 마을 + 방송 fetch
             announceList = em.createQuery("select distinct a from Announce a join fetch a.atList at join fetch at.town order by a.time desc", Announce.class)
                     .getResultList();
+
             // (5) 마을 추가에 들어가는 지역 목록
             List<Region> regionList = em.createQuery("select r from Region r", Region.class).getResultList();
             model.addAttribute("regionList", regionList);
+
+            alertList = em.createQuery("select a from EmergencyAlert a", EmergencyAlert.class).getResultList();
             log.info("쿼리 종료 ===================");
 
         } 
@@ -86,6 +90,8 @@ public class HomeController {
             // (5) 마을 + 방송 fetch
             announceList = em.createQuery("select distinct a from Announce a join fetch a.atList at join fetch at.town order by a.time desc", Announce.class)
                     .getResultList();
+
+            alertList = em.createQuery("select a from EmergencyAlert a", EmergencyAlert.class).getResultList();
             log.info("쿼리 종료 ===================");
         }
         List<ComplexDTO> complexDTOList = new ArrayList<>();
@@ -113,16 +119,36 @@ public class HomeController {
                 }
             }
 
-            List<User> ul = new ArrayList<>();
+            int userAlertCnt = 0;
+            int fireAlertCnt = 0;
+            int motionAlertCnt = 0;
             List<EmergencyAlert> el = new ArrayList<>();
+
             int mqttErrorCnt = 0;
             int sensorErrorCnt = 0;
             int notConnectedCnt = 0;
+            boolean fireAlertStatus = false;
+            List<User> ul = new ArrayList<>();
             for (User user : userList) {
                 if(user.getTown().equals(town)) {
                     ul.add(user);
-                    for (EmergencyAlert alert : user.getAlertList()) {
+                    // 긴급호출 목록 내림차순 정렬
+                    List<EmergencyAlert> sortedList = user.getAlertList();
+                    sortedList.sort(new Comparator<EmergencyAlert>() {
+                        @Override
+                        public int compare(EmergencyAlert o1, EmergencyAlert o2) {
+                            return Long.valueOf(o2.getId() - o1.getId()).intValue();
+                        }
+                    });
+                    for (EmergencyAlert alert : sortedList) {
                         el.add(alert);
+                        if(alert.getAlertType() == AlertType.USER) {
+                            userAlertCnt++;
+                        } else if (alert.getAlertType() == AlertType.FIRE) {
+                            fireAlertCnt++;
+                        } else {
+                            motionAlertCnt++;
+                        }
                     }
                     if(user.getDevice() != null) {
                         if(user.getDevice().isError_sensor()) {
@@ -130,6 +156,9 @@ public class HomeController {
                         }
                         if(user.getDevice().isError_mqtt()) {
                             mqttErrorCnt++;
+                        }
+                        if(user.getDevice().isEmergency_fire()) {
+                            fireAlertStatus = true;
                         }
                     } else {
                         notConnectedCnt++;
@@ -144,9 +173,10 @@ public class HomeController {
                     .announceList(aal)
                     .alertList(el)
                     .townAdminCnt(townAdminCnt)
-                    .alert_fire(0)
-                    .alert_user(el.size())
-                    .alert_motion(0)
+                    .emergency_fire(fireAlertStatus)
+                    .alert_fire(fireAlertCnt)
+                    .alert_user(userAlertCnt)
+                    .alert_motion(motionAlertCnt)
                     .status_notConnected(notConnectedCnt)
                     .status_error_sensor(sensorErrorCnt)
                     .status_error_mqtt(mqttErrorCnt).build();

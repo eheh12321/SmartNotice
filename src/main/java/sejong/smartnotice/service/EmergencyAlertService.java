@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sejong.smartnotice.domain.AlertType;
 import sejong.smartnotice.domain.EmergencyAlert;
 import sejong.smartnotice.domain.member.Supporter;
 import sejong.smartnotice.domain.member.User;
@@ -40,14 +41,10 @@ public class EmergencyAlertService {
     @Value("${twilio.myTel}")
     private String MY_TEL;
 
-    public void makeEmergencyCall(Long userId) throws Exception {
+    public void makeEmergencyCall(Long userId) {
         // 1. 전화 대상 조회
         User user = null;
-        try {
-            user = userService.findById(userId);
-        } catch (NullPointerException e) {
-            log.error("주민이 존재하지 않습니다!");
-        }
+        user = userService.findById(userId);
 
         // 2. Twilio 초기화
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
@@ -79,14 +76,14 @@ public class EmergencyAlertService {
         log.info("긴급 호출 성공");
     }
 
-    public Long createAlert(User user) {
+    public Long createAlert(User user, AlertType alertType) {
         try {
             makeEmergencyCall(user.getId());
         } catch (Exception e) {
             e.printStackTrace();
             log.error("실패했습니다 ㅜㅜ");
         }
-        EmergencyAlert alert = EmergencyAlert.createAlert(user);
+        EmergencyAlert alert = EmergencyAlert.createAlert(user, alertType);
         emRepository.save(alert);
         return alert.getId();
     }

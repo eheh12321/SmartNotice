@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import sejong.smartnotice.domain.AlertType;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.announce.Announce;
 import sejong.smartnotice.domain.member.User;
@@ -68,7 +69,7 @@ public class UserPageController {
     @ResponseBody
     public ResponseEntity<String> makeAlert(Authentication auth) {
         User authUser = userService.findByLoginId(auth.getName());
-        alertService.createAlert(authUser);
+        alertService.createAlert(authUser, AlertType.USER);
         return ResponseEntity.ok().body("보호자에게 긴급알림을 전송하였습니다");
     }
 }

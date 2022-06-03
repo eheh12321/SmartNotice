@@ -31,4 +31,6 @@ public class ComplexDTO {
     private int status_notConnected; // 단말기 미연결
     private int status_error_mqtt; // 통신 장애
     private int status_error_sensor; // 센서 장애
+
+    private boolean emergency_fire; // 화재 발생 유무
 }

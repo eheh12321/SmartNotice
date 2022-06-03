@@ -209,7 +209,7 @@
                                             <tbody>
                                             <tr th:each="alert, i : ${alertList}">
                                                 <td th:text="${i.index + 1}"></td>
-                                                <td>사용자 호출</td>
+                                                <td th:text="${alert.getAlertType().toString() == 'USER' ? '사용자 호출' : '화재 감지'}"></td>
                                                 <td th:text="${#temporals.format(alert.alertTime, 'yy/MM/dd HH:mm:ss')}"></td>
                                                 <td>확인</td>
                                             </tr>
@@ -286,10 +286,12 @@
         getChart();
 
         $("#supporterTable").DataTable({
+            order: [ [0, "desc"] ],
             pageLength : 3,
             lengthMenu: [ [3,10,20], [3,10,20] ]
         });
         $("#alertTable").DataTable({
+            order: [ [0, "desc"] ],
             pageLength : 3,
             lengthMenu: [ [3,10,20], [3,10,20] ]
         });
