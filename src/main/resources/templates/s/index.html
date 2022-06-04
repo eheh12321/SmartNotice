@@ -288,25 +288,19 @@
                 const myChart = new Chart(ctx, {
                     type: 'line',
                     data: {
-                            labels: timeList,
-                            datasets: [
-                                {
-                                    label: '온도',
-                                    fill: true,
-                                    backgroundColor: 'rgb(54, 162, 235)',
-                                    borderColor: 'rgb(54, 162, 235)',
-                                    data: tempList,
-                                }
-                            ]
-                        },
+                        labels: timeList,
+                        datasets: [
+                            {
+                                label: '온도',
+                                fill: true,
+                                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                                borderColor: 'rgba(54, 162, 235, 0.5)',
+                                data: tempList,
+                            }
+                        ]
+                    },
                     options: {
                         responsive: true,
-                        plugins: {
-                            title: {
-                                display: true,
-                                text: 'Chart.js Line Chart'
-                            },
-                        },
                         interaction: {
                             mode: 'index',
                             intersect: false
@@ -323,7 +317,7 @@
                                 display: true,
                                 title: {
                                     display: true,
-                                    text: 'Value'
+                                    text: 'temp'
                                 }
                             }
                         },
@@ -340,34 +334,23 @@
                             {
                                 label: 'co2',
                                 fill: false,
-                                backgroundColor: 'rgb(0, 0, 235)',
-                                borderColor: 'rgb(0, 0, 235)',
+                                backgroundColor: 'rgba(0, 0, 235, 0.5)',
+                                borderColor: 'rgba(0, 0, 235, 0.5)',
                                 data: co2List,
+                                yAxisID: 'y_co2',
                             },
                             {
                                 label: 'oxygen',
                                 fill: false,
-                                backgroundColor: 'rgb(0, 162, 0)',
-                                borderColor: 'rgb(0, 162, 0)',
+                                backgroundColor: 'rgba(0, 162, 0, 0.5)',
+                                borderColor: 'rgba(0, 162, 0, 0.5)',
                                 data: oxygenList,
-                            },
-                            {
-                                label: 'lumnc',
-                                fill: false,
-                                backgroundColor: 'rgb(162, 0, 0)',
-                                borderColor: 'rgb(162, 0, 0)',
-                                data: lumncList,
-                            },
+                                yAxisID: 'y_oxy',
+                            }
                         ]
                     },
                     options: {
                         responsive: true,
-                        plugins: {
-                            title: {
-                                display: true,
-                                text: 'Chart.js Line Chart'
-                            },
-                        },
                         interaction: {
                             mode: 'index',
                             intersect: false
@@ -380,62 +363,91 @@
                                     text: 'TimeLine'
                                 }
                             },
-                            y: {
+                            y_co2: {
                                 display: true,
                                 title: {
                                     display: true,
-                                    text: 'Value'
+                                    text: 'Co2'
+                                },
+                                suggestedMax: 0.5,
+                                ticks: {
+                                    stepSize: 0.01
+                                },
+                                grid: {
+                                    display: false
+                                },
+                                position: 'left'
+                            },
+                            y_oxy: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'Oxy'
+                                },
+                                position: 'right',
+                                suggestedMax: 0.5,
+                                ticks: {
+                                    stepSize: 0.04
                                 }
                             }
                         },
-                        pointStyle:'line'
                     },
                 });
 
                 const ctx3 = document.getElementById('myChart3').getContext('2d');
                 const myChart3 = new Chart(ctx3, {
-                    type: 'line',
+                    type: 'scatter',
                     data: {
                         labels: timeList,
                         datasets: [
                             {
+                                label: 'lumnc',
+                                data: lumncList,
+                                type: 'line',
+                                backgroundColor: 'rgba(123, 0, 235, 0.5)',
+                                borderColor: 'rgba(123, 0, 235, 0.5)',
+                                yAxisID: 'y',
+                            },
+                            {
                                 label: 'action',
-                                fill: true,
-                                backgroundColor: 'rgb(0, 0, 235)',
-                                borderColor: 'rgb(0, 0, 235)',
-                                data: co2List,
+                                data: actionList,
+                                type: 'bar',
+                                backgroundColor: 'rgba(0, 0, 235, 0.5)',
+                                borderColor: 'rgba(0, 0, 235, 0.5)',
+                                yAxisID: 'y1',
                             }
                         ]
                     },
                     options: {
                         responsive: true,
-                        plugins: {
-                            title: {
-                                display: true,
-                                text: 'Chart.js Line Chart'
-                            },
-                        },
                         interaction: {
                             mode: 'index',
                             intersect: false
                         },
                         scales: {
-                            x: {
-                                display: true,
-                                title: {
-                                    display: true,
-                                    text: 'TimeLine'
-                                }
-                            },
                             y: {
                                 display: true,
+                                beginAtZero: true,
                                 title: {
                                     display: true,
-                                    text: 'Value'
+                                    text: '조도 센서'
+                                },
+                                position: 'left'
+                            },
+                            y1: {
+                                display: true,
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: '동작 센서'
+                                },
+                                position: 'right',
+                                suggestedMax: 0.5,
+                                ticks: {
+                                    stepSize: 0.5
                                 }
                             }
                         },
-                        pointStyle:'line'
                     },
                 });
             },

@@ -54,8 +54,7 @@
                                                             var fireAlertCnt = [[${dto.alert_fire}]];
                                                             var userAlertCnt = [[${dto.alert_user}]];
                                                             var motionAlertCnt = [[${dto.alert_motion}]];
-                                                            var chartId = "myChart";
-                                                            var ctx = document.getElementById(chartId).getContext('2d');
+                                                            var ctx = document.getElementById("myChart").getContext('2d');
                                                             var myChart = new Chart(ctx, {
                                                                 type: 'bar',
                                                                 data: {
@@ -63,7 +62,7 @@
                                                                     datasets: [
                                                                         {
                                                                             label: '단말기 미연결',
-                                                                            data: [notConnectedCnt,-1,-1],
+                                                                            data: [notConnectedCnt, -1, -1],
                                                                             backgroundColor: 'rgba(255, 99, 132, 0.2)',
                                                                             borderColor: 'rgb(0, 0, 0, 0.5)',
                                                                             stack: 'Stack 0',
@@ -71,7 +70,7 @@
                                                                         },
                                                                         {
                                                                             label: '통신 장애',
-                                                                            data: [-1,mqttErrorCnt,-1],
+                                                                            data: [-1, mqttErrorCnt, -1],
                                                                             backgroundColor: 'rgba(255, 159, 64, 0.2)',
                                                                             borderColor: 'rgb(0, 0, 0, 0.5)',
                                                                             stack: 'Stack 0',
@@ -79,7 +78,7 @@
                                                                         },
                                                                         {
                                                                             label: '센서 장애',
-                                                                            data: [-1,sensorErrorCnt,-1],
+                                                                            data: [-1, sensorErrorCnt, -1],
                                                                             backgroundColor: 'rgba(255, 205, 86, 0.2)',
                                                                             borderColor: 'rgb(0, 0, 0, 0.5)',
                                                                             stack: 'Stack 0',
@@ -87,7 +86,7 @@
                                                                         },
                                                                         {
                                                                             label: '사용자 호출',
-                                                                            data: [-1,-1,userAlertCnt],
+                                                                            data: [-1, -1, userAlertCnt],
                                                                             backgroundColor: 'rgba(75, 192, 192, 0.2)',
                                                                             borderColor: 'rgb(0, 0, 0, 0.5)',
                                                                             stack: 'Stack 0',
@@ -95,7 +94,7 @@
                                                                         },
                                                                         {
                                                                             label: '화재 감지',
-                                                                            data: [-1,-1,fireAlertCnt],
+                                                                            data: [-1, -1, fireAlertCnt],
                                                                             backgroundColor: 'rgba(54, 162, 235, 0.2)',
                                                                             borderColor: 'rgb(0, 0, 0, 0.5)',
                                                                             stack: 'Stack 0',
@@ -103,7 +102,7 @@
                                                                         },
                                                                         {
                                                                             label: '동작 감지',
-                                                                            data: [-1,-1,motionAlertCnt],
+                                                                            data: [-1, -1, motionAlertCnt],
                                                                             backgroundColor: 'rgba(153, 102, 255, 0.2)',
                                                                             borderColor: 'rgb(0, 0, 0, 0.5)',
                                                                             stack: 'Stack 0',
@@ -130,8 +129,8 @@
                                                                             stacked: true,
                                                                         },
                                                                         y: {
-                                                                            min:0,
-                                                                            suggestedMax:10,
+                                                                            min: 0,
+                                                                            suggestedMax: 10,
                                                                             stacked: true,
                                                                             beginAtZero: true,
                                                                             ticks: {
@@ -420,70 +419,27 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="row mb-5">
-                                            <div class="col-md-6 col-lg-4" th:each="user, i : ${dto.getUserList()}">
+                                            <div class="col-md-4" th:each="user, i : ${dto.getUserList()}">
                                                 <div class="card text-start border border-secondary mb-3">
                                                     <a th:href="@{/users/{id}(id=${user.id})}">
                                                         <div class="card-body">
-                                                            <h5 class="card-title" th:text="|${user.name} 정보|">주민
-                                                                이름</h5>
+                                                            <h5 class="card-title" th:text="|주민 ${user.name} 정보|"></h5>
                                                             <div th:unless="${user.device}">
-                                                                <span style="color:#dc3545;">[단말기 미연결]</span>
+                                                                <p style="color:#dc3545;">[단말기 미연결]</p>
                                                             </div>
                                                             <div th:if="${user.device}">
-                                                                <span th:text="|단말기 상태: ${!user.device.available}|">단말기 상태</span>
-                                                                <span> // </span>
-                                                                <span th:text="|통신 장애: ${user.device.error_mqtt}|">통신 장애</span>
-                                                                <span> // </span>
-                                                                <span th:text="|센서 장애: ${user.device.error_sensor}|">센서 장애</span>
+                                                                <p style="color:forestgreen;">[정상]</p>
                                                             </div>
+                                                            <p th:if="${user.supporterList.size() > 0}"
+                                                               th:text="|대표 보호자: ${user.supporterList.get(0).name},
+                                                               ${user.supporterList.get(0).tel}|">
+                                                            </p>
+                                                            <p th:unless="${user.supporterList.size() > 0}"
+                                                               th:text="|대표 보호자: -|">
+                                                            </p>
+                                                            <p th:text="|연락처: ${user.tel}|"></p>
+                                                            <p th:text="|최근 긴급호출 횟수: ${user.alertList.size()}회|"></p>
                                                             <br>
-                                                            <!-- Chart -->
-                                                            <div class="col-md-7">
-                                                                <canvas id="userChart" th:id="|userChart_${i.index}|"
-                                                                        width="400" height="400"></canvas>
-                                                                <script th:inline="javascript">
-                                                                    var alertCnt = [[${user.alertList.size()}]];
-                                                                    var chartId = "userChart_" + [[${i.index}]];
-                                                                    var userCtx = document.getElementById(chartId).getContext('2d');
-                                                                    var userChart = new Chart(userCtx, {
-                                                                        type: 'bar',
-                                                                        data: {
-                                                                            labels: ['긴급호출'],
-                                                                            datasets: [{
-                                                                                data: [alertCnt],
-                                                                                backgroundColor: [
-                                                                                    'rgba(255, 99, 132, 0.3)'
-                                                                                ],
-                                                                                borderColor: [
-                                                                                    'rgba(255, 99, 132, 1)'
-                                                                                ],
-                                                                                borderWidth: 1
-                                                                            }]
-                                                                        },
-                                                                        options: {
-                                                                            plugins: {
-                                                                                title: {
-                                                                                    display: true,
-                                                                                    text: '마을 주민 차트'
-                                                                                },
-                                                                                legend: {
-                                                                                    display: false
-                                                                                }
-                                                                            },
-                                                                            responsive: true,
-                                                                            scales: {
-                                                                                y: {
-                                                                                    beginAtZero: true,
-                                                                                    ticks: {
-                                                                                        stepSize: 1
-                                                                                    }
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    });
-                                                                </script>
-                                                            </div>
-                                                            <!-- /Chart -->
                                                         </div>
                                                     </a>
                                                 </div>
@@ -495,7 +451,6 @@
                         </div>
                     </div>
                     <!-- /마을 Card-->
-
                     <!-- Modal -->
                     <div class="modal fade" id="announceModal" tabindex="-1"
                          aria-hidden="true">
@@ -562,9 +517,9 @@
                     return false;
                 }
                 $.ajax({
-                    type:"DELETE",
-                    url:"/towns/" + townId,
-                    dataType:"text",
+                    type: "DELETE",
+                    url: "/towns/" + townId,
+                    dataType: "text",
                     success: function (result) {
                         alert(result);
                         window.location.href = "/";
