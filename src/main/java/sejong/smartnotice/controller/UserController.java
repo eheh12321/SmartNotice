@@ -58,10 +58,13 @@ public class UserController {
         log.info("== 마을 주민 조회 ==");
         User user = userService.findById(id);
         Device device = user.getDevice();
+
+        List<Device> deviceList = em.createQuery("select d from Device d", Device.class).getResultList();
         model.addAttribute("user", user);
         model.addAttribute("device", device);
         model.addAttribute("supporterList", user.getSupporterList());
         model.addAttribute("alertList", user.getAlertList());
+        model.addAttribute("deviceList", deviceList);
         return "user/detail";
     }
 
@@ -78,6 +81,13 @@ public class UserController {
     public ResponseEntity<String> modify(@ModelAttribute UserModifyDTO modifyDTO) {
         log.info("== 마을 주민 정보 수정 ==");
         userService.modifyUserInfo(modifyDTO);
+        return ResponseEntity.ok().body("수정을 완료했습니다");
+    }
+
+    @PostMapping("/{id}/device")
+    public ResponseEntity<String> modifyUserDevice(@PathVariable Long id, @RequestParam Long deviceId) {
+        log.info("== 마을 주민 단말기 수정 ==");
+        userService.modifyUserDevice(id, deviceId);
         return ResponseEntity.ok().body("수정을 완료했습니다");
     }
 

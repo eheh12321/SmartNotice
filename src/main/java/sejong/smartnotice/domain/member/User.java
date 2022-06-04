@@ -83,10 +83,8 @@ public class User implements UserDetails {
         this.birth = birth;
     }
 
-    public void modifyTown(Town town) {
-        this.town.getUserList().remove(this); // 기존 마을 정보 삭제
-        this.town = town;
-        town.getUserList().add(this);
+    public void modifyUserDevice(Device device) {
+        this.device = device;
     }
 
     // 마을 주민 계정을 관리자 등록

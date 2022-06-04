@@ -153,10 +153,8 @@
                                                             <tbody>
                                                             <tr th:each="alert : ${alertList}">
                                                                 <td th:text="${alert.id}">1</td>
-                                                                <td th:text="${#temporals.format(alert.alertTime, 'yy/MM/dd HH:mm:ss')}">
-                                                                    1
-                                                                </td>
-                                                                <td>사용자 호출</td>
+                                                                <td th:text="${#temporals.format(alert.alertTime, 'yy/MM/dd HH:mm:ss')}"></td>
+                                                                <td th:text="${alert.getAlertType().toString() =='USER' ? '사용자 호출' : '화재 감지'}">사용자 호출</td>
                                                             </tr>
                                                             </tbody>
                                                         </table>

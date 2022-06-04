@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.*;
 import sejong.smartnotice.domain.announce.Announce;
+import sejong.smartnotice.domain.device.Device;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.AdminType;
 import sejong.smartnotice.domain.member.User;
