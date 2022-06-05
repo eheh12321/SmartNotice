@@ -33,4 +33,5 @@ public class ComplexDTO {
     private int status_error_sensor; // 센서 장애
 
     private boolean emergency_fire; // 화재 발생 유무
+    private boolean notConfirmedAlert; // 미확인 긴급알림 존재 유무
 }

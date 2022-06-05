@@ -49,6 +49,12 @@ public class EmergencyAlertController {
         return "alert/list";
     }
 
+    @PostMapping("/{id}")
+    public String receiveAlertConfirm(@PathVariable Long id) {
+        alertService.alertConfirm(id);
+        return "redirect:/";
+    }
+
     @PostMapping("/api")
     @ResponseBody
     @Transactional

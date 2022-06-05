@@ -37,7 +37,9 @@ public class UserPageController {
     }
 
     @GetMapping
-    public String index() {
+    public String index(Authentication auth, Model model) {
+        User authUser = userService.findByLoginId(auth.getName());
+        model.addAttribute("userName", authUser.getName());
         return "u/index";
     }
 
@@ -49,6 +51,7 @@ public class UserPageController {
                 .setParameter("townId", town.getId())
                 .getResultList();
 
+        model.addAttribute("userName", authUser.getName());
         model.addAttribute("announceList", announceList);
         return "u/normalAnnounceList";
     }
@@ -61,6 +64,7 @@ public class UserPageController {
                 .setParameter("townId", town.getId())
                 .getResultList();
 
+        model.addAttribute("userName", authUser.getName());
         model.addAttribute("announceList", announceList);
         return "u/emergencyAnnounceList";
     }

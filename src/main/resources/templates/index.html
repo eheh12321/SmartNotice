@@ -60,6 +60,19 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="row mb-4" style="justify-content: center">
+                                            <!-- 긴급 알림 발생 시 출력 -->
+                                            <div class="alert alert-warning" style="width: 80%; color: crimson"
+                                                 th:if="${dto.notConfirmedAlert}">
+                                                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                                                     aria-label="Danger:">
+                                                    <use xlink:href="#exclamation-triangle-fill"/>
+                                                </svg>
+                                                <span>  ** 마을 내 미확인 긴급 알림이 있습니다 **  </span>
+                                                <button type="button" class="btn-close" style="float: right;"
+                                                        data-bs-dismiss="alert" aria-label="Close"></button>
+                                            </div>
+
+                                            <!-- 화재 알림 발생 시 출력 -->
                                             <div class="alert alert-danger" style="width: 80%;"
                                                  th:if="${dto.emergency_fire}">
                                                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
@@ -67,6 +80,8 @@
                                                     <use xlink:href="#exclamation-triangle-fill"/>
                                                 </svg>
                                                 <span>  ** 마을 내 화재가 발생했습니다 **  </span>
+                                                <button type="button" class="btn-close" style="float: right;"
+                                                        data-bs-dismiss="alert" aria-label="Close"></button>
                                             </div>
                                             <div class="col-sm-7 ps-4">
                                                 <div class="row row-bordered g-0">
@@ -90,7 +105,7 @@
                                                                     datasets: [
                                                                         {
                                                                             label: '단말기 미연결',
-                                                                            data: [notConnectedCnt,-1,-1],
+                                                                            data: [notConnectedCnt, -1, -1],
                                                                             backgroundColor: 'rgba(255, 99, 132, 0.2)',
                                                                             borderColor: 'rgb(0, 0, 0, 0.5)',
                                                                             stack: 'Stack 0',
@@ -98,7 +113,7 @@
                                                                         },
                                                                         {
                                                                             label: '통신 장애',
-                                                                            data: [-1,mqttErrorCnt,-1],
+                                                                            data: [-1, mqttErrorCnt, -1],
                                                                             backgroundColor: 'rgba(255, 159, 64, 0.2)',
                                                                             borderColor: 'rgb(0, 0, 0, 0.5)',
                                                                             stack: 'Stack 0',
@@ -106,7 +121,7 @@
                                                                         },
                                                                         {
                                                                             label: '센서 장애',
-                                                                            data: [-1,sensorErrorCnt,-1],
+                                                                            data: [-1, sensorErrorCnt, -1],
                                                                             backgroundColor: 'rgba(255, 205, 86, 0.2)',
                                                                             borderColor: 'rgb(0, 0, 0, 0.5)',
                                                                             stack: 'Stack 0',
@@ -114,7 +129,7 @@
                                                                         },
                                                                         {
                                                                             label: '사용자 호출',
-                                                                            data: [-1,-1,userAlertCnt],
+                                                                            data: [-1, -1, userAlertCnt],
                                                                             backgroundColor: 'rgba(75, 192, 192, 0.2)',
                                                                             borderColor: 'rgb(0, 0, 0, 0.5)',
                                                                             stack: 'Stack 0',
@@ -122,7 +137,7 @@
                                                                         },
                                                                         {
                                                                             label: '화재 감지',
-                                                                            data: [-1,-1,fireAlertCnt],
+                                                                            data: [-1, -1, fireAlertCnt],
                                                                             backgroundColor: 'rgba(54, 162, 235, 0.2)',
                                                                             borderColor: 'rgb(0, 0, 0, 0.5)',
                                                                             stack: 'Stack 0',
@@ -130,7 +145,7 @@
                                                                         },
                                                                         {
                                                                             label: '동작 감지',
-                                                                            data: [-1,-1,motionAlertCnt],
+                                                                            data: [-1, -1, motionAlertCnt],
                                                                             backgroundColor: 'rgba(153, 102, 255, 0.2)',
                                                                             borderColor: 'rgb(0, 0, 0, 0.5)',
                                                                             stack: 'Stack 0',
@@ -157,8 +172,8 @@
                                                                             stacked: true,
                                                                         },
                                                                         y: {
-                                                                            min:0,
-                                                                            suggestedMax:10,
+                                                                            min: 0,
+                                                                            suggestedMax: 10,
                                                                             stacked: true,
                                                                             beginAtZero: true,
                                                                             ticks: {
@@ -196,7 +211,7 @@
                                                             </tr>
                                                             <tr>
                                                                 <td class="fw-bold">긴급 호출</td>
-                                                                <td th:text="|${dto.getAlertList().size()}건|">-건</td>
+                                                                <td th:text="|${dto.alert_fire + dto.alert_motion + dto.alert_user}건|">-건</td>
                                                             </tr>
                                                             <tr>
                                                                 <td class="fw-bold" style="color: #e83e8c"
@@ -240,25 +255,37 @@
                                                     </div>
 
                                                     <div class="col-12 mb-4">
-                                                        <h5 class="fw-bold">긴급 호출 내역</h5>
-                                                        <table class="table table-bordered">
+                                                        <h5 class="fw-bold">미확인 긴급 호출 내역</h5>
+                                                        <table class="table table-bordered table-hover">
                                                             <thead class="table-secondary">
                                                             <tr>
                                                                 <th>사용자</th>
                                                                 <th>분류</th>
                                                                 <th>시각</th>
-                                                                <th>수신 여부</th>
+                                                                <th>수신</th>
                                                             </tr>
                                                             </thead>
                                                             <tbody>
                                                             <tr th:each="alert, i : ${dto.alertList}"
                                                                 th:if="${i.index < 3}">
-                                                                <td th:text="${alert.user.name}">-</td>
+                                                                    <td th:text="${alert.user.name}"
+                                                                        th:onclick="|location.href='@{/users/{id}(id=${alert.user.id})}'|">
+                                                                    </td>
                                                                 <td th:text="${alert.getAlertType().toString() == 'USER' ? '사용자 호출' : '화재 감지'}">
                                                                     사용자 호출
                                                                 </td>
                                                                 <td th:text="${#temporals.format(alert.alertTime, 'yy/MM/dd HH:mm:ss')}"></td>
-                                                                <td>확인</td>
+                                                                <td class="text-center">
+                                                                    <form th:action="@{/alerts/{id}(id=${alert.id})}" method="post">
+                                                                        <input type="hidden" name="alertId" th:value="${alert.id}">
+                                                                        <button type="submit"
+                                                                                onclick="if(!confirm('긴급 호출을 수신하셨습니까??')){return false;}"
+                                                                                style="width: max-content"
+                                                                                class="btn rounded-pill btn-primary"
+                                                                                id="alertConfirmBtn">수신
+                                                                        </button>
+                                                                    </form>
+                                                                </td>
                                                             </tr>
                                                             </tbody>
                                                         </table>

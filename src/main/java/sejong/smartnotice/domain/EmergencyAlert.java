@@ -34,11 +34,18 @@ public class EmergencyAlert {
     @Column(nullable = false)
     private AlertType alertType;
 
+    @ColumnDefault("0") // == false
+    private boolean confirmed; // 관리자 확인 유무
+
     public static EmergencyAlert createAlert(User user, AlertType alertType) {
         EmergencyAlert alert = EmergencyAlert.builder()
                 .user(user)
                 .alertType(alertType)
                 .alertTime(LocalDateTime.now()).build();
         return alert;
+    }
+
+    public void alertConfirm() {
+        this.confirmed = true;
     }
 }

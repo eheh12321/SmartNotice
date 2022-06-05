@@ -128,6 +128,7 @@ public class HomeController {
             int sensorErrorCnt = 0;
             int notConnectedCnt = 0;
             boolean fireAlertStatus = false;
+            boolean notConfirmedAlertStatus = false;
             List<User> ul = new ArrayList<>();
             for (User user : userList) {
                 if(user.getTown().equals(town)) {
@@ -137,17 +138,20 @@ public class HomeController {
                     sortedList.sort(new Comparator<EmergencyAlert>() {
                         @Override
                         public int compare(EmergencyAlert o1, EmergencyAlert o2) {
-                            return Long.valueOf(o2.getId() - o1.getId()).intValue();
+                            return o2.getAlertTime().compareTo(o1.getAlertTime());
                         }
                     });
                     for (EmergencyAlert alert : sortedList) {
-                        el.add(alert);
                         if(alert.getAlertType() == AlertType.USER) {
                             userAlertCnt++;
                         } else if (alert.getAlertType() == AlertType.FIRE) {
                             fireAlertCnt++;
                         } else {
                             motionAlertCnt++;
+                        }
+                        if(!alert.isConfirmed()) {
+                            el.add(alert);
+                            notConfirmedAlertStatus = true;
                         }
                     }
                     if(user.getDevice() != null) {
@@ -174,6 +178,7 @@ public class HomeController {
                     .alertList(el)
                     .townAdminCnt(townAdminCnt)
                     .emergency_fire(fireAlertStatus)
+                    .notConfirmedAlert(notConfirmedAlertStatus)
                     .alert_fire(fireAlertCnt)
                     .alert_user(userAlertCnt)
                     .alert_motion(motionAlertCnt)

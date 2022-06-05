@@ -22,6 +22,7 @@ import sejong.smartnotice.repository.EmergencyAlertRepository;
 
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -88,6 +89,11 @@ public class EmergencyAlertService {
         return alert.getId();
     }
 
+    public void alertConfirm(Long id) {
+        EmergencyAlert alert = findById(id);
+        alert.alertConfirm();
+    }
+
     @Transactional(readOnly = true)
     public List<EmergencyAlert> findWithUserByUserId(Long userId) {
         log.info("== 주민별 호출 목록 조회(fetch) ==");
@@ -99,6 +105,15 @@ public class EmergencyAlertService {
         log.info("== 마을별 긴급 호출 목록 조회(fetch) ==");
 //        return emRepository.findAllWithUserByTown(townId);
         return emRepository.findAll();
+    }
+
+    public EmergencyAlert findById(Long id) {
+        Optional<EmergencyAlert> opt = emRepository.findById(id);
+        if (opt.isEmpty()) {
+            log.warn("호출 ID가 존재하지 않습니다");
+            throw new NullPointerException("호출 ID가 존재하지 않습니다.");
+        }
+        return opt.get();
     }
 
     public List<EmergencyAlert> findAllWithUser() {

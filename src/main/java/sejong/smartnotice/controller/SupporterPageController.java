@@ -48,6 +48,7 @@ public class SupporterPageController {
         log.info(auth.getName()); // Supporter Class에 정의된 getUsername() = loginId;
         Supporter supporter = supporterService.findByLoginId(auth.getName());
         List<EmergencyAlert> alertList = alertService.findWithUserByUserId(supporter.getUser().getId());
+        model.addAttribute("userName", supporter.getName());
         model.addAttribute("alertList", alertList);
         model.addAttribute("supporter", supporter);
         return "s/index";
