@@ -49,7 +49,7 @@ public class DeviceController {
         if(device == null) {
             return ResponseEntity.ok().body(dtoList);
         }
-        List<Sensor> sensorList = em.createQuery("select s from Sensor s where s.device=:device and mod(s.id, 6) = 0", Sensor.class)
+        List<Sensor> sensorList = em.createQuery("select s from Sensor s where s.device=:device and mod(s.id, 1) = 0", Sensor.class)
                 .setParameter("device", device)
                 .setMaxResults(360)
                 .getResultList();
@@ -60,5 +60,18 @@ public class DeviceController {
         });
 
         return ResponseEntity.ok().body(dtoList);
+    }
+
+    @ResponseBody
+    @GetMapping("/{id}/update")
+    public ResponseEntity<SensorDataDTO> updateUserDeviceSensorData(@PathVariable Long id) {
+        User user = userService.findById(id);
+        Device device = user.getDevice();
+
+        Sensor sensor = em.createQuery("select s from Sensor s where s.device=:device order by s.id desc", Sensor.class)
+                .setParameter("device", device).setMaxResults(1).getSingleResult();
+
+        SensorDataDTO dto = new SensorDataDTO(sensor.getId(), sensor.getMeasureTime(), sensor.getTemp(), sensor.getCo2(), sensor.getOxy(), sensor.getLumnc(), sensor.getCo2());
+        return ResponseEntity.ok().body(dto);
     }
 }

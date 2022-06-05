@@ -351,14 +351,18 @@
         });
     });
 
-    function getChart(id) {
-        let timeList = [];
-        let tempList = [];
-        let co2List = [];
-        let oxygenList = [];
-        let actionList = [];
-        let lumncList = [];
+    let timeList = [];
+    let tempList = [];
+    let co2List = [];
+    let oxygenList = [];
+    let actionList = [];
+    let lumncList = [];
 
+    let myChart;
+    let myChart2;
+    let myChart3;
+
+    function getChart() {
         $.ajax({
             url:"/devices/" + [[${user.id}]],
             type:"GET",
@@ -373,7 +377,7 @@
                     actionList.push(result[i].action);
                 }
                 const ctx = document.getElementById('myChart').getContext('2d');
-                const myChart = new Chart(ctx, {
+                myChart = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: timeList,
@@ -414,7 +418,7 @@
                 });
 
                 const ctx2 = document.getElementById('myChart2').getContext('2d');
-                const myChart2 = new Chart(ctx2, {
+                myChart2 = new Chart(ctx2, {
                     type: 'line',
                     data: {
                         labels: timeList,
@@ -483,7 +487,7 @@
                 });
 
                 const ctx3 = document.getElementById('myChart3').getContext('2d');
-                const myChart3 = new Chart(ctx3, {
+                myChart3 = new Chart(ctx3, {
                     type: 'scatter',
                     data: {
                         labels: timeList,
@@ -544,6 +548,38 @@
             }
         });
     }
+
+    function updateChart() {
+        $.ajax({
+            url:"/devices/" + [[${user.id}]] + "/update",
+            type:"GET",
+            dataType:"json",
+            success: function(result) {
+                timeList.push(result.measureTime);
+                tempList.push(result.temp);
+                co2List.push(result.co2);
+                lumncList.push(result.lumnc);
+                oxygenList.push(result.oxy);
+                actionList.push(result.action);
+
+                timeList.shift();
+                tempList.shift();
+                co2List.shift();
+                lumncList.shift();
+                oxygenList.shift();
+                actionList.shift();
+
+                myChart.update();
+                myChart2.update();
+                myChart3.update();
+            },
+            error: function (xhr) {
+                alert("차트 업데이트에  실패했습니다 :P");
+            }
+        });
+    }
+
+    setInterval(updateChart, 5000);
 </script>
 <div th:replace="~{fragment/header :: fragment-bottom-script}"></div>
 </html>
