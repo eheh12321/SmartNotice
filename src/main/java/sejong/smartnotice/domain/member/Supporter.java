@@ -56,18 +56,15 @@ public class Supporter implements UserDetails {
         }
     }
 
-    // 테스트용(임베디드 단에서 구현할것)
-    public void emergencyCall(EmergencyAlert alert) {
-        log.warn("!!!!!!!!!!!!!!긴급 호출이 발생했습니다!!!!!!!!!!!!!");
-        log.warn("호출시각: {}", alert.getAlertTime());
-        log.warn("받은사람: {}", this.getName());
-        log.warn("================================================");
-    }
-
     // 보호자 정보 수정
     public void modifySupporterInfo(String name, String tel) {
         this.name = name;
         this.tel = tel;
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 
     ///////////// 스프링 시큐리티

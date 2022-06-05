@@ -134,15 +134,6 @@ public class TownController {
         return "town/townDetail";
     }
 
-    // 마을 관리자 목록 조회
-    @GetMapping("/{id}/admin")
-    public String getTownAdminList(@PathVariable Long id, Model model) {
-        log.info("== 마을 관리자 목록 조회 ==");
-        Town town = townService.findById(id);
-        model.addAttribute("town", town);
-
-        return "town/adminList";
-    }
 
     @GetMapping("/{id}/admin/new")
     public String addTownAdminForm(@PathVariable Long id, Model model) {

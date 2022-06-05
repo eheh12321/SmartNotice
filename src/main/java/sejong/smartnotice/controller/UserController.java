@@ -43,11 +43,12 @@ public class UserController {
             // 마을 관리자인 경우 관리 마을 대상으로 한 주민 목록만 조회
             Admin authAdmin = adminService.findByLoginId(auth.getName());
             List<Town> managedTownList = townService.findTownByAdmin(authAdmin);
-            userList = em.createQuery("select u from User u join fetch u.town where u.town in(:townList)", User.class)
+            userList = em.createQuery("select distinct u from User u join fetch u.supporterList s join fetch u.town where u.town in(:townList)", User.class)
                     .setParameter("townList", managedTownList)
                     .getResultList();
         } else {
-            userList = userService.findAllWithTown();
+            userList = em.createQuery("select distinct u from User u left join fetch u.supporterList s join fetch u.town", User.class)
+                    .getResultList();
         }
         model.addAttribute("userList", userList);
         return "user/list";
@@ -68,14 +69,6 @@ public class UserController {
         return "user/detail";
     }
 
-    @GetMapping("/{id}/edit")
-    public String modifyForm(@PathVariable Long id, Model model) {
-        log.info("== 마을 주민 수정 ==");
-        User user = userService.findById(id);
-        model.addAttribute("user", user);
-
-        return "user/modify";
-    }
 
     @PutMapping
     public ResponseEntity<String> modify(@ModelAttribute UserModifyDTO modifyDTO) {
