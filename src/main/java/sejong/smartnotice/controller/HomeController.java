@@ -2,6 +2,7 @@ package sejong.smartnotice.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
@@ -48,6 +49,9 @@ public class HomeController {
         List<User> userList;
         List<Announce> announceList;
         List<EmergencyAlert> alertList;
+
+        boolean navbar_userAlert = false;
+        boolean navbar_fireAlert = false;
 
         // 최고 관리자는 전체 마을을 모두 조회할 수 있어야 한다
         if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPER"))) {
@@ -152,6 +156,7 @@ public class HomeController {
                         if(!alert.isConfirmed()) {
                             el.add(alert);
                             notConfirmedAlertStatus = true;
+                            navbar_userAlert = true;
                         }
                     }
                     if(user.getDevice() != null) {
@@ -163,6 +168,7 @@ public class HomeController {
                         }
                         if(user.getDevice().isEmergency_fire()) {
                             fireAlertStatus = true;
+                            navbar_fireAlert = true;
                         }
                     } else {
                         notConnectedCnt++;
@@ -188,6 +194,8 @@ public class HomeController {
             complexDTOList.add(dto);
         }
 
+        model.addAttribute("navbar_userAlert", navbar_userAlert);
+        model.addAttribute("navbar_fireAlert", navbar_fireAlert);
         model.addAttribute("dtoList", complexDTOList);
 
         return "index";
@@ -211,6 +219,39 @@ public class HomeController {
         model.addAttribute("townList", townList);
         model.addAttribute("managedTownIdList", managedTownIdList);
         return "admin/modify";
+    }
+
+    @GetMapping("/nav")
+    @ResponseBody
+    public ResponseEntity<NavbarStatusDTO> checkNavbarStatus(Authentication auth) {
+        log.info("== Navbar 상태 조회 ==");
+        Admin authAdmin = adminService.findByLoginId(auth.getName());
+        List<Town> townList = adminService.getTownList(authAdmin);
+
+        boolean notConfirmedAlertStatus = false;
+        boolean fireAlertStatus = false;
+
+        List<User> userList = em.createQuery("select distinct u from User u left join fetch u.alertList al join fetch u.device d where u.town in(:townList)", User.class)
+                .setParameter("townList", townList).getResultList();
+
+        for (User user : userList) {
+            List<EmergencyAlert> alertList = user.getAlertList();
+            for (EmergencyAlert alert : alertList) {
+                if (!alert.isConfirmed()) {
+                    notConfirmedAlertStatus = true;
+                    break;
+                }
+            }
+            if(user.getDevice()!= null) {
+                if(user.getDevice().isEmergency_fire()) {
+                    fireAlertStatus = true;
+                }
+            }
+            if(notConfirmedAlertStatus && fireAlertStatus) {
+                return ResponseEntity.ok().body(new NavbarStatusDTO(true, true));
+            }
+        }
+        return ResponseEntity.ok().body(new NavbarStatusDTO(notConfirmedAlertStatus, fireAlertStatus));
     }
 
     @GetMapping("/register")

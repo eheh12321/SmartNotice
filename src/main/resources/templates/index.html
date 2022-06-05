@@ -14,16 +14,16 @@
             <!-- Navbar(검색창) -->
             <div th:replace="~{fragment/navbar :: fragment-navbar}"></div>
             <!--최고 관리자만 접근 가능 (마을 추가)-->
-<!--            <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse"-->
-<!--                 sec:authorize="hasRole('SUPER')">-->
-<!--                <ul class="navbar-nav flex-row align-items-center ms-auto">-->
-<!--                    <li class="nav-item">-->
-<!--                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"-->
-<!--                                data-bs-target="#backDropModal">마을 추가-->
-<!--                        </button>-->
-<!--                    </li>-->
-<!--                </ul>-->
-<!--            </div>-->
+            <!--            <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse"-->
+            <!--                 sec:authorize="hasRole('SUPER')">-->
+            <!--                <ul class="navbar-nav flex-row align-items-center ms-auto">-->
+            <!--                    <li class="nav-item">-->
+            <!--                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"-->
+            <!--                                data-bs-target="#backDropModal">마을 추가-->
+            <!--                        </button>-->
+            <!--                    </li>-->
+            <!--                </ul>-->
+            <!--            </div>-->
             <!-- /Navbar -->
             <!-- Content wrapper -->
             <div class="content-wrapper">
@@ -195,7 +195,9 @@
                                                             </tr>
                                                             <tr>
                                                                 <td class="fw-bold">긴급 호출</td>
-                                                                <td th:text="|${dto.alert_fire + dto.alert_motion + dto.alert_user}건|">-건</td>
+                                                                <td th:text="|${dto.alert_fire + dto.alert_motion + dto.alert_user}건|">
+                                                                    -건
+                                                                </td>
                                                             </tr>
                                                             <tr>
                                                                 <td class="fw-bold" style="color: #e83e8c"
@@ -252,16 +254,18 @@
                                                             <tbody>
                                                             <tr th:each="alert, i : ${dto.alertList}"
                                                                 th:if="${i.index < 3}">
-                                                                    <td th:text="${alert.user.name}"
-                                                                        th:onclick="|location.href='@{/users/{id}(id=${alert.user.id})}'|">
-                                                                    </td>
+                                                                <td th:text="${alert.user.name}"
+                                                                    th:onclick="|location.href='@{/users/{id}(id=${alert.user.id})}'|">
+                                                                </td>
                                                                 <td th:text="${alert.getAlertType().toString() == 'USER' ? '사용자 호출' : '화재 감지'}">
                                                                     사용자 호출
                                                                 </td>
                                                                 <td th:text="${#temporals.format(alert.alertTime, 'yy/MM/dd HH:mm:ss')}"></td>
                                                                 <td class="text-center">
-                                                                    <form th:action="@{/alerts/{id}(id=${alert.id})}" method="post">
-                                                                        <input type="hidden" name="alertId" th:value="${alert.id}">
+                                                                    <form th:action="@{/alerts/{id}(id=${alert.id})}"
+                                                                          method="post">
+                                                                        <input type="hidden" name="alertId"
+                                                                               th:value="${alert.id}">
                                                                         <button type="submit"
                                                                                 onclick="if(!confirm('긴급 호출을 수신하셨습니까??')){return false;}"
                                                                                 style="width: max-content"
