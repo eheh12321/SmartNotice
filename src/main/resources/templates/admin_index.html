@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
-<head th:replace="~{fragment/header :: fragment-header ('마을 관리자 메인 페이지')}"></head>
+<head th:insert="~{fragment/header :: fragment-header ('마을 관리자 메인 페이지')}"></head>
 <body>
 <!-- Layout wrapper -->
 <div class="layout-wrapper layout-content-navbar">
@@ -33,43 +33,55 @@
             <div class="content-wrapper">
                 <!-- Content -->
                 <div class="container-xxl flex-grow-1 container-p-y">
-                    <div class="row mb-5">
-                        <div class="col-md-6 col-lg-4 mb-3">
-                            <a href="/">
-                                <div class="card h-100" style="background: #f2cdc8;">
-                                    <h4 class="card-title fw-bold p-3 m-0" style="background: #ffffff">마을 관리</h4>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-md-6 col-lg-4 mb-3">
-                            <div class="card mb-2" style="height: fit-content">
-                                <a href="/announces/normal">
-                                    <img class="card-img-top p-1" src="/resources/img/announcement.png"
-                                         style="object-fit: contain; height: 20vw; background: #d3ffce;">
-                                    <h4 class="card-title fw-bold p-3 m-0">마을 방송 목록</h4>
-                                </a>
-                            </div>
-                            <div class="card mb-2" style="height: fit-content">
-                                <a href="/announces/disaster">
-                                    <img class="card-img-top p-1" src="/resources/img/disaster.png"
-                                         style="object-fit: contain; height: 20vw; background: #e6e6fa;">
-                                    <h4 class="card-title fw-bold p-3 m-0">재난 방송 목록</h4>
+                    <div class="row mt-4 text-center">
+                        <div class="col-md-6 col-lg-4 mb-3 d-flex">
+                            <div class="card mb-3 w-100" style="background: #e6e6fa; justify-content: center;">
+                                <h4 class="card-title fw-bold p-3 m-0" style="background: #ffffff; position: absolute; top: 0; width: 100%">마을 관리</h4>
+                                <a href="/">
+                                    <div class="card-header">
+                                        <img class="card-img-top p-4" src="/resources/img/dashboard.png"
+                                             style="object-fit: contain; height:15vw; opacity: 0.8;">
+                                    </div>
                                 </a>
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-4 mb-3">
-                            <div class="card mb-2" style="height: fit-content">
+                            <div class="card mb-3" style="height: fit-content">
                                 <a href="/announces/voice">
-                                    <img class="card-img-top p-1" src="/resources/img/mic.png"
-                                         style="object-fit: contain; height: 20vw; background: #e6e6fa;">
+                                    <div class="card-header" style="background: #e6e6fa; height: 15vw">
+                                        <img class="card-img-top p-4" src="/resources/img/mic.png"
+                                             style="object-fit: contain; height: 12vw; opacity: 0.8;">
+                                    </div>
                                     <h4 class="card-title fw-bold p-3 m-0">음성 방송하기</h4>
                                 </a>
                             </div>
-                            <div class="card mb-2" style="height: fit-content">
+                            <div class="card mb-3" style="height: fit-content">
                                 <a href="/announces/text">
-                                    <img class="card-img-top p-1" src="/resources/img/comment.png"
-                                         style="object-fit: contain; height: 20vw; background: #e6e6fa;">
+                                    <div class="card-header" style="background: #e6e6fa; height: 15vw">
+                                        <img class="card-img-top p-4" src="/resources/img/comment.png"
+                                             style="object-fit: contain; height: 12vw;opacity: 0.8;">
+                                    </div>
                                     <h4 class="card-title fw-bold p-3 m-0">문자 방송하기</h4>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card mb-3" style="height: fit-content">
+                                <a href="/announces/normal">
+                                    <div class="card-header" style="background: #e6e6fa; height: 15vw">
+                                        <img class="card-img-top p-4" src="/resources/img/announcement.png"
+                                             style="object-fit: contain; height: 12vw; background: #e6e6fa; opacity: 0.8;">
+                                    </div>
+                                    <h4 class="card-title fw-bold p-3 m-0">마을 방송 목록</h4>
+                                </a>
+                            </div>
+                            <div class="card mb-3" style="height: fit-content">
+                                <a href="/announces/disaster">
+                                    <div class="card-header" style="background: #e6e6fa; height: 15vw">
+                                        <img class="card-img-top p-4" src="/resources/img/disaster.png"
+                                             style="object-fit: contain; height: 12vw;  opacity: 0.8;">
+                                    </div>
+                                    <h4 class="card-title fw-bold p-3 m-0">재난 방송 목록</h4>
                                 </a>
                             </div>
                         </div>
