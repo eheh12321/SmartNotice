@@ -16,6 +16,8 @@ import sejong.smartnotice.service.UserService;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -50,10 +52,17 @@ public class DeviceController {
         if(device == null) {
             return ResponseEntity.ok().body(dtoList);
         }
-        List<Sensor> sensorList = em.createQuery("select s from Sensor s where s.device=:device and mod(s.id, 1) = 0", Sensor.class)
+        List<Sensor> sensorList = em.createQuery("select s from Sensor s where s.device=:device and mod(s.id, 1) = 0 order by s.id desc", Sensor.class)
                 .setParameter("device", device)
                 .setMaxResults(360)
                 .getResultList();
+
+        sensorList.sort(new Comparator<Sensor>() {
+            @Override
+            public int compare(Sensor o1, Sensor o2) {
+                return o1.getMeasureTime().compareTo(o2.getMeasureTime());
+            }
+        });
 
         sensorList.stream().forEach(sensor -> {
             SensorDataDTO dto = new SensorDataDTO(sensor.getId(), sensor.getMeasureTime(), sensor.getTemp(), sensor.getCo2(), sensor.getOxy(), sensor.getLumnc(), sensor.getAction());
