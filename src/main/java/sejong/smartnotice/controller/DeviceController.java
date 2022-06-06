@@ -1,6 +1,7 @@
 package sejong.smartnotice.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -67,7 +68,9 @@ public class DeviceController {
     public ResponseEntity<SensorDataDTO> updateUserDeviceSensorData(@PathVariable Long id) {
         User user = userService.findById(id);
         Device device = user.getDevice();
-
+        if(device == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
         Sensor sensor = em.createQuery("select s from Sensor s where s.device=:device order by s.id desc", Sensor.class)
                 .setParameter("device", device).setMaxResults(1).getSingleResult();
 
