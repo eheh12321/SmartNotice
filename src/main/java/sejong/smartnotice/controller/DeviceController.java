@@ -56,7 +56,7 @@ public class DeviceController {
                 .getResultList();
 
         sensorList.stream().forEach(sensor -> {
-            SensorDataDTO dto = new SensorDataDTO(sensor.getId(), sensor.getMeasureTime(), sensor.getTemp(), sensor.getCo2(), sensor.getOxy(), sensor.getLumnc(), sensor.getCo2());
+            SensorDataDTO dto = new SensorDataDTO(sensor.getId(), sensor.getMeasureTime(), sensor.getTemp(), sensor.getCo2(), sensor.getOxy(), sensor.getLumnc(), sensor.getAction());
             dtoList.add(dto);
         });
 
@@ -74,7 +74,7 @@ public class DeviceController {
         Sensor sensor = em.createQuery("select s from Sensor s where s.device=:device order by s.id desc", Sensor.class)
                 .setParameter("device", device).setMaxResults(1).getSingleResult();
 
-        SensorDataDTO dto = new SensorDataDTO(sensor.getId(), sensor.getMeasureTime(), sensor.getTemp(), sensor.getCo2(), sensor.getOxy(), sensor.getLumnc(), sensor.getCo2());
+        SensorDataDTO dto = new SensorDataDTO(sensor.getId(), sensor.getMeasureTime(), sensor.getTemp(), sensor.getCo2(), sensor.getOxy(), sensor.getLumnc(), sensor.getAction());
         return ResponseEntity.ok().body(dto);
     }
 }

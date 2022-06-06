@@ -15,5 +15,5 @@ public class SensorDataDTO {
     private double co2;
     private double oxy;
     private double lumnc;
-    private double action;
+    private double action_;
 }

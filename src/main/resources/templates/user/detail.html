@@ -374,7 +374,7 @@
                     co2List.push(result[i].co2);
                     lumncList.push(result[i].lumnc);
                     oxygenList.push(result[i].oxy);
-                    actionList.push(result[i].action);
+                    actionList.push(result[i].action_);
                 }
                 const ctx = document.getElementById('myChart').getContext('2d');
                 myChart = new Chart(ctx, {
@@ -520,6 +520,7 @@
                             y: {
                                 display: true,
                                 beginAtZero: true,
+                                suggestedMax: 100,
                                 title: {
                                     display: true,
                                     text: '조도 센서'
@@ -533,10 +534,13 @@
                                     display: true,
                                     text: '동작 센서'
                                 },
+                                grid: {
+                                    display: false
+                                },
                                 position: 'right',
-                                suggestedMax: 0.5,
+                                suggestedMax: 500,
                                 ticks: {
-                                    stepSize: 0.5
+                                    stepSize: 100
                                 }
                             }
                         },
