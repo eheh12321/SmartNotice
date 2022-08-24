@@ -34,11 +34,14 @@
             <div class="content-wrapper">
                 <!-- Content -->
                 <div class="container-xxl flex-grow-1 container-p-y">
-                    <div class="row mb-5 h-100">
+                    <div class="row mb-5 mt-4 h-100 text-center">
                         <div class="col-md-6 col-lg-4 mb-3">
                             <div class="card" style="height:fit-content">
                                 <a href="u/announces/normal">
-                                    <img class="card-img-top p-1" src="/resources/img/announcement.png" style="object-fit: contain; height: 30vw; background: #d3ffce;">
+                                    <div class="card-header" style="background: #e6e6fa; height: 25vw">
+                                        <img class="card-img-top p-1" src="/resources/img/announcement.png"
+                                             style="object-fit: contain; height: 12vw; opacity: 0.8; position: relative; top: 15%;">
+                                    </div>
                                     <h4 class="card-title fw-bold p-3 m-0">마을 방송 목록</h4>
                                 </a>
                             </div>
@@ -46,7 +49,10 @@
                         <div class="col-md-6 col-lg-4 mb-3">
                             <div class="card" style="height:fit-content">
                                 <a href="u/announces/emergency">
-                                    <img class="card-img-top p-1" src="/resources/img/disaster.png" style="object-fit: contain; height: 30vw; background: #e6e6fa;">
+                                    <div class="card-header" style="background: #e6e6fa; height: 25vw">
+                                        <img class="card-img-top p-1" src="/resources/img/disaster.png"
+                                             style="object-fit: contain; height: 12vw; opacity: 0.8; position: relative; top: 15%;">
+                                    </div>
                                     <h4 class="card-title fw-bold p-3 m-0">재난 방송 목록</h4>
                                 </a>
                             </div>
@@ -54,7 +60,10 @@
                         <div class="col-md-6 col-lg-4 mb-3">
                             <div class="card" style="height:fit-content">
                                 <a href="#" onclick="makeAlert()">
-                                    <img class="card-img-top p-1" src="/resources/img/alert.png" style="object-fit: contain; height: 30vw; background: #ffe4e1;">
+                                    <div class="card-header" style="background: #ff6f69; height: 25vw">
+                                        <img class="card-img-top p-1" src="/resources/img/alert.png"
+                                             style="object-fit: contain; height: 12vw; opacity: 0.8; position: relative; top: 15%;">
+                                    </div>
                                     <h4 class="card-title fw-bold p-3 m-0">긴급 알림</h4>
                                 </a>
                             </div>
@@ -74,16 +83,16 @@
 </div>
 <script type="text/javascript">
     function makeAlert() {
-        if(confirm("정말 긴급호출 하시겠습니까??")) {
+        if (confirm("정말 긴급호출 하시겠습니까??")) {
             $.ajax({
-                type:"POST",
-                url:"/u",
-                dataType:"text",
-                success: function(result){
+                type: "POST",
+                url: "/u",
+                dataType: "text",
+                success: function (result) {
                     console.log(result);
                     alert(result);
                 },
-                error: function(xhr) {
+                error: function (xhr) {
                     alert("긴급호출에 실패했습니다");
                 }
             });
