@@ -41,6 +41,11 @@ public class HomeController {
     private final AnnounceService announceService;
     private final EntityManager em;
 
+    @GetMapping("/lab")
+    public String labPage() {
+        return "lab";
+    }
+
     @GetMapping
     public String indexPage(Authentication auth, Model model) {
 

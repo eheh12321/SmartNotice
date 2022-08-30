@@ -73,19 +73,19 @@
         <div class="menu-inner-shadow"></div>
 
         <ul class="menu-inner py-1">
-            <!-- 로그인 정보 -->
-            <li class="menu-item mb-3">
-                <a class="menu-link">
-                    <div class="fw-bold fs-4">
-                        <p>
-                            <span sec:authentication="name"></span>님
-                            <br>
-                            <span sec:authorize="hasRole('SUPER')">(최고 관리자)</span>
-                            <span sec:authorize="!hasRole('SUPER')">(마을 관리자)</span>
-                        </p>
-                    </div>
-                </a>
-            </li>
+<!--            &lt;!&ndash; 로그인 정보 &ndash;&gt;-->
+<!--            <li class="menu-item mb-3">-->
+<!--                <a class="menu-link">-->
+<!--                    <div class="fw-bold fs-4">-->
+<!--                        <p>-->
+<!--                            <span sec:authentication="name"></span>님-->
+<!--                            <br>-->
+<!--                            <span sec:authorize="hasRole('SUPER')">(최고 관리자)</span>-->
+<!--                            <span sec:authorize="!hasRole('SUPER')">(마을 관리자)</span>-->
+<!--                        </p>-->
+<!--                    </div>-->
+<!--                </a>-->
+<!--            </li>-->
 
             <!-- 홈(마을 관리자만 보임) -->
             <li id="sidebar_home" class="menu-item">
@@ -197,6 +197,13 @@
                 <a href="/edit" class="menu-link">
                     <i class="menu-icon tf-icons bx bxs-user-detail"></i>
                     <div data-i18n="Basic">사용자 정보</div>
+                </a>
+            </li>
+
+            <li id="sidebar_lab" class="menu-item" sec:authorize="hasRole('SUPER')">
+                <a href="/lab" class="menu-link">
+                    <i class='menu-icon bx bxs-magic-wand'></i>
+                    <div data-i18n="Basic">실험실</div>
                 </a>
             </li>
 
