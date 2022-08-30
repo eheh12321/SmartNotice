@@ -16,8 +16,11 @@
 - Google Cloud TTS (기간 만료로 현재 사용불가) :x:
 - Twilio (인터넷 전화 API)
 - MQTT
-### CI/CD 적용 예정
-- Travis CI 체험판 만료되기 전에 하루빨리 연결해볼것!!!! :clock130:
+### CI/CD 
+- Travis CI 연동 완료
+- AWS S3, Codedeploy 연동 완료
+- 무중단 배포 해볼것! :clock130: :clock130: :clock130:
+
 
 ### 기타
 - 도메인 연결 o (현재 안됨..) :x:
