@@ -19,7 +19,8 @@ script: "./gradlew clean build"
 # Travis CI에서 Build한 Jar 파일을 S3에 올리는 과정
 before_deploy:
   - mkdir -p before-deploy # 디렉토리 생성 (Travis는 디렉토리 단위로만 업로드 가능)
-  - cp build/libs/*.jar before-deploy/ # 배포에 필요한 파일만 꼽아서 복사 (스크립트 + executable jar)
+  - cp build/libs/*.jar before-deploy/ # 배포에 필요한 파일만 꼽아서 복사 (스크립트 + appspec.yml + executable jar)
+  - cp appspec.yml before-deploy/
   - cd before-deploy && zip -r smartnotice * # 위치 이동 후 내부 파일 전체 압축
   - cd ../ && mkdir -p deploy # 상위 디렉토리로 이동 후 deploy 디렉토리 생성
   - mv before-deploy/smartnotice.zip deploy/smartnotice.zip # 파일 위치 옮기기
@@ -33,6 +34,19 @@ deploy:
     skip_cleanup: true
     acl: private
     local_dir: deploy # 해당 위치의 파일들만 s3으로 전송한다
+    wait-until-deployed: true
+    on:
+      branch: main # main branch 허용
+
+  - provider: codedeploy
+    access_key_id: $AWS_ACCESS_KEY # Travis 웹에서 설정한 환경변수 사용
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: my-springboot-build
+    key: smartnotice.zip
+    bundle_type: zip
+    application: smartnotice
+    deployment_group: smartnotice-group
+    region: ap-northeast-2
     wait-until-deployed: true
     on:
       branch: main # main branch 허용

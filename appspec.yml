@@ -1,0 +1,7 @@
+# CodeDeploy Version
+version: 0.0
+os: linux
+files:
+  - source: / # CodeDeploy에서 전달해준 파일 중 destination으로 이동시킬 대상 지정 (/ = 루트, 전체 파일)
+    destination: /home/ec2-user/app/smartnotice_build # source에서 지정된 파일을 받을 위치. 이후 Jar은 destination에서 옮겨진 파일들로 진행.
+    overwrite: yes
