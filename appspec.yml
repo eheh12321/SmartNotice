@@ -13,7 +13,17 @@ permissions:
     owner: ec2-user
     group: ec2-user
 
-ApplicationStart: # deploy.sh 파일을 ec2-user 권한으로 실행해라 (중단 배포)
-  - location: deploy.sh
-    timeout: 60
-    runas: ec2-user
+# CodeDeploy 배포 단계에서 실행할 명령어 지정
+hooks:
+  AfterInstall:
+    - location: stop.sh # nginx와 연결되어있지 않는 스프링부트 종료
+      timeout: 60
+      runas: ec2-user
+  ApplicationStart:
+    - location: start.sh # nginx와 연결되어있지 않은 포트로 새 버전의 스프링부트 실행
+      timeout: 60
+      runas: ec2-user
+  ValidateService:
+    - location: health.sh # 새 스프링 부트가 정상적으로 실행됬는지 확인
+      timeout: 60
+      runas: ec2-user

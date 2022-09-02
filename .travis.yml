@@ -7,7 +7,7 @@ branches:
   only:
     - main # main branch에 push 될 때만 CI를 수행해라
 
-# CI를 통해 빌드할때마다 gradle || maven 을 통한 의존 라이브러리를 전부 빌드하는 것은 꽤 비효율적이다
+# CI를 통해 빌드할때마다 gradle || maven 을 통한 의존 라이브러리를 전부 빌드하는 것은 비효율적이다
 # 그래서 Travis가 내부적으로 캐싱을 해두도록 설정할 수 있다.
 cache:
   directories:

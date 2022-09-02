@@ -2,6 +2,7 @@ package sejong.smartnotice.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -40,6 +41,20 @@ public class HomeController {
     private final EmergencyAlertService emService;
     private final AnnounceService announceService;
     private final EntityManager em;
+    private final Environment env;
+
+    @GetMapping("/profile")
+    @ResponseBody
+    public String profile() {
+        List<String> profiles = Arrays.asList(env.getActiveProfiles()); // 현재 실행중인 ActiveProfile 조회 (real, oauth, real-db)
+        List<String> realProfiles = Arrays.asList("real", "real1", "real2");
+        String defaultProfile = profiles.isEmpty() ? "default" : profiles.get(0);
+
+        return profiles.stream()
+                .filter(realProfiles::contains)
+                .findAny()
+                .orElse(defaultProfile);
+    }
 
     @GetMapping("/lab")
     public String labPage() {
