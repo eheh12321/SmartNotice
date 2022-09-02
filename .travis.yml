@@ -7,11 +7,12 @@ branches:
   only:
     - main # main branch에 push 될 때만 CI를 수행해라
 
-# Travis CI Server Home
+# CI를 통해 빌드할때마다 gradle || maven 을 통한 의존 라이브러리를 전부 빌드하는 것은 꽤 비효율적이다
+# 그래서 Travis가 내부적으로 캐싱을 해두도록 설정할 수 있다.
 cache:
   directories:
-    - '$HOME/.m2/repository'
-    - '$HOME/.gradle'
+    - '$HOME/.m2/repository' # maven 사용하는 경우
+    - '$HOME/.gradle' # gradle 사용하는 경우
 
 # main branch에 push 되었을 때 수행할 명령어
 script: "./gradlew clean build"

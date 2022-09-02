@@ -3,6 +3,10 @@
 REPOSITORY=/home/ec2-user/app/smartnotice_build
 PROJECT_NAME=smartnotice
 
+echo "> Build 파일 복사"
+
+cp $REPOSITORY/zip/*.jar $REPOSITORY/
+
 echo "> 현재 구동중인 애플리케이션 pid 확인"
 
 CURRENT_PID=$(pgrep -fl springwebservice | grep jar | awk '{pring $1}')
