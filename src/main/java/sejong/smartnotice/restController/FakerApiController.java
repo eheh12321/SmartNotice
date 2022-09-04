@@ -7,23 +7,30 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import sejong.smartnotice.domain.Region;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.dto.TownRegisterDTO;
 import sejong.smartnotice.service.TownService;
 
 import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Locale;
+import javax.persistence.EntityManager;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 
 @Slf4j
 @RestController
 @RequestMapping("/api/faker")
 @RequiredArgsConstructor
 public class FakerApiController {
-    
+
+    private final EntityManager em;
     private final TownService townService;
     private static final Faker FAKER = new Faker(Locale.KOREA);
     
@@ -33,18 +40,73 @@ public class FakerApiController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("권한이 없습니다");
         }
 
-        String cityName = FAKER.address().cityName();
-        List<Town> sameTownList = townService.findByName(cityName);
-        if(sameTownList.size() != 0) { // 이미 마을이 존재하는 경우
-            cityName = cityName + sameTownList.size(); // 숫자 붙이기
+        long len = em.createQuery("select count(r) from Region r", Long.class)
+                .getSingleResult();
+
+        long newRegionNum = (long) (Math.random() * len);
+        Region newRegion = em.createQuery("select r from Region r where r.regionCode=:code", Region.class)
+                .setParameter("code", newRegionNum)
+                .getSingleResult();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(newRegion.getMainRegion());
+        sb.append(" ");
+        sb.append(newRegion.getSubRegion());
+
+        String newCityName = sb.toString();
+        List<Town> prevTownList = townService.findByName(newCityName);
+        if(prevTownList.size() != 0) {
+            sb.append(prevTownList.size());
         }
-        cityName = cityName + "마을";
+        sb.append(" 마을");
+        newCityName = sb.toString();
 
-        TownRegisterDTO registerDTO
-                = new TownRegisterDTO(cityName, 1L);
-
+        TownRegisterDTO registerDTO = new TownRegisterDTO(newCityName, newRegion.getRegionCode());
         townService.register(registerDTO);
-        return ResponseEntity.ok("[" + cityName + "]을 생성했습니다");
+
+        return ResponseEntity.ok("[" + newCityName + "]을 생성했습니다");
+    }
+
+    /**
+     * 지역 목록을 초기화 한다
+     * - 마을이 하나라도 등록이 되어있으면 외래키 제약조건 때문에 초기화 불가
+     * - region 테이블을 처음에 싹 비우고 파일을 읽어서 다시 싹 채우는 방식
+     * @return
+     */
+    @PostMapping("/region")
+    @Transactional
+    public ResponseEntity<String> resetRegionList(Authentication auth) {
+        if(auth == null || !isSuperAuthority(auth)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("권한이 없습니다");
+        }
+
+        List<Town> townList = townService.findAll();
+        if(townList.size() != 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("마을이 존재하고 있어 초기화가 불가능합니다");
+        }
+
+        em.createQuery("delete from Region r where r.regionCode > 0").executeUpdate();
+
+        BufferedReader br = null;
+        try {
+            br = Files.newBufferedReader(Paths.get("./custom/initialRegionList.csv"));
+            String line = br.readLine(); // head 떼기
+
+            while((line = br.readLine()) != null) {
+                String[] splits = line.split(",");
+                em.persist(new Region(Long.parseLong(splits[0]), splits[1], splits[2]));
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                br.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        
+        return ResponseEntity.ok("초기화에 성공했습니다");
     }
 
     private boolean isSuperAuthority(Authentication auth) {

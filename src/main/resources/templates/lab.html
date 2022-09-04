@@ -29,12 +29,15 @@
                                     <div class="card-body">
                                         <div class="row-cols-auto" style="display: flex; justify-content: space-evenly;">
                                             <button type="button"
+                                                    id="resetRegionListBtn"
+                                                    class="btn btn btn-danger">지역 목록 초기화</button>
+                                            <button type="button"
                                                     id="createTownBtn"
-                                                    class="btn btn-warning">마을 추가</button>
-                                            <button type="button" class="btn btn-success">최고 관리자 추가</button>
-                                            <button type="button" class="btn btn-success">마을 관리자 추가</button>
-                                            <button type="button" class="btn btn-success">마을 주민 추가</button>
-                                            <button type="button" class="btn btn-success">보호자 추가</button>
+                                                    class="btn btn btn-primary">마을 추가</button>
+                                            <button type="button" class="btn btn-close-white">최고 관리자 추가</button>
+                                            <button type="button" class="btn btn-close-white">마을 관리자 추가</button>
+                                            <button type="button" class="btn btn-close-white">마을 주민 추가</button>
+                                            <button type="button" class="btn btn-close-white">보호자 추가</button>
                                         </div>
                                     </div>
                                 </div>
@@ -63,6 +66,22 @@
                 $.ajax({
                     type: "POST",
                     url: "/api/faker/town",
+                    success: function (result) {
+                        alert(result);
+                    },
+                    error: function (xhr) {
+                        alert(xhr.responseText);
+                    }
+                });
+            } else {
+                return false;
+            }
+        });
+        $("#resetRegionListBtn").on("click", function () {
+            if(confirm("지역 목록을 초기화 하시겠습니까? (마을이 존재하면 외래키 제약조건에 의해 초기화가 불가능합니다)")) {
+                $.ajax({
+                    type: "POST",
+                    url: "/api/faker/region",
                     success: function (result) {
                         alert(result);
                     },
