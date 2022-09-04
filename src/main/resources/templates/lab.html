@@ -27,7 +27,15 @@
                                         <hr>
                                     </div>
                                     <div class="card-body">
-                                        <button type="button" class="btn btn-success">테스트 마을 추가</button>
+                                        <div class="row-cols-auto" style="display: flex; justify-content: space-evenly;">
+                                            <button type="button"
+                                                    id="createTownBtn"
+                                                    class="btn btn-warning">마을 추가</button>
+                                            <button type="button" class="btn btn-success">최고 관리자 추가</button>
+                                            <button type="button" class="btn btn-success">마을 관리자 추가</button>
+                                            <button type="button" class="btn btn-success">마을 주민 추가</button>
+                                            <button type="button" class="btn btn-success">보호자 추가</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -48,6 +56,26 @@
     <div class="layout-overlay layout-menu-toggle"></div>
 </div>
 <!-- / Layout wrapper -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#createTownBtn").on("click", function () {
+            if(confirm("마을을 추가하시겠습니까?")) {
+                $.ajax({
+                    type: "POST",
+                    url: "/api/faker/town",
+                    success: function (result) {
+                        alert(result);
+                    },
+                    error: function (xhr) {
+                        alert(xhr.responseText);
+                    }
+                });
+            } else {
+                return false;
+            }
+        });
+    });
+</script>
 <div th:replace="~{fragment/header :: fragment-bottom-script}"></div>
 </body>
 </html>

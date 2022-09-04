@@ -128,7 +128,7 @@ public class MultipleSecurityConfig {
         protected void configure(HttpSecurity http) throws Exception {
             http.csrf().disable().requestMatcher(new AntPathRequestMatcher("/**"))
                     .authorizeRequests()
-                    .antMatchers("/resources/**", "/test*", "/alerts/api", "/profile").permitAll()
+                    .antMatchers("/resources/**", "/test*", "/alerts/api", "/profile", "/api/**").permitAll()
                     .antMatchers("/login", "/register/**").permitAll()
                     .antMatchers("/emergency/**", "/announces/**", "/storage/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER")
                     .anyRequest().hasRole("ADMIN");
