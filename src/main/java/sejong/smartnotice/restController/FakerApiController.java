@@ -3,6 +3,7 @@ package sejong.smartnotice.restController;
 import com.github.javafaker.Faker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -20,6 +21,7 @@ import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -94,7 +96,8 @@ public class FakerApiController {
 
         BufferedReader br = null;
         try {
-            br = Files.newBufferedReader(Paths.get("/custom/regionList.csv"));
+            br = new BufferedReader(new InputStreamReader(
+                    new ClassPathResource("/static/custom/regionList.csv").getInputStream()));
             String line = br.readLine(); // head 떼기
 
             while((line = br.readLine()) != null) {
