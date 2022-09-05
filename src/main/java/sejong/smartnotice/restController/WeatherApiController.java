@@ -52,7 +52,7 @@ public class WeatherApiController {
         String hourStr = hour + "00"; // 정시 기준
         String nx = Integer.toString(region.getNx());
         String ny = Integer.toString(region.getNy());
-        String currentChangeTime = now.format(DateTimeFormatter.ofPattern("yy.MM.dd HH"));
+        String currentChangeTime = now.format(DateTimeFormatter.ofPattern("yy.MM.dd ")) + hour;
 
         // 기준 시각이 이미 존재하고 있다면 API 요청 없이 기존 자료 그대로 넘김
         Weather prevWeather = region.getWeather();

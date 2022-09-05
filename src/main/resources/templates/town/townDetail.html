@@ -511,6 +511,29 @@
         var townId = [[${dto.town.id}]];
         var regionId = [[${dto.town.region.id}]];
 
+        $("#weatherSyncIcon").addClass("bx-spin");
+
+        // 페이지 로딩 완료 시 먼저 1회 수행
+        $.ajax({
+            type: "GET",
+            url: "/api/weather?regionId=" + regionId,
+            dataType: "json",
+            success: function (result) {
+                var weather = result.weather;
+                var lastUpdateTime = weather.lastUpdateTime;
+                var temp = weather.temp;
+                var humid = weather.humid;
+                var rainAmount = weather.rainAmount;
+                $("#weatherInfoText").text(" 온도: " + temp + "º, 습도: " + humid
+                    + "%, 강수량: " + rainAmount + "mm (기준 시점: " + lastUpdateTime + "시)");
+                $("#weatherSyncIcon").removeClass("bx-spin");
+            },
+            error: function (xhr) {
+                alert(xhr.responseText);
+                $("#weatherSyncIcon").removeClass("bx-spin");
+            }
+        });
+
         $("#townDeleteBtn").on("click", function () {
             if (confirm("마을을 삭제하시겠습니까? (주의:해당 마을에 주민이 존재하는 경우 삭제가 불가능합니다.)")) {
                 if ([[${dto.userList.size()}]] != 0) {
