@@ -307,7 +307,7 @@
                                         <div>지역 선택</div>
                                         <select name="regionCode" class="form-select">
                                             <option th:each="region : ${regionList}"
-                                                    th:value="${region.regionCode}"
+                                                    th:value="${region.getId}"
                                                     th:text="${region.toString()}">지역명
                                             </option>
                                         </select>

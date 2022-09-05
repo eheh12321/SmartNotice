@@ -43,15 +43,20 @@ public class FakerApiController {
         long len = em.createQuery("select count(r) from Region r", Long.class)
                 .getSingleResult();
 
-        long newRegionNum = (long) (Math.random() * len);
-        Region newRegion = em.createQuery("select r from Region r where r.regionCode=:code", Region.class)
+        long newRegionNum;
+        do {
+            newRegionNum = (long) (Math.random() * len);
+        } while (newRegionNum == 0);
+        log.info("새 마을 지역 번호: {}", newRegionNum);
+
+        Region newRegion = em.createQuery("select r from Region r where r.id=:code", Region.class)
                 .setParameter("code", newRegionNum)
                 .getSingleResult();
 
         StringBuilder sb = new StringBuilder();
-        sb.append(newRegion.getMainRegion());
+        sb.append(newRegion.getParentRegion());
         sb.append(" ");
-        sb.append(newRegion.getSubRegion());
+        sb.append(newRegion.getChildRegion());
 
         String newCityName = sb.toString();
         List<Town> prevTownList = townService.findByName(newCityName);
@@ -61,7 +66,7 @@ public class FakerApiController {
         sb.append(" 마을");
         newCityName = sb.toString();
 
-        TownRegisterDTO registerDTO = new TownRegisterDTO(newCityName, newRegion.getRegionCode());
+        TownRegisterDTO registerDTO = new TownRegisterDTO(newCityName, newRegion.getId());
         townService.register(registerDTO);
 
         return ResponseEntity.ok("[" + newCityName + "]을 생성했습니다");
@@ -85,16 +90,17 @@ public class FakerApiController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("마을이 존재하고 있어 초기화가 불가능합니다");
         }
 
-        em.createQuery("delete from Region r where r.regionCode > 0").executeUpdate();
+        em.createQuery("delete from Region r where r.id > 0").executeUpdate();
 
         BufferedReader br = null;
         try {
-            br = Files.newBufferedReader(Paths.get("./custom/initialRegionList.csv"));
+            br = Files.newBufferedReader(Paths.get("/custom/regionList.csv"));
             String line = br.readLine(); // head 떼기
 
             while((line = br.readLine()) != null) {
                 String[] splits = line.split(",");
-                em.persist(new Region(Long.parseLong(splits[0]), splits[1], splits[2]));
+                em.persist(new Region(Long.parseLong(splits[0]), splits[1], splits[2],
+                        Integer.parseInt(splits[3]), Integer.parseInt(splits[4])));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

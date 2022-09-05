@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'sejong'
-version = '1.0.1-SNAPSHOT-' + new Date().format("yyyyMMddHHmmss")
+version = '1.0.2-SNAPSHOT-' + new Date().format("yyyyMMddHHmmss")
 sourceCompatibility = '11'
 
 configurations {
@@ -50,6 +50,9 @@ dependencies {
 
 	// DevTools
 	developmentOnly "org.springframework.boot:spring-boot-devtools"
+
+	// JSON Parser
+	implementation 'org.json:json:20220320'
 }
 
 tasks.named('test') {

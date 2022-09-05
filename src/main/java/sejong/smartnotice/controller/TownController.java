@@ -10,7 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.*;
 import sejong.smartnotice.domain.announce.Announce;
-import sejong.smartnotice.domain.device.Device;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.AdminType;
 import sejong.smartnotice.domain.member.User;
@@ -130,7 +129,7 @@ public class TownController {
 
         model.addAttribute("dto", dto);
         model.addAttribute("regionList", regionList);
-        model.addAttribute("town", new TownModifyDTO(town.getId(), town.getName(), town.getRegion().getRegionCode()));
+        model.addAttribute("town", new TownModifyDTO(town.getId(), town.getName(), town.getRegion().getId()));
         return "town/townDetail";
     }
 

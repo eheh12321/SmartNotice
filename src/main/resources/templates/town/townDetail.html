@@ -18,6 +18,15 @@
             <div class="content-wrapper">
                 <!-- Content -->
                 <div class="container-xxl flex-grow-1 container-p-y">
+
+                    <div class="alert alert-primary" role="alert">
+                        <span th:text="|${dto.town.name} 현재 기상 정보 - |">xx마을 현재 기상 정보</span>
+                        <span id="weatherInfoText">-</span>
+                        <button type="button" class="btn bg-transparent" id="reloadWeatherInfoBtn" style="position: absolute; right: 0px; top: 0px;">
+                            <i class='bx bx-sync bx-rotate-90 bx-md' id="weatherSyncIcon"></i>
+                        </button>
+                    </div>
+
                     <!-- 마을 Card -->
                     <div class="row">
                         <div class="col mb-4">
@@ -206,7 +215,7 @@
                                                                                     class="form-select"
                                                                                     th:field="${town.regionCode}">
                                                                                 <option th:each="region : ${regionList}"
-                                                                                        th:value="${region.regionCode}"
+                                                                                        th:value="${region.getId}"
                                                                                         th:text="${region.toString()}">
                                                                                     지역명
                                                                                 </option>
@@ -500,6 +509,7 @@
         $("#alertTable").DataTable();
 
         var townId = [[${dto.town.id}]];
+        var regionId = [[${dto.town.region.id}]];
 
         $("#townDeleteBtn").on("click", function () {
             if (confirm("마을을 삭제하시겠습니까? (주의:해당 마을에 주민이 존재하는 경우 삭제가 불가능합니다.)")) {
@@ -600,6 +610,31 @@
             $("#userDiv").css('display', 'none');
             $("#announceDiv").css('display', 'none');
             $("#alertDiv").css('display', '');
+        });
+
+        $("#reloadWeatherInfoBtn").on("click", function () {
+
+            $("#weatherSyncIcon").addClass("bx-spin");
+
+            $.ajax({
+                type: "GET",
+                url: "/api/weather?regionId=" + regionId,
+                dataType: "json",
+                success: function (result) {
+                    var weather = result.weather;
+                    var lastUpdateTime = weather.lastUpdateTime;
+                    var temp = weather.temp;
+                    var humid = weather.humid;
+                    var rainAmount = weather.rainAmount;
+                    $("#weatherInfoText").text(" 온도: " + temp + "º, 습도: " + humid
+                        + "%, 강수량: " + rainAmount + "mm (기준 시점: " + lastUpdateTime + "시)");
+                    $("#weatherSyncIcon").removeClass("bx-spin");
+                },
+                error: function (xhr) {
+                    alert(xhr.responseText);
+                    $("#weatherSyncIcon").removeClass("bx-spin");
+                }
+            });
         });
     });
 </script>
