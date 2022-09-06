@@ -3,7 +3,9 @@ package sejong.smartnotice.restController;
 import com.github.javafaker.Faker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -22,7 +24,8 @@ import javax.persistence.EntityManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
+import java.net.URI;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -35,6 +38,9 @@ public class FakerApiController {
     private final EntityManager em;
     private final TownService townService;
     private static final Faker FAKER = new Faker(Locale.KOREA);
+
+    @Value("${resources.location}")
+    private String resourceLocation;
     
     @PostMapping("/town")
     public ResponseEntity<String> createFakeTown(@Nullable Authentication auth) {
@@ -96,8 +102,12 @@ public class FakerApiController {
 
         BufferedReader br = null;
         try {
+            String fileLocation = resourceLocation + "/init/regionList.csv"; // 설정파일에 설정된 경로 뒤에 붙인다
+            Path path = Paths.get(fileLocation).toAbsolutePath(); // 파일의 절대 경로
+            URI uri = path.toUri(); // path를 uri로 변경
+
             br = new BufferedReader(new InputStreamReader(
-                    new ClassPathResource("/static/custom/regionList.csv").getInputStream()));
+                    new UrlResource(uri).getInputStream()));
             String line = br.readLine(); // head 떼기
 
             while((line = br.readLine()) != null) {

@@ -1,5 +1,6 @@
 package sejong.smartnotice.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.CacheControl;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -12,12 +13,16 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    private final Path FILE_ROOT = Paths.get("./storage").toAbsolutePath();
+    @Value("${resources.location}")
+    private String resourceLocation;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+
+        Path path = Paths.get(resourceLocation).toAbsolutePath();
+
         registry.addResourceHandler("/storage/**")
-                .addResourceLocations(FILE_ROOT.toUri().toString());
+                .addResourceLocations(path.toUri().toString());
 
         CacheControl cacheControl = CacheControl.maxAge((3600 * 24 * 30), TimeUnit.SECONDS);
 
