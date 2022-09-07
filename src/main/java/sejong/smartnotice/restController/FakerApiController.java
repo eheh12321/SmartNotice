@@ -41,10 +41,10 @@ public class FakerApiController {
 
     @Value("${resources.location}")
     private String resourceLocation;
-    
+
     @PostMapping("/town")
     public ResponseEntity<String> createFakeTown(@Nullable Authentication auth) {
-        if(auth == null || !isSuperAuthority(auth)) {
+        if (auth == null || !isSuperAuthority(auth)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("권한이 없습니다");
         }
 
@@ -68,7 +68,7 @@ public class FakerApiController {
 
         String newCityName = sb.toString();
         List<Town> prevTownList = townService.findByName(newCityName);
-        if(prevTownList.size() != 0) {
+        if (prevTownList.size() != 0) {
             sb.append(prevTownList.size());
         }
         sb.append(" 마을");
@@ -84,47 +84,40 @@ public class FakerApiController {
      * 지역 목록을 초기화 한다
      * - 마을이 하나라도 등록이 되어있으면 외래키 제약조건 때문에 초기화 불가
      * - region 테이블을 처음에 싹 비우고 파일을 읽어서 다시 싹 채우는 방식
+     *
      * @return
      */
     @PostMapping("/region")
     @Transactional
     public ResponseEntity<String> resetRegionList(Authentication auth) {
-        if(auth == null || !isSuperAuthority(auth)) {
+        if (auth == null || !isSuperAuthority(auth)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("권한이 없습니다");
         }
 
         List<Town> townList = townService.findAll();
-        if(townList.size() != 0) {
+        if (townList.size() != 0) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("마을이 존재하고 있어 초기화가 불가능합니다");
         }
 
         em.createQuery("delete from Region r where r.id > 0").executeUpdate();
 
-        BufferedReader br = null;
-        try {
-            String fileLocation = resourceLocation + "/init/regionList.csv"; // 설정파일에 설정된 경로 뒤에 붙인다
-            Path path = Paths.get(fileLocation).toAbsolutePath(); // 파일의 절대 경로
-            URI uri = path.toUri(); // path를 uri로 변경
+        String fileLocation = resourceLocation + "/init/regionList.csv"; // 설정파일에 설정된 경로 뒤에 붙인다
+        Path path = Paths.get(fileLocation);
+        URI uri = path.toUri();
 
-            br = new BufferedReader(new InputStreamReader(
-                    new UrlResource(uri).getInputStream()));
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(
+                new UrlResource(uri).getInputStream()))
+        ) {
             String line = br.readLine(); // head 떼기
-
-            while((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null) {
                 String[] splits = line.split(",");
                 em.persist(new Region(Long.parseLong(splits[0]), splits[1], splits[2],
                         Integer.parseInt(splits[3]), Integer.parseInt(splits[4])));
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                br.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("뭔가 오류가 생겼는데요");
         }
-        
         return ResponseEntity.ok("초기화에 성공했습니다");
     }
 

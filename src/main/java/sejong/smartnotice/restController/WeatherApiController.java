@@ -39,9 +39,11 @@ public class WeatherApiController {
     @Transactional
     public ResponseEntity<WeatherResponseDTO> getRegionWeather(@RequestParam Long regionId) {
 
+        // 1. 날씨 정보를 요청한 지역 조회
         Region region = em.find(Region.class, regionId);
         StringBuilder urlBuilder =  new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst");
 
+        // 2. 요청 시각 조회
         LocalDateTime now = LocalDateTime.now();
         String yyyyMMdd = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         int hour = now.getHour();
@@ -54,7 +56,7 @@ public class WeatherApiController {
         String ny = Integer.toString(region.getNy());
         String currentChangeTime = now.format(DateTimeFormatter.ofPattern("yy.MM.dd ")) + hour;
 
-        // 기준 시각이 이미 존재하고 있다면 API 요청 없이 기존 자료 그대로 넘김
+        // 기준 시각 조회 자료가 이미 존재하고 있다면 API 요청 없이 기존 자료 그대로 넘김
         Weather prevWeather = region.getWeather();
         if(prevWeather != null && prevWeather.getLastUpdateTime() != null) {
             if(prevWeather.getLastUpdateTime().equals(currentChangeTime)) {
@@ -66,9 +68,7 @@ public class WeatherApiController {
             }
         }
 
-        log.info("연월일: {}", yyyyMMdd);
-        log.info("시각: {}", hourStr);
-        log.info("NX: {}, NY: {}", nx, ny);
+        log.info("API 요청 발송 >>> 지역: {}, 연월일: {}, 시각: {}", region, yyyyMMdd, hourStr);
 
         try {
             urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + serviceKey);
@@ -102,23 +102,21 @@ public class WeatherApiController {
             conn.disconnect();
             String data = sb.toString();
 
+            //// 응답 수신 완료 ////
+            //// 응답 결과를 JSON 파싱 ////
+
             Double temp = null;
             Double humid = null;
             Double rainAmount = null;
 
-            log.info(data);
-
             JSONObject jObject = new JSONObject(data);
-
             JSONObject response = jObject.getJSONObject("response");
             JSONObject body = response.getJSONObject("body");
             JSONObject items = body.getJSONObject("items");
             JSONArray jArray = items.getJSONArray("item");
+
             for(int i = 0; i < jArray.length(); i++) {
                 JSONObject obj = jArray.getJSONObject(i);
-
-                String baseDate = obj.getString("baseDate");
-                String baseTime = obj.getString("baseTime");
                 String category = obj.getString("category");
                 double obsrValue = obj.getDouble("obsrValue");
 
@@ -133,15 +131,10 @@ public class WeatherApiController {
                         humid = obsrValue;
                         break;
                 }
-
-                System.out.println("baseDate = " + baseDate);
-                System.out.println("baseTime = " + baseTime);
-                System.out.println("category = " + category);
-                System.out.println("obsrValue = " + obsrValue);
             }
 
             Weather weather = new Weather(temp, rainAmount, humid, currentChangeTime);
-            region.updateRegionWeather(weather);
+            region.updateRegionWeather(weather); // DB 업데이트
             WeatherResponseDTO dto = WeatherResponseDTO.builder()
                     .weather(weather)
                     .message("OK").build();
@@ -151,7 +144,7 @@ public class WeatherApiController {
             WeatherResponseDTO dto = WeatherResponseDTO.builder()
                     .weather(null)
                     .message("날씨 정보를 불러오는 중 오류가 발생했습니다").build();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(dto);
+            return ResponseEntity.ok(dto);
         }
     }
 }
