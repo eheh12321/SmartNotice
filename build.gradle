@@ -53,6 +53,9 @@ dependencies {
 
 	// JSON Parser
 	implementation 'org.json:json:20220320'
+
+	// Swagger
+	implementation "io.springfox:springfox-boot-starter:3.0.0"
 }
 
 tasks.named('test') {
