@@ -25,7 +25,7 @@
 - 도메인 연결 o (현재 안됨..) :x:
 - HTTPS 적용 (인증서 기간 만료로 현재 사용불가) :x:
 - ~~Faker 라이브러리를 이용한 테스트용 가짜 데이터 생성 기능~~
-- Github Commit Status API 적용?
+- Github Commit Status 적용
 <br>
 
 ## 2. 프로젝트 상세
