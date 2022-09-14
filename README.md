@@ -17,15 +17,15 @@
 - MQTT
 - 기상청 단기예보 오픈 API 서비스 
 ### CI/CD 
-- ~~Travis CI (기간 만료)~~ Jenkins 연동
+- ~~Travis CI (기간 만료)~~ Jenkins 연동 완료 (9090 포트 사용)
 - AWS S3, Codedeploy 연동 완료
 - Nginx를 이용한 무중단 배포 적용 완료 (8081, 8082 포트 사용)
-
 
 ### 기타
 - 도메인 연결 o (현재 안됨..) :x:
 - HTTPS 적용 (인증서 기간 만료로 현재 사용불가) :x:
 - ~~Faker 라이브러리를 이용한 테스트용 가짜 데이터 생성 기능~~
+- Github Commit Status API 적용?
 <br>
 
 ## 2. 프로젝트 상세

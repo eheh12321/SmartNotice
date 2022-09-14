@@ -20,8 +20,8 @@ public class SwaggerConfig {
     public Docket myApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select() // returns an instance of ApiSelectorBuilder to give fine grained control over the endpoints exposed via swagger.
-                .apis(RequestHandlerSelectors.any()) // api가 작성되어있는 패키지
-                .paths(PathSelectors.any()) // 해당 경로에 해당하는 api만 보겠다.
+                .apis(RequestHandlerSelectors.basePackage("sejong.smartnotice.restController")) // 해당 패키지 이하에 있는 api만 보겠다.
+                .paths(PathSelectors.ant("/api/**")) // 해당 경로에 해당하는 api만 보겠다.
                 .build() // The selector needs to be built after configuring the api and path selectors.
                 .useDefaultResponseMessages(false)
                 .apiInfo(customApiInfo());
@@ -34,9 +34,5 @@ public class SwaggerConfig {
                 .version("0.0.1")
                 .contact(new Contact("eheh12321", "#", "eheh12321@gmail.com"))
                 .build();
-    }
-
-    private ApiKey apiKey() {
-        return new ApiKey("mykey", "api_key", "header");
     }
 }
