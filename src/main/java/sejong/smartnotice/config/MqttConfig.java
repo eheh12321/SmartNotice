@@ -34,13 +34,15 @@ import sejong.smartnotice.service.EmergencyAlertService;
 import sejong.smartnotice.service.UserService;
 
 @Slf4j
-@Configuration
+//@Configuration
 @RequiredArgsConstructor
 public class MqttConfig {
 
     private final EmergencyAlertService alertService;
     private final UserService userService;
     private final DeviceService deviceService;
+    private final DefaultMqttPahoClientFactory defaultMqttPahoClientFactory;
+    private final MessageChannel mqttInputChannel;
 
     /**
      * publish와 Subscribe cilentId가 동일하게 사용하면 publish 시 subscribe 중이던 client가 일시적으로 연결이 끊어지게 됨
@@ -65,7 +67,7 @@ public class MqttConfig {
     @Bean
     public MessageProducer inbound() {
         MqttPahoMessageDrivenChannelAdapter adapter =
-                new MqttPahoMessageDrivenChannelAdapter(clientId+ "_sub", defaultMqttPahoClientFactory());
+                new MqttPahoMessageDrivenChannelAdapter(clientId+ "_sub", defaultMqttPahoClientFactory);
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         
@@ -75,7 +77,7 @@ public class MqttConfig {
         adapter.addTopic("emergency", 2);
 
         // Subscribe Topic 수신 시 MessageHandler 통해 처리
-        adapter.setOutputChannel(mqttInputChannel());
+        adapter.setOutputChannel(mqttInputChannel);
         return adapter;
     }
 
@@ -139,6 +141,7 @@ public class MqttConfig {
             }
         };
     }
+
 
     @Bean
     public DefaultMqttPahoClientFactory defaultMqttPahoClientFactory() {
