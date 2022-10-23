@@ -15,15 +15,7 @@ permissions:
 
 # CodeDeploy 배포 단계에서 실행할 명령어 지정
 hooks:
-  AfterInstall:
-    - location: /scripts/stop.sh # nginx와 연결되어있지 않는 스프링부트 종료
-      timeout: 60
-      runas: ec2-user
-  ApplicationStart:
-    - location: /scripts/start.sh # nginx와 연결되어있지 않은 포트로 새 버전의 스프링부트 실행
-      timeout: 60
-      runas: ec2-user
-  ValidateService:
-    - location: /scripts/health.sh # 새 스프링 부트가 정상적으로 실행됬는지 확인
+  ApplicationStart: # deploy.sh 파일을 ec2-user 권한으로 실행해라 (중단 배포)
+    - location: /scripts/deploy.sh
       timeout: 60
       runas: ec2-user
