@@ -63,17 +63,17 @@ public class AnnounceService {
             saveAudioContents(audioContents, fileName, path);
         }
 
-        // JSON 변환 및 MQTT 전송
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            MqttAnnounceJson json = new MqttAnnounceJson(admin.getName(), registerDTO.getTitle(), registerDTO.getTextData(),
-                    Base64.getEncoder().encodeToString(audioContents), registerDTO.getType().toString(), registerDTO.getCategory().toString(), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            String jsonInString = mapper.writeValueAsString(json);
-            mqttGateway.sendToMqtt(jsonInString, "announce", 1);
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("JSON 변환 실패!!");
-        }
+//        // JSON 변환 및 MQTT 전송
+//        try {
+//            ObjectMapper mapper = new ObjectMapper();
+//            MqttAnnounceJson json = new MqttAnnounceJson(admin.getName(), registerDTO.getTitle(), registerDTO.getTextData(),
+//                    Base64.getEncoder().encodeToString(audioContents), registerDTO.getType().toString(), registerDTO.getCategory().toString(), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+//            String jsonInString = mapper.writeValueAsString(json);
+//            mqttGateway.sendToMqtt(jsonInString, "announce", 1);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            log.error("JSON 변환 실패!!");
+//        }
 
         // 2. 방송 대상 마을 추출
         List<Town> townList = new ArrayList<>();
