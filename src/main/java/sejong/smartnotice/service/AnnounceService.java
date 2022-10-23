@@ -7,6 +7,7 @@ import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.texttospeech.v1.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.config.MqttConfig;
@@ -22,7 +23,6 @@ import sejong.smartnotice.repository.AnnounceRepository;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Slf4j
@@ -158,7 +158,7 @@ public class AnnounceService {
     }
 
     // 문자 -> 음성파일 변환
-    private static byte[] synthesizeText(String text) throws Exception {
+    private byte[] synthesizeText(String text) throws Exception {
         // Instantiates a client
         String jsonPath = "custom/tactile-depot-347005-5be01ad6f1cb.json";
         CredentialsProvider credentialsProvider = FixedCredentialsProvider.create(ServiceAccountCredentials.fromStream(new FileInputStream(jsonPath)));
@@ -191,11 +191,15 @@ public class AnnounceService {
         }
     }
 
-    private static boolean saveAudioContents(byte[] audioContents, String fileName, String directory) {
-        String path = directory + File.separator + fileName + ".mp3";
+    @Value("${resources.location}")
+    private String resourceLocation;
+
+    private boolean saveAudioContents(byte[] audioContents, String fileName, String directory) {
+        String path = resourceLocation + File.separator + directory + File.separator + fileName + ".mp3";
+        log.info(">> 파일 저장 경로: {}", path);
         try (OutputStream out = new FileOutputStream(path)) {
             out.write(audioContents);
-            log.info("파일 저장에 성공했습니다: {}", path);
+            log.info("파일 저장에 성공했습니다");
             return true;
         } catch (Exception e) {
             log.warn("파일 저장에 실패하였습니다");
