@@ -1,35 +1,34 @@
 # 스마트 마을알림 시스템
-엄청난 스마트 마을알림 시스템을 만들어보자!!
-<br><br>
+스마트 마을 알림 시스템은 마을들에 대한 종합적인 관제 서비스를 제공하면서 각 마을에 문자/음성 방송 송신, 사용자 긴급 호출 수신 등 시골 마을 또는 독거 노인 관리 서비스를 제공하는 시스템입니다. 
+
+<br>
+
+<img alt="main" src="https://user-images.githubusercontent.com/74748851/197440390-dcf08b57-79af-4696-9f47-e51ec3c181d2.png" height="400"/>
+
+* 배포 링크: https://www.smarttownnotice.gq/
+  - 관리자 계정: testSuperAdmin / testSuperAdmin!  
+  - 주민 계정: testUser / testUser!
+  - 보호자 계정: testSupporter / testSupporter!
+<br>
 
 ## 1. 기술 스택
-### Spring Boot
+### Back-End
+- Java 11
+- Spring framework 2.7.x
 - JPA
-- thymeleaf
 - Spring Security
-- (테스트 프레임워크) Mockito + JUnit5
-### MySQL
-### AWS EC2 
-- 가능하면 RDB도 연결해볼것! :clock130:
-### 외부 API
-- Google Cloud TTS (기간 만료로 현재 사용불가) :x:
-- Twilio (인터넷 전화 API)
-- MQTT
-- 기상청 단기예보 오픈 API 서비스 
+### DB
+- MySQL
+### Server
+- AWS EC2
+- Nginx
 ### CI/CD 
-- ~~Travis CI (기간 만료)~~ Jenkins 연동 완료 (9090 포트 사용)
-- AWS S3, Codedeploy 연동 완료
-- Nginx를 이용한 무중단 배포 적용 완료 (8081, 8082 포트 사용)
+- Jenkins
+- AWS CodeDeploy
 
-### 기타
-- 도메인 연결 o (현재 안됨..) :x:
-- HTTPS 적용 (인증서 기간 만료로 현재 사용불가) :x:
-- ~~Faker 라이브러리를 이용한 테스트용 가짜 데이터 생성 기능~~
-- Github Commit Status 적용
 <br>
 
 ## 2. 프로젝트 상세
-"마을에 공지사항, 재난 상황, 긴급 호출 등의 다양한 알림을 제공하는 시스템"
 <details>
    <summary> 시스템 구조도 </summary>
    
@@ -41,23 +40,11 @@
    
 ![erd](https://user-images.githubusercontent.com/74748851/187402401-a7ead2b8-aab6-4492-9b05-9887e700e742.PNG)
 </details>
-<br>
 
-- 도메인: <https://smarttownnotice.gq> (현재 접속불가 :x:)
-<br>
-
-## 3. To-Do List
-1. 테스트용 실험실 만들기 (무작위 마을, 유저 등록같은 테스트 기능 만들기) -> (09.04 진행중 :dart:)
-2. 마을 주민 간 소통 게시판 만들기 (CRUD 다시 리마인드 하기)
-    - 테스트 코드 꼼꼼하게 작성하면서 만들어보기
-3. 일정표(일/주/월별) 만들기
-    - 오늘의 일정 알림, 매일마다 하는 일정 시간 알림 및 수행 유무 체크, D-Day 설정 등 추가해보기
-4. 자동 로그인 / 로그인 유지 기능 만들어보기
-5. (시간 나면) 디자인도 조금.. 이쁘게 다듬기
-    - flexbox 이용해서 동적으로 디자인하기
+* 프로젝트 회고: https://www.notion.so/dcca07ba3275410e95afe00b7a4953f1
 <br>
    
-## 4. 구현된 기능
+## 3. 구현된 기능
 - 관리자 회원가입, 수정, 조회, 삭제 <br>
 - 마을 주민 회원가입, 수정, 조회, 삭제 <br>
 - 보호자 회원가입, 수정, 조회, 삭제 <br>
@@ -68,10 +55,3 @@
 - 긴급 호출 전화 <br>
 - 단말기와 MQTT로 연동 <br>
 - 기상청 오픈 API를 이용해 날씨 정보 조회 
-
-<br>
-<hr/>
-
-+ 테스트 코드 작성을 생활화...
-+ **DTO는 서비스 계층에서 변환하기**
-+ **절대 개인정보가 담긴 파일을 Github에 올리지 말것!!!!!**
