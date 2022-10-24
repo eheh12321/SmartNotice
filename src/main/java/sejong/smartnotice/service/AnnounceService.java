@@ -21,6 +21,7 @@ import sejong.smartnotice.dto.MqttAnnounceJson;
 import sejong.smartnotice.repository.AnnounceRepository;
 
 import java.io.*;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -43,7 +44,7 @@ public class AnnounceService {
 
         // 1. 방송 파일 저장
         String fileName = UUID.randomUUID().toString();
-        String path = getDirectory(); // 폴더 생성
+        String datePath = getDirectory(); // 폴더 생성
         byte[] audioContents;
 
         // == 문자 방송인 경우 ==
@@ -51,16 +52,16 @@ public class AnnounceService {
             if(registerDTO.getVoiceData() != null) {
                 log.info("기존 파일 이용");
                 audioContents = Base64.getDecoder().decode(registerDTO.getVoiceData());
-                saveAudioContents(audioContents, fileName, path);
+                saveAudioContents(audioContents, fileName, datePath);
             } else {
                 log.info("새로 생성");
                 AnnounceOutputDTO outputDTO = makeTextAnnounce(registerDTO.getTextData());
                 audioContents = outputDTO.getAudioContents();
-                saveAudioContents(audioContents, fileName, path); // 저장
+                saveAudioContents(audioContents, fileName, datePath); // 저장
             }
         } else { // == 음성 방송인 경우 ==
             audioContents = Base64.getDecoder().decode(registerDTO.getVoiceData());
-            saveAudioContents(audioContents, fileName, path);
+            saveAudioContents(audioContents, fileName, datePath);
         }
 
 //        // JSON 변환 및 MQTT 전송
@@ -84,7 +85,7 @@ public class AnnounceService {
 
         // 3. 방송 생성
         Announce announce = Announce.makeAnnounce(admin.getName(), registerDTO.getTextData(), registerDTO.getCategory(),
-                registerDTO.getType(), townList, path, fileName, registerDTO.getTitle());
+                registerDTO.getType(), townList, "storage" + datePath, fileName, registerDTO.getTitle());
         announceRepository.save(announce);
 
         return announce.getId();
@@ -195,7 +196,10 @@ public class AnnounceService {
     private String resourceLocation;
 
     private boolean saveAudioContents(byte[] audioContents, String fileName, String directory) {
-        String path = resourceLocation + File.separator + directory + File.separator + fileName + ".mp3";
+        // resourceLocation -> /home/~~/storage
+        // directory -> /2022/10/24/
+        // fileName -> fileName
+        String path = resourceLocation + directory + fileName + ".mp3";
         log.info(">> 파일 저장 경로: {}", path);
         try (OutputStream out = new FileOutputStream(path)) {
             out.write(audioContents);
@@ -208,18 +212,26 @@ public class AnnounceService {
         }
     }
 
-    // 날짜에 따른 업로드 파일 경로 생성 (연/월/일)
+    /**
+     * 날짜에 따른 업로트 파일 경로 생성 (연-월-일)
+     * - 디텍토리가 존재하지 않는다면 새로 생성함
+     * - ex) /2022/10/15/
+     */
     private String getDirectory() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date();
-        String str = "storage" + File.separator
-                + sdf.format(date).replace("-", File.separator); // ex) 2022\03\08;
+        String datePath =
+                File.separator
+                + sdf.format(date).replace("-", File.separator)
+                + File.separator;
 
-        File file = new File(str);
+        String fullPath = resourceLocation + datePath;
+        File file = new File(fullPath);
         if(!file.exists()) {
+            log.info(">> 새 디렉토리를 생성했습니다: {}", Paths.get(fullPath).toUri());
             file.mkdirs(); // 디렉토리가 존재하지 않는다면 새로 생성
         }
-        return str;
+        return datePath;
     }
 
 }
