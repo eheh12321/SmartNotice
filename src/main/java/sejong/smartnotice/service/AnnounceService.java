@@ -56,7 +56,8 @@ public class AnnounceService {
             } else {
                 log.info("새로 생성");
                 AnnounceOutputDTO outputDTO = makeTextAnnounce(registerDTO.getTextData());
-                audioContents = outputDTO.getAudioContents();
+                audioContents = null;
+//                audioContents = outputDTO.getAudioContents();
                 saveAudioContents(audioContents, fileName, datePath); // 저장
             }
         } else { // == 음성 방송인 경우 ==
