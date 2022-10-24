@@ -78,12 +78,12 @@ public class EmergencyAlertService {
     }
 
     public Long createAlert(User user, AlertType alertType) {
-        try {
-            makeEmergencyCall(user.getId());
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("실패했습니다 ㅜㅜ");
-        }
+//        try {
+//            makeEmergencyCall(user.getId());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            log.error("실패했습니다 ㅜㅜ");
+//        }
         EmergencyAlert alert = EmergencyAlert.createAlert(user, alertType);
         emRepository.save(alert);
         return alert.getId();
