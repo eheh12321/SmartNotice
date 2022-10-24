@@ -37,6 +37,9 @@ public class AnnounceService {
     private final MqttConfig.MyGateway mqttGateway;
     private final AnnounceRepository announceRepository;
 
+    @Value("${resources.location}")
+    private String resourceLocation;
+
     public Long registerAnnounce(AnnounceRegisterDTO registerDTO) {
         log.info("== 방송 등록 ==");
 
@@ -115,20 +118,8 @@ public class AnnounceService {
 
     public void delete(Long announceId) {
         log.info("== 방송 삭제 ==");
-        // 1. 방송 조회
         Announce announce = findById(announceId);
-
-        // 2. 방송 파일 삭제
-        File savedFile = new File("." + announce.getFullPath());
-        boolean isDelete = savedFile.delete();
-
-        // 3. DB 삭제
-        if(isDelete) {
-            announceRepository.delete(announce);
-        } else {
-            log.warn("방송 삭제에 실패했습니다");
-            throw new IllegalStateException("방송 삭제에 실패했습니다");
-        }
+        announceRepository.delete(announce);
     }
 
     public Announce findById(Long id) {
@@ -192,9 +183,6 @@ public class AnnounceService {
             return response.getAudioContent().toByteArray();
         }
     }
-
-    @Value("${resources.location}")
-    private String resourceLocation;
 
     private boolean saveAudioContents(byte[] audioContents, String fileName, String directory) {
         // resourceLocation -> /home/~~/storage
