@@ -266,7 +266,7 @@
             <div class="modal fade" id="backDropModal" data-bs-backdrop="static" tabindex="-1"
                  style="display: none;" aria-hidden="true">
                 <div class="modal-dialog">
-                    <form class="modal-content" action="/" method="post" id="deviceFormObj">
+                    <form class="modal-content" th:action="@{/users/{id}/device(id=${user.id})}" method="post" id="deviceFormObj">
                         <div class="modal-header">
                             <h5 class="modal-title" id="backDropModalTitle">단말기 등록</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -283,14 +283,13 @@
                                 </thead>
                                 <tbody>
                                 <tr th:each="device : ${deviceList}" th:if="${device.available}">
-                                    <form method="post" th:action="@{/users/{id}(id=${user.id})}" >
-                                        <td th:text="${device.id}"></td>
-                                        <td th:text="${device.mac}"></td>
-                                        <td class="text-center">
-                                            <button type="submit" onclick="!confirm('단말기를 등록하시겠습니까?')"
-                                                    class="btn rounded-pill btn-primary">등록</button>
-                                        </td>
-                                    </form>
+                                    <input type="hidden" th:value="${device.id}" name="deviceId"/>
+                                    <td th:text="${device.id}"></td>
+                                    <td th:text="${device.mac}"></td>
+                                    <td class="text-center">
+                                        <button type="submit" onclick="!confirm('단말기를 등록하시겠습니까?')"
+                                                class="btn rounded-pill btn-primary">등록</button>
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>

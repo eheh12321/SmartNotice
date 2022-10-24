@@ -78,10 +78,10 @@ public class UserController {
     }
 
     @PostMapping("/{id}/device")
-    public ResponseEntity<String> modifyUserDevice(@PathVariable Long id, @RequestParam Long deviceId) {
+    public String modifyUserDevice(@PathVariable Long id, @RequestParam Long deviceId) {
         log.info("== 마을 주민 단말기 수정 ==");
         userService.modifyUserDevice(id, deviceId);
-        return ResponseEntity.ok().body("수정을 완료했습니다");
+        return "redirect:/users/" + id;
     }
 
     @DeleteMapping("/{id}")
