@@ -21,7 +21,6 @@
 - MySQL
 ### Server
 - AWS EC2
-- Nginx
 ### CI/CD 
 - Jenkins
 - AWS CodeDeploy
@@ -29,19 +28,14 @@
 <br>
 
 ## 2. 프로젝트 상세
-<details>
-   <summary> 시스템 구조도 </summary>
-   
-![system](https://user-images.githubusercontent.com/74748851/187402314-266fbd26-d64b-4eb0-8af4-85c634a81212.PNG)
-</details>
+### 2-1. 시스템 구조도
+![image](https://user-images.githubusercontent.com/74748851/197469874-4fd70d0d-0d93-437e-b387-7227b3545b8b.png)
 
-<details>
-   <summary> ERD 다이어그램 </summary>
-   
+### 2-2. ERD 다이어그램
 ![erd](https://user-images.githubusercontent.com/74748851/187402401-a7ead2b8-aab6-4492-9b05-9887e700e742.PNG)
-</details>
 
-* 프로젝트 회고: https://www.notion.so/dcca07ba3275410e95afe00b7a4953f1
+### 2-3. 프로젝트 회고
+- https://www.notion.so/dcca07ba3275410e95afe00b7a4953f1
 <br>
    
 ## 3. 구현된 기능
