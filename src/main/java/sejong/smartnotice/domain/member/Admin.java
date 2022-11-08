@@ -64,12 +64,12 @@ public class Admin implements UserDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Admin admin = (Admin) o;
-        return Objects.equals(getId(), admin.getId()) && Objects.equals(getName(), admin.getName()) && Objects.equals(getTel(), admin.getTel()) && Objects.equals(getAccount(), admin.getAccount()) && Objects.equals(getAtList(), admin.getAtList()) && getType() == admin.getType();
+        return id != null && id.equals(admin.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getTel(), getAccount(), getAtList(), getType());
+        return Objects.hash(id);
     }
 
     @Override
