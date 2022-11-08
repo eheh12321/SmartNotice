@@ -14,7 +14,7 @@
 <br>
 
 ## 1. 기술 스택
-![image](https://user-images.githubusercontent.com/74748851/199999931-00707455-45dd-4707-911b-4ebb17c98671.png)
+![image](https://user-images.githubusercontent.com/74748851/200614127-b36fd783-9cff-4a56-9443-abce280e668c.png)
 
 <br>
 
@@ -30,4 +30,4 @@
 <br>
    
 ## 3. 구현된 기능
-![image](https://user-images.githubusercontent.com/74748851/200612100-53c05d82-cb2f-46eb-97af-e45982012e2e.png)
+![image](https://user-images.githubusercontent.com/74748851/200613915-a0e019f4-181a-4ff2-bc85-f569559159c1.png)
