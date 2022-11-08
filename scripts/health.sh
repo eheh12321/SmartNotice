@@ -20,7 +20,7 @@ do
   if [ ${UP_COUNT} -ge 1 ] # real 문자열이 있는지 검증
   then
     echo "> Health Check 성공"
-    switch_proxy
+    switch_proxy # 정상적으로 배포 성공하면 다음 배포시 다른 포트를 사용하기 위해 포트 변경!!!
     break
   else
     echo "> Health Check의 응답을 알 수 없거나, 실행 상태가 아닙니다"

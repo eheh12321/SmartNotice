@@ -4,7 +4,7 @@ ABSPATH=$(readlink -f $0)
 ABSDIR=$(dirname $ABSPATH) # 현재 stop.sh가 속해있는 경로를 찾는다
 source ${ABSDIR}/profile.sh # java import 생각하면 됨 - 다른 .sh 파일의 function을 사용할 수 있게 해줌
 
-IDLE_PORT=$(find_idle_port)
+IDLE_PORT=$(find_idle_port) #subShell
 
 echo "> $IDLE_PORT 에서 구동중인 애플리케이션 pid 확인"
 IDLE_PID=$(lsof -ti tcp:${IDLE_PORT})
