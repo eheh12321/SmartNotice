@@ -20,7 +20,7 @@
 
 ## 2. 프로젝트 상세
 ### 2-1. 시스템 구조도
-![image](https://user-images.githubusercontent.com/74748851/197469874-4fd70d0d-0d93-437e-b387-7227b3545b8b.png)
+![image](https://user-images.githubusercontent.com/74748851/200610920-44e8a5ce-d617-4f7b-8109-ffbd98dda266.png)
 
 ### 2-2. ERD 다이어그램
 ![erd](https://user-images.githubusercontent.com/74748851/187402401-a7ead2b8-aab6-4492-9b05-9887e700e742.PNG)
