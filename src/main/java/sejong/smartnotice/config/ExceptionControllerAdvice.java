@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.nio.file.AccessDeniedException;
+
 @Slf4j
 @ControllerAdvice(basePackages = "sejong.smartnotice.controller")
 public class ExceptionControllerAdvice {
@@ -23,6 +25,13 @@ public class ExceptionControllerAdvice {
     public ModelAndView handleNullPointerException(NullPointerException e) {
         log.error("[NullPointerException e]", e);
         return new ModelAndView("error/400");
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler
+    public ModelAndView handleAccessDeniedException(AccessDeniedException e) {
+        log.error("[AccessDeniedException e] -> {}", e.getMessage());
+        return new ModelAndView("error/403");
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
