@@ -20,7 +20,7 @@
 
 ## 2. 프로젝트 상세
 ### 2-1. 시스템 구조도
-![image](https://user-images.githubusercontent.com/74748851/200610920-44e8a5ce-d617-4f7b-8109-ffbd98dda266.png)
+![image](https://user-images.githubusercontent.com/74748851/200611910-d9c56909-5428-4424-8a85-29a95d7e3092.png)
 
 ### 2-2. ERD 다이어그램
 ![erd](https://user-images.githubusercontent.com/74748851/187402401-a7ead2b8-aab6-4492-9b05-9887e700e742.PNG)
@@ -30,4 +30,4 @@
 <br>
    
 ## 3. 구현된 기능
-![image](https://user-images.githubusercontent.com/74748851/200000149-af8a7202-88c4-4d99-8214-609c60171dee.png)
+![image](https://user-images.githubusercontent.com/74748851/200612100-53c05d82-cb2f-46eb-97af-e45982012e2e.png)
