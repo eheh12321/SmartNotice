@@ -4,7 +4,6 @@ import lombok.*;
 import sejong.smartnotice.domain.announce.AnnounceCategory;
 import sejong.smartnotice.domain.announce.AnnounceType;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -29,6 +28,7 @@ public class AnnounceRegisterDTO {
     @NotNull
     private String title; // 방송 제목
 
-    private String voiceData;
-    private String textData;
+    private String textData; // 방송 텍스트 본문
+
+    private String voiceData; // 음성 파일
 }

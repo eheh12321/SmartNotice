@@ -6,21 +6,21 @@ import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.texttospeech.v1.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sejong.smartnotice.config.MqttConfig;
 import sejong.smartnotice.domain.announce.Announce;
 import sejong.smartnotice.domain.Town;
-import sejong.smartnotice.domain.announce.AnnounceType;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.dto.AnnounceOutputDTO;
 import sejong.smartnotice.dto.AnnounceRegisterDTO;
+import sejong.smartnotice.event.CreatedAnnounceEvent;
 import sejong.smartnotice.repository.AnnounceRepository;
 
 import java.io.*;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -30,84 +30,29 @@ public class AnnounceService {
 
     private final AdminService adminService;
     private final TownService townService;
-    private final MqttConfig.MyGateway mqttGateway;
     private final AnnounceRepository announceRepository;
-    private final FileService fileService;
+
+    private final ApplicationEventPublisher publisher;
 
     public Long registerAnnounce(AnnounceRegisterDTO registerDTO) {
         log.info("== 방송 등록 ==");
-
         Admin admin = adminService.findById(registerDTO.getAdminId());
 
-        // 1. 방송 파일 저장
-        String fileName = UUID.randomUUID().toString();
-        String datePath = fileService.getDirectory(); // 폴더 생성
-        byte[] audioContents;
+        // 1. 방송 생성
+        List<Town> townList = registerDTO.getTownId().stream()
+                .map(townService::findById)
+                .collect(Collectors.toList());
 
-        // == 문자 방송인 경우 ==
-        if(registerDTO.getType().equals(AnnounceType.TEXT)) {
-            if(registerDTO.getVoiceData() != null) {
-                log.info("기존 파일 이용");
-                audioContents = Base64.getDecoder().decode(registerDTO.getVoiceData());
-                fileService.saveFile(audioContents, fileName, datePath);
-            } else {
-                log.info("새로 생성");
-                AnnounceOutputDTO outputDTO = makeTextAnnounce(registerDTO.getTextData());
-                audioContents = null;
-//                audioContents = outputDTO.getAudioContents();
-                fileService.saveFile(audioContents, fileName, datePath); // 저장
-            }
-        } else { // == 음성 방송인 경우 ==
-            audioContents = Base64.getDecoder().decode(registerDTO.getVoiceData());
-            fileService.saveFile(audioContents, fileName, datePath);
-        }
-
-//        // JSON 변환 및 MQTT 전송
-//        try {
-//            ObjectMapper mapper = new ObjectMapper();
-//            MqttAnnounceJson json = new MqttAnnounceJson(admin.getName(), registerDTO.getTitle(), registerDTO.getTextData(),
-//                    Base64.getEncoder().encodeToString(audioContents), registerDTO.getType().toString(), registerDTO.getCategory().toString(), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-//            String jsonInString = mapper.writeValueAsString(json);
-//            mqttGateway.sendToMqtt(jsonInString, "announce", 1);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            log.error("JSON 변환 실패!!");
-//        }
-
-        // 2. 방송 대상 마을 추출
-        List<Town> townList = new ArrayList<>();
-        for (Long tid : registerDTO.getTownId()) {
-            Town town = townService.findById(tid);
-            townList.add(town);
-        }
-
-        // 3. 방송 생성
         Announce announce = Announce.makeAnnounce(admin.getName(), registerDTO.getTextData(), registerDTO.getCategory(),
-                registerDTO.getType(), townList, "storage" + datePath, fileName, registerDTO.getTitle());
+                registerDTO.getType(), townList, registerDTO.getTitle());
         announceRepository.save(announce);
 
+        // 2. 파일 저장을 위한 Event 생성
+        log.info(">> 방송 저장 Event 요청");
+        byte[] audioContents = registerDTO.getVoiceData() != null ? Base64.getDecoder().decode(registerDTO.getVoiceData()) : null;
+        publisher.publishEvent(new CreatedAnnounceEvent(this, announce, audioContents));
+
         return announce.getId();
-    }
-    
-    // 문자방송 파일 생성
-    public AnnounceOutputDTO makeTextAnnounce(String text) {
-        log.info("== 문자 방송 생성 (API 통신) ==");
-        log.info("방송 시각: {}", LocalDateTime.now());
-        log.info("방송 내용: {}", text);
-        log.info("문자 길이: {}", text.length());
-        log.info("==================");
-        if(text.length() > 1000) { // 제한
-            throw new IllegalStateException("1000자를 초과할 수 없습니다");
-        }
-        try {
-            byte[] audioContents = synthesizeText(text); // API 통신
-            log.info("성공!");
-            return new AnnounceOutputDTO(audioContents);
-        } catch (Exception e) {
-            log.warn("방송 파일 생성 실패");
-            e.printStackTrace();
-            return null;
-        }
     }
 
     public void delete(Long announceId) {
@@ -144,6 +89,9 @@ public class AnnounceService {
         return announceRepository.findAllAnnounceToTown(townList);
     }
 
+    /**
+     * Google TTS가 만료되면서 쓸모없어진 코드들
+     */
     // 문자 -> 음성파일 변환
     private byte[] synthesizeText(String text) throws Exception {
         // Instantiates a client
@@ -177,4 +125,26 @@ public class AnnounceService {
             return response.getAudioContent().toByteArray();
         }
     }
+
+    // 문자방송 파일 생성
+    public AnnounceOutputDTO makeTextAnnounce(String text) {
+        log.info("== 문자 방송 생성 (API 통신) ==");
+        log.info("방송 시각: {}", LocalDateTime.now());
+        log.info("방송 내용: {}", text);
+        log.info("문자 길이: {}", text.length());
+        log.info("==================");
+        if(text.length() > 1000) { // 제한
+            throw new IllegalStateException("1000자를 초과할 수 없습니다");
+        }
+        try {
+            byte[] audioContents = synthesizeText(text); // API 통신
+            log.info("성공!");
+            return new AnnounceOutputDTO(audioContents);
+        } catch (Exception e) {
+            log.warn("방송 파일 생성 실패");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

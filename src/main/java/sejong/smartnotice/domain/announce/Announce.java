@@ -1,11 +1,8 @@
 package sejong.smartnotice.domain.announce;
 
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import sejong.smartnotice.domain.Announce_Town;
 import sejong.smartnotice.domain.Town;
-import sejong.smartnotice.domain.member.Admin;
-import sejong.smartnotice.domain.member.User;
 
 import javax.persistence.*;
 import java.io.File;
@@ -57,8 +54,14 @@ public class Announce {
         return File.separator + directory + fileName + ".mp3";
     }
 
+    // 파일 저장 성공 시 파일 경로 및 이름 세팅
+    public void setAnnounceFileSaved(String directory, String fileName) {
+        this.directory = directory;
+        this.fileName = fileName;
+    }
+
     public static Announce makeAnnounce(String producer, String contents, AnnounceCategory category, AnnounceType type,
-                                        List<Town> townList, String directory, String fileName, String title) {
+                                        List<Town> townList, String title) {
         // 1. 방송 생성
         Announce announce = Announce.builder()
                 .producer(producer)
@@ -67,9 +70,7 @@ public class Announce {
                 .category(category)
                 .type(type)
                 .atList(new ArrayList<>())
-                .time(LocalDateTime.now())
-                .directory(directory)
-                .fileName(fileName).build();
+                .time(LocalDateTime.now()).build();
 
         // 2. 마을에 방송 전파
         for (Town town : townList) {
