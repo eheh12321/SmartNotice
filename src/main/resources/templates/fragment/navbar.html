@@ -11,58 +11,15 @@
         </symbol>
     </svg>
 
+    <div class="fw-bold" style="min-width: fit-content">
+        <span th:text="${#authentication.principal.name} + ' 님'"/>
+    </div>
+
     <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
         <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
             <i class="bx bx-menu bx-sm"></i>
         </a>
     </div>
-
-    <!-- 화재 알림 발생 시 출력 -->
-    <div class="navbar-nav alert alert-danger mb-0 w-100" id="fireAlertDiv"
-         style="overflow: hidden; white-space: nowrap; display: none; text-overflow: ellipsis">
-        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
-             aria-label="Danger:">
-            <use xlink:href="#exclamation-triangle-fill"/>
-        </svg>
-        <span>  ** 마을 내 화재가 발생했습니다 **  </span>
-    </div>
-
-    <!-- 긴급 알림 발생 시 출력 -->
-    <div class="navbar-nav alert alert-warning mb-0 w-100" id="notConfirmedAlertDiv"
-         style="color: crimson; overflow: hidden; white-space: nowrap; display: none; text-overflow: ellipsis">
-        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
-             aria-label="Danger:">
-            <use xlink:href="#exclamation-triangle-fill"/>
-        </svg>
-        <span>  ** 마을 내 미확인 긴급 알림이 있습니다 **  </span>
-    </div>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $.ajax({
-                type: "GET",
-                url: "/nav",
-                dataType: "json",
-                success: function (result) {
-                    console.log(result.fireAlertStatus);
-                    console.log(result.notConfirmedAlertStatus);
-
-                    if(result.fireAlertStatus) {
-                        $("#fireAlertDiv").css("display", "block");
-                    } else {
-                        $("#fireAlertDiv").css("display", "none");
-                    }
-                    if(result.notConfirmedAlertStatus) {
-                        $("#notConfirmedAlertDiv").css("display", "block");
-                    } else {
-                        $("#notConfirmedAlertDiv").css("display", "none");
-                    }
-                },
-                error: function (xhr) {
-                    alert(xhr.responseText);
-                }
-            });
-        });
-    </script>
 </nav>
 
 </html>

@@ -3,7 +3,6 @@ package sejong.smartnotice.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
@@ -38,8 +37,6 @@ public class HomeController {
     private final UserService userService;
     private final TownService townService;
     private final SupporterService supporterService;
-    private final EmergencyAlertService emService;
-    private final AnnounceService announceService;
     private final EntityManager em;
     private final Environment env;
 
@@ -239,39 +236,6 @@ public class HomeController {
         model.addAttribute("townList", townList);
         model.addAttribute("managedTownIdList", managedTownIdList);
         return "admin/modify";
-    }
-
-    @GetMapping("/nav")
-    @ResponseBody
-    public ResponseEntity<NavbarStatusDTO> checkNavbarStatus(Authentication auth) {
-        log.info("== Navbar 상태 조회 ==");
-        Admin authAdmin = adminService.findByLoginId(auth.getName());
-        List<Town> townList = adminService.getTownList(authAdmin);
-
-        boolean notConfirmedAlertStatus = false;
-        boolean fireAlertStatus = false;
-
-        List<User> userList = em.createQuery("select distinct u from User u left join fetch u.alertList al join fetch u.device d where u.town in(:townList)", User.class)
-                .setParameter("townList", townList).getResultList();
-
-        for (User user : userList) {
-            List<EmergencyAlert> alertList = user.getAlertList();
-            for (EmergencyAlert alert : alertList) {
-                if (!alert.isConfirmed()) {
-                    notConfirmedAlertStatus = true;
-                    break;
-                }
-            }
-            if(user.getDevice()!= null) {
-                if(user.getDevice().isEmergency_fire()) {
-                    fireAlertStatus = true;
-                }
-            }
-            if(notConfirmedAlertStatus && fireAlertStatus) {
-                return ResponseEntity.ok().body(new NavbarStatusDTO(true, true));
-            }
-        }
-        return ResponseEntity.ok().body(new NavbarStatusDTO(notConfirmedAlertStatus, fireAlertStatus));
     }
 
     @GetMapping("/register")
