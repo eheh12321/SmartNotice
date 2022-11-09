@@ -2,14 +2,22 @@
 
 # 쉬고있는 profile 찾기
 function find_idle_profile() {
-    # 8081 포트로 요청을 보내봤을 때 응답 코드를 변수로 저장
-    RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8081/profile)
 
-    if [ "${RESPONSE_CODE}" -ge 400 ] || [ "${RESPONSE_CODE}" -eq 000 ]; # 400보다 크거나, 000(TimeOut)이면 -> Error 발생 = 현재 쉬고있는 포트임
+    # 현재 애플리케이션이 몇번 포트로 실행되고 있는지 확인 (Nginx가 443으로 받아서 포워드)
+    RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://www.smarttownnotice.gq/profile)
+
+    if [ "${RESPONSE_CODE}" -ge 400 ] || [ "${RESPONSE_CODE}" -eq 000 ] # 400보다 크거나, 000(TimeOut)이면 -> Error 발생
     then
-      IDLE_PROFILE=real1 # 8081 포트가 쉬는중
+      CURRENT_PROFILE=real1 # 에러 발생 시 real1 포트로 보내도록 세팅
+    else # 정상 상태(200) 이라면
+      CURRENT_PROFILE=$(curl -s https://www.smarttownnotice.gq/profile) # 사이트에서 현재 사용중인 포트를 응답해줌(real1/real2)
+    fi
+
+    if [ "${CURRENT_PROFILE}" == real1 ]
+    then
+      IDLE_PROFILE=real2;
     else
-      IDLE_PROFILE=real2 # 8082 포트가 쉬는중
+      IDLE_PROFILE=real1
     fi
 
     echo "${IDLE_PROFILE}"
