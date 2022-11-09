@@ -1,6 +1,5 @@
 package sejong.smartnotice.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.ServiceAccountCredentials;
@@ -17,12 +16,9 @@ import sejong.smartnotice.domain.announce.AnnounceType;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.dto.AnnounceOutputDTO;
 import sejong.smartnotice.dto.AnnounceRegisterDTO;
-import sejong.smartnotice.dto.MqttAnnounceJson;
 import sejong.smartnotice.repository.AnnounceRepository;
 
 import java.io.*;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -36,9 +32,7 @@ public class AnnounceService {
     private final TownService townService;
     private final MqttConfig.MyGateway mqttGateway;
     private final AnnounceRepository announceRepository;
-
-    @Value("${resources.location}")
-    private String resourceLocation;
+    private final FileService fileService;
 
     public Long registerAnnounce(AnnounceRegisterDTO registerDTO) {
         log.info("== 방송 등록 ==");
@@ -47,7 +41,7 @@ public class AnnounceService {
 
         // 1. 방송 파일 저장
         String fileName = UUID.randomUUID().toString();
-        String datePath = getDirectory(); // 폴더 생성
+        String datePath = fileService.getDirectory(); // 폴더 생성
         byte[] audioContents;
 
         // == 문자 방송인 경우 ==
@@ -55,17 +49,17 @@ public class AnnounceService {
             if(registerDTO.getVoiceData() != null) {
                 log.info("기존 파일 이용");
                 audioContents = Base64.getDecoder().decode(registerDTO.getVoiceData());
-                saveAudioContents(audioContents, fileName, datePath);
+                fileService.saveFile(audioContents, fileName, datePath);
             } else {
                 log.info("새로 생성");
                 AnnounceOutputDTO outputDTO = makeTextAnnounce(registerDTO.getTextData());
                 audioContents = null;
 //                audioContents = outputDTO.getAudioContents();
-                saveAudioContents(audioContents, fileName, datePath); // 저장
+                fileService.saveFile(audioContents, fileName, datePath); // 저장
             }
         } else { // == 음성 방송인 경우 ==
             audioContents = Base64.getDecoder().decode(registerDTO.getVoiceData());
-            saveAudioContents(audioContents, fileName, datePath);
+            fileService.saveFile(audioContents, fileName, datePath);
         }
 
 //        // JSON 변환 및 MQTT 전송
@@ -183,44 +177,4 @@ public class AnnounceService {
             return response.getAudioContent().toByteArray();
         }
     }
-
-    private boolean saveAudioContents(byte[] audioContents, String fileName, String directory) {
-        // resourceLocation -> /home/~~/storage
-        // directory -> /2022/10/24/
-        // fileName -> fileName
-        String path = resourceLocation + directory + fileName + ".mp3";
-        log.info(">> 파일 저장 경로: {}", path);
-        try (OutputStream out = new FileOutputStream(path)) {
-            out.write(audioContents);
-            log.info("파일 저장에 성공했습니다");
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.warn("파일 저장에 실패하였습니다");
-            return false;
-        }
-    }
-
-    /**
-     * 날짜에 따른 업로트 파일 경로 생성 (연-월-일)
-     * - 디텍토리가 존재하지 않는다면 새로 생성함
-     * - ex) /2022/10/15/
-     */
-    private String getDirectory() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = new Date();
-        String datePath =
-                File.separator
-                + sdf.format(date).replace("-", File.separator)
-                + File.separator;
-
-        String fullPath = resourceLocation + datePath;
-        File file = new File(fullPath);
-        if(!file.exists()) {
-            log.info(">> 새 디렉토리를 생성했습니다: {}", Paths.get(fullPath).toUri());
-            file.mkdirs(); // 디렉토리가 존재하지 않는다면 새로 생성
-        }
-        return datePath;
-    }
-
 }
