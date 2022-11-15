@@ -3,6 +3,7 @@ package sejong.smartnotice.domain.member;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import sejong.smartnotice.domain.AuditingFields;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -11,7 +12,7 @@ import java.util.Collection;
 @DiscriminatorColumn
 @Inheritance(strategy = InheritanceType.JOINED)
 @Entity
-public abstract class UserAccount implements UserDetails {
+public abstract class UserAccount extends AuditingFields implements UserDetails {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_account_id")
