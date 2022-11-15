@@ -14,9 +14,10 @@ import sejong.smartnotice.domain.device.Device;
 import sejong.smartnotice.domain.member.Account;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.dto.UserModifyDTO;
-import sejong.smartnotice.dto.UserRegisterDTO;
+import sejong.smartnotice.dto.request.UserRegisterDTO;
 import sejong.smartnotice.repository.UserRepository;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -109,12 +110,14 @@ public class UserService implements UserDetailsService {
 
     public User findByLoginId(String loginId) {
         log.info("== 마을 주민 로그인 아이디 조회 ==");
-        return userRepository.findByAccountLoginId(loginId);
+        return userRepository.findByAccount_LoginId(loginId)
+                .orElseThrow(() -> new EntityNotFoundException("마을 주민이 존재하지 않습니다"));
     }
 
     public User findByTel(String tel) {
         log.info("== 마을 주민 전화번호 조회 ==");
-        return userRepository.findByTel(tel);
+        return userRepository.findByTel(tel)
+                .orElseThrow(() -> new EntityNotFoundException("마을 주민이 존재하지 않습니다"));
     }
 
     private User validateUserId(Long userId) {
