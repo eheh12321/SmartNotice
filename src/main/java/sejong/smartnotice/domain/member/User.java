@@ -5,38 +5,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import sejong.smartnotice.domain.EmergencyAlert;
-import sejong.smartnotice.domain.announce.Announce;
 import sejong.smartnotice.domain.device.Device;
 import sejong.smartnotice.domain.Town;
 
 import javax.persistence.*;
 import java.util.*;
 
-import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.*;
 
 @Slf4j
 @Getter
-@Builder
-@Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class User implements UserDetails {
-
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long id;
-
-    @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false, unique = true)
-    private String tel;
-
-    @Embedded
-    Account account;
+@Entity
+public class User extends UserAccount {
 
     @Column(length = 50)
     private String address;
@@ -61,23 +43,22 @@ public class User implements UserDetails {
     private Town town;
 
     @OneToMany(mappedBy = "user")
-    private List<Supporter> supporterList = new ArrayList<>();
+    private final List<Supporter> supporterList = new ArrayList<>();
+
+    private User(String address, String birth, Town town) {
+        this.address = address;
+        this.birth = birth;
+        this.town = town;
+    }
 
     public static User createUser(String name, String tel, String address, String birth, Town town, Account account) {
-        return User.builder()
-                .name(name)
-                .tel(tel)
-                .address(address)
-                .birth(birth)
-                .account(account)
-                .supporterList(new ArrayList<>())
-                .alertList(new ArrayList<>())
-                .town(town).build();
+        User user = new User(address, birth, town);
+        user.createUserAccount(name, tel, account);
+        return user;
     }
 
     public void modifyUserInfo(String name, String tel, String address, String info, String birth) {
-        this.name = name;
-        this.tel = tel;
+        super.changeUserAccountInfo(name, tel);
         this.address = address;
         this.info = info;
         this.birth = birth;
@@ -92,31 +73,6 @@ public class User implements UserDetails {
         this.isAdmin = true;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(getId(), user.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "name='" + name + '\'' +
-                ", tel='" + tel + '\'' +
-                ", address='" + address + '\'' +
-                ", info='" + info + '\'' +
-                ", birth=" + birth +
-                '}';
-    }
-
-    /////////// 스프링 시큐리티 설정
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -125,33 +81,4 @@ public class User implements UserDetails {
         return roles;
     }
 
-    @Override // 비밀번호 주세요
-    public String getPassword() {
-        return this.account.getLoginPw();
-    }
-
-    @Override // 사용자 유니크 아이디 반환
-    public String getUsername() {
-        return this.account.getLoginId();
-    }
-
-    @Override // 계정 만료 여부 반환
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override // 계정 잠금 여부 반환
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override // 크리덴셜 만료 여부 반환
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override // 계정 사용가능 여부 반환
-    public boolean isEnabled() {
-        return true;
-    }
 }
