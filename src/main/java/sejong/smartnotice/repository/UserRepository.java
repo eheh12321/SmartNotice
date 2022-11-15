@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import sejong.smartnotice.domain.member.User;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -16,9 +17,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u from User u join fetch u.town")
     List<User> findAllWithTown();
 
-    User findByAccountLoginId(String loginId);
+    Optional<User> findByAccount_LoginId(String loginId);
 
-    User findByTel(String tel);
+    Optional<User> findByTel(String tel);
 
     boolean existsByTelOrAccountLoginId(String tel, String loginId);
 }

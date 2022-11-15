@@ -17,7 +17,7 @@ public class Admin_Town {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "admin_id", nullable = false)
+    @JoinColumn(name = "user_account_id", nullable = false)
     private Admin admin;
 
     @ManyToOne(fetch = FetchType.LAZY)
