@@ -76,14 +76,14 @@
                         <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
                         <div th:text="${registerMessage}">로그아웃 문구</div>
                     </div>
-                    <form id="formAuthentication" class="mb-3" action="" method="POST">
+                    <form id="formAuthentication" class="mb-3" action="/login" method="POST">
                         <div class="mb-3" style="display: flow-root">
                             <div style="float: left">
-                                <label for="loginAuth" class="form-label">권한</label>
-                                <select id="loginAuth" name="loginAuth" class="form-select">
-                                    <option value="admin" th:selected="${auth}=='admin'">관리자</option>
-                                    <option value="user" th:selected="${auth}=='user'">마을주민</option>
-                                    <option value="supporter" th:selected="${auth}=='supporter'">보호자</option>
+                                <label for="domain" class="form-label">권한</label>
+                                <select id="domain" name="domain" class="form-select">
+                                    <option value="admin" name="admin" th:selected="${domain}=='admin'">관리자</option>
+                                    <option value="user" name="user" th:selected="${domain}=='user'">마을주민</option>
+                                    <option value="supporter" name="supporter" th:selected="${domain}=='supporter'">보호자</option>
                                 </select>
                             </div>
                             <div style="float: right">
@@ -175,24 +175,6 @@
         </div>
     </div>
 </div>
-<script type="text/javascript">
-    $(document).ready(function (){
-        let formObj = $("#formAuthentication");
-        $("#loginBtn").on("click", function (e){
-            let auth = $("#loginAuth").val();
-            if(auth == "admin") {
-                console.log("admin");
-                formObj.attr('action', '/login');
-            } else if (auth == "user") {
-                console.log("user");
-                formObj.attr('action', '/u/login');
-            } else if (auth == "supporter") {
-                console.log("supporter");
-                formObj.attr('action', '/s/login');
-            }
-        });
-    });
-</script>
 <script src="/resources/vendor/libs/jquery/jquery.js"></script>
 <script src="/resources/vendor/libs/popper/popper.js"></script>
 <script src="/resources/vendor/js/bootstrap.js"></script>
