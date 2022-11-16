@@ -15,7 +15,7 @@
 //import sejong.smartnotice.domain.member.Admin;
 //import sejong.smartnotice.domain.member.AdminType;
 //import sejong.smartnotice.dto.AdminModifyDTO;
-//import sejong.smartnotice.dto.AdminRegisterDTO;
+//import sejong.smartnotice.dto.request.register.AdminRegisterDTO;
 //import sejong.smartnotice.repository.AdminRepository;
 //
 //import javax.persistence.EntityManager;

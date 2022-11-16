@@ -13,8 +13,8 @@ import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.device.Device;
 import sejong.smartnotice.domain.member.Account;
 import sejong.smartnotice.domain.member.User;
-import sejong.smartnotice.dto.UserModifyDTO;
-import sejong.smartnotice.dto.request.UserRegisterDTO;
+import sejong.smartnotice.helper.dto.UserModifyDTO;
+import sejong.smartnotice.helper.dto.request.register.UserRegisterDTO;
 import sejong.smartnotice.repository.UserRepository;
 
 import javax.persistence.EntityNotFoundException;

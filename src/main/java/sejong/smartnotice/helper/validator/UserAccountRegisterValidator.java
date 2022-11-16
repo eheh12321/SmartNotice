@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import sejong.smartnotice.domain.member.User;
-import sejong.smartnotice.dto.request.SupporterRegisterDTO;
-import sejong.smartnotice.dto.request.UserAccountRegisterDTO;
+import sejong.smartnotice.helper.dto.request.register.SupporterRegisterDTO;
+import sejong.smartnotice.helper.dto.request.register.UserAccountRegisterDTO;
 import sejong.smartnotice.repository.UserAccountRepository;
 
 @RequiredArgsConstructor

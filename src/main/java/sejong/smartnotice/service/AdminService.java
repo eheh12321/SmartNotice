@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.member.Account;
 import sejong.smartnotice.domain.member.Admin;
-import sejong.smartnotice.dto.AdminModifyDTO;
-import sejong.smartnotice.dto.request.AdminRegisterDTO;
+import sejong.smartnotice.helper.dto.AdminModifyDTO;
+import sejong.smartnotice.helper.dto.request.register.AdminRegisterDTO;
 import sejong.smartnotice.repository.AdminRepository;
 
 import javax.persistence.EntityManager;

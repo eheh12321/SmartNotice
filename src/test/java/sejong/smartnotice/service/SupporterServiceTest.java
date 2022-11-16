@@ -12,7 +12,7 @@
 //import sejong.smartnotice.domain.member.Supporter;
 //import sejong.smartnotice.domain.member.User;
 //import sejong.smartnotice.dto.SupporterModifyDTO;
-//import sejong.smartnotice.dto.SupporterRegisterDTO;
+//import sejong.smartnotice.dto.request.register.SupporterRegisterDTO;
 //import sejong.smartnotice.repository.SupporterRepository;
 //
 //import java.util.Optional;
