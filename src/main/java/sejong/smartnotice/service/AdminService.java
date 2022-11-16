@@ -2,9 +2,6 @@ package sejong.smartnotice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,18 +9,19 @@ import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.member.Account;
 import sejong.smartnotice.domain.member.Admin;
-import sejong.smartnotice.dto.AdminModifyDTO;
-import sejong.smartnotice.dto.AdminRegisterDTO;
+import sejong.smartnotice.helper.dto.AdminModifyDTO;
+import sejong.smartnotice.helper.dto.request.register.AdminRegisterDTO;
 import sejong.smartnotice.repository.AdminRepository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import java.util.*;
 
 @Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class AdminService implements UserDetailsService {
+public class AdminService {
 
     private final EntityManager em;
     private final AdminRepository adminRepository;
@@ -112,7 +110,8 @@ public class AdminService implements UserDetailsService {
     @Transactional(readOnly = true)
     public Admin findByLoginId(String loginId) {
         log.info("== 관리자 로그인 아이디 조회 ==");
-        return adminRepository.findByAccountLoginId(loginId);
+        return adminRepository.findByAccount_LoginId(loginId)
+                .orElseThrow(() -> new EntityNotFoundException("관리자가 존재하지 않습니다"));
     }
 
     @Transactional(readOnly = true)
@@ -124,7 +123,8 @@ public class AdminService implements UserDetailsService {
     @Transactional(readOnly = true)
     public Admin findByTel(String tel) {
         log.info("== 관리자 전화번호 조회 ==");
-        return adminRepository.findByTel(tel);
+        return adminRepository.findByTel(tel)
+                .orElseThrow(() -> new EntityNotFoundException("관리자가 존재하지 않습니다"));
     }
 
     @Transactional(readOnly = true)
@@ -157,12 +157,5 @@ public class AdminService implements UserDetailsService {
             log.warn("이미 존재하는 회원입니다");
             throw new IllegalStateException("이미 존재하는 회원입니다");
         }
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Admin admin = findByLoginId(username);
-        if(admin == null) throw new UsernameNotFoundException("등록되지 않은 사용자입니다");
-        return admin;
     }
 }

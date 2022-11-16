@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import sejong.smartnotice.domain.member.Admin;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AdminRepository extends JpaRepository<Admin, Long> {
@@ -24,9 +25,9 @@ public interface AdminRepository extends JpaRepository<Admin, Long> {
 
     Admin findByName(String name);
 
-    Admin findByAccountLoginId(String loginId);
+    Optional<Admin> findByAccount_LoginId(String loginId);
 
-    Admin findByTel(String tel);
+    Optional<Admin> findByTel(String tel);
 
     boolean existsAdminByTelOrAccountLoginId(String tel, String loginId);
 }

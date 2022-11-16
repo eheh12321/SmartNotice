@@ -8,8 +8,8 @@ import sejong.smartnotice.domain.Admin_Town;
 import sejong.smartnotice.domain.Region;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.member.Admin;
-import sejong.smartnotice.dto.TownModifyDTO;
-import sejong.smartnotice.dto.TownRegisterDTO;
+import sejong.smartnotice.helper.dto.TownModifyDTO;
+import sejong.smartnotice.helper.dto.TownRegisterDTO;
 import sejong.smartnotice.repository.TownRepository;
 
 import javax.persistence.EntityManager;
@@ -88,11 +88,16 @@ public class TownService {
         // 현재 관리 마을 목록
         List<Town> managedTownList = adminService.getTownList(admin);
 
+        // 두개의 리스트에서 차이가 있는 요소를 찾는 알고리즘
+        // 체크박스 리스트를 통해 현재 관리 마을 목록 List를 갈아끼우는 비즈니스 로직
+        // 1. Map에 체크된 마을 목록 ID를 싹 다 넣는다
         HashMap<Long, Integer> map = new HashMap<>();
         for (Long tId : townIdList) {
             map.put(tId, 1);
         }
+        // 2. 관리자가 관리하고 있는 마을 목록을 돌면서
         for (Town town : managedTownList) {
+            // 기존에 관리하고 있던 마을이 체크 해제된 경우
             if(!map.containsKey(town.getId())) {
                 // 마을 관리 삭제
                 removeTownAdmin(town.getId(), adminId);
@@ -101,6 +106,7 @@ public class TownService {
                 map.remove(town.getId());
             }
         }
+        // 3. 나머지 처리되지 않은 마을들을 대상으로
         if(!map.isEmpty()) {
             for (Long key : map.keySet()) {
                 // 신규 관리 마을 추가
