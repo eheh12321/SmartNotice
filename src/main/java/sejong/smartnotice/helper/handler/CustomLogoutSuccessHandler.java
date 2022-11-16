@@ -1,4 +1,4 @@
-package sejong.smartnotice.handler;
+package sejong.smartnotice.helper.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -7,7 +7,6 @@ import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.FlashMapManager;
 import org.springframework.web.servlet.support.SessionFlashMapManager;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -16,7 +15,7 @@ import java.io.IOException;
 public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
 
     @Override
-    public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         log.info("# 로그아웃");
         FlashMap flashMap = new FlashMap();
         flashMap.put("logout", "로그아웃 되었습니다");
@@ -24,7 +23,11 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
         FlashMapManager flashMapManager = new SessionFlashMapManager();
         flashMapManager.saveOutputFlashMap(flashMap, request, response);
 
-        String loginAuth = request.getParameter("loginAuth");
-        response.sendRedirect("/login?loginAuth=" + loginAuth);
+        String domain = request.getParameter("domain");
+        if(domain != null) {
+            response.sendRedirect("/login?domain=" + domain);
+        } else {
+            response.sendRedirect("/login");
+        }
     }
 }
