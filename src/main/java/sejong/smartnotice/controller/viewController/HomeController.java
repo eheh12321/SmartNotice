@@ -257,6 +257,7 @@ public class HomeController {
         if (registerMessage != null && registerMessage.length() != 0) {
             model.addAttribute("registerMessage", registerMessage);
         }
+        model.addAttribute("port", env.getProperty("server.port", "-"));
         model.addAttribute("domain", domain);
         return "login";
     }
