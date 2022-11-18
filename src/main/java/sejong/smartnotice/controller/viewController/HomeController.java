@@ -3,7 +3,6 @@ package sejong.smartnotice.controller.viewController;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +21,7 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -73,7 +73,7 @@ public class HomeController {
             // (1) 마을 조회
             townList = townService.findAll();
             // (2) 마을 + 관리자 fetch
-            adminList = em.createQuery("select distinct a from Admin a join fetch a.atList at join fetch at.town", Admin.class)
+            adminList = em.createQuery("select distinct a from Admin a join fetch a.townAdminList at join fetch at.town", Admin.class)
                     .getResultList();
             // (3) 마을 + 주민 + 단말기 + 긴급알림 fetch
             userList = em.createQuery("select distinct u from User u left join fetch u.alertList left join fetch u.device", User.class)
@@ -94,11 +94,11 @@ public class HomeController {
         else {
             log.info("# 권한: 마을 관리자===========");
             // (2) 마을 조회
-            townList = em.createQuery("select distinct t from Town t join fetch t.region left join t.atList at where at.admin.id=:adminId", Town.class)
+            townList = em.createQuery("select distinct t from Town t join fetch t.region left join t.townAdminList at where at.admin.id=:adminId", Town.class)
                     .setParameter("adminId", authAdmin.getId())
                     .getResultList();
             // (3) 마을 + 관리자 fetch
-            adminList = em.createQuery("select distinct a from Admin a join fetch a.atList at join fetch at.town", Admin.class)
+            adminList = em.createQuery("select distinct a from Admin a join fetch a.townAdminList at join fetch at.town", Admin.class)
                     .getResultList();
             // (4) 마을 + 주민 + 단말기 + 긴급알림 fetch
             userList = em.createQuery("select distinct u from User u left join fetch u.alertList left join fetch u.device", User.class)
@@ -117,7 +117,7 @@ public class HomeController {
             List<Admin> al = new ArrayList<>();
             int townAdminCnt = 0;
             for (Admin admin : adminList) {
-                for (Admin_Town at : admin.getAtList()) {
+                for (TownAdmin at : admin.getTownAdminList()) {
                     if (at.getTown().equals(town)) {
                         al.add(admin);
                         if (admin.getType() == AdminType.ADMIN) {
@@ -220,14 +220,14 @@ public class HomeController {
     }
 
     @GetMapping("/edit")
-    public String adminModifyPage(Authentication auth, Model model) {
-        Admin authAdmin = adminService.findByLoginId(auth.getName());
-        List<Town> townList = townService.findAll();
-        List<Town> managedTownList = townService.findTownByAdmin(authAdmin);
-        List<Long> managedTownIdList = new ArrayList<>();
-        for (Town town : managedTownList) {
-            managedTownIdList.add(town.getId());
-        }
+    public String adminModifyPage(@AuthenticationPrincipal Admin admin, Model model) {
+        // AuthenticationPrincipal을 그대로 사용하면 안됨 -> 세션에 저장되어있을 뿐이고 트랜잭션이 적용되지 않아 DB 반영 X
+        Admin authAdmin = adminService.findById(admin.getId());
+        List<Town> townList = townService.findAll(); // 전체 마을 목록
+        List<Long> managedTownIdList = townService.findTownByAdmin(authAdmin).stream()
+                .map(Town::getId)
+                .collect(Collectors.toList()); // 관리하고 있는 마을 ID 목록
+
         model.addAttribute("admin", authAdmin);
         model.addAttribute("townList", townList);
         model.addAttribute("managedTownIdList", managedTownIdList);
