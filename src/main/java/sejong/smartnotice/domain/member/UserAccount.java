@@ -59,6 +59,11 @@ public abstract class UserAccount extends AuditingFields implements UserDetails 
         return Objects.hash(id);
     }
 
+    @Override
+    public String toString() {
+        return this.name;
+    }
+
     /**
      * 스프링 시큐리티 세팅 메서드
      * - 상속 하위 클래스가 경우에 맞게 오버라이딩 해서 사용
