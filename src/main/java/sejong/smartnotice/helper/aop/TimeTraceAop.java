@@ -14,7 +14,7 @@ public class TimeTraceAop {
     // 메서드 호출 전후에 수행
     // [접근 제한자 패턴] - " " - 리턴 타입 - " " - 패키지 - 클래스 - 메서드(매개변수)
     // controller 패키지 내부의 모든 메서드에 대해 시작 - 종료 시간을 계산하는 메서드
-    @Around("execution(* sejong.smartnotice.controller.*.*(..))")
+    @Around("execution(* sejong.smartnotice.controller.*Controller.*.*(..))")
     public Object logging(ProceedingJoinPoint joinPoint) throws Throwable {
         long start = System.currentTimeMillis();
         log.info("START: {}", joinPoint.toString());
