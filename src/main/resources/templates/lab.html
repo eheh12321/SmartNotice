@@ -1,20 +1,27 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragment/header :: fragment-header ('실험실')}"></head>
+
+<head>
+    <th:block th:insert="~{fragment/header :: fragment-header ('실험실')}"></th:block>
+</head>
+
 <body>
-<!-- Layout wrapper -->
 <div class="layout-wrapper layout-content-navbar">
     <div class="layout-container">
-        <!-- Sidebar fragment -->
-        <div th:replace="~{fragment/sidebar :: fragment-sidebar('sidebar_lab', '')}"></div>
+
+        <!-- Sidebar -->
+        <aside th:replace="~{fragment/sidebar :: fragment-sidebar('sidebar_lab', '')}"></aside>
         <!-- /Sidebar -->
+
         <!-- Layout container -->
-        <div class="layout-page">
-            <!-- Navbar(검색창) -->
-            <div th:replace="~{fragment/navbar :: fragment-navbar}"></div>
+        <section class="layout-page">
+
+            <!-- Navbar -->
+            <nav th:replace="~{fragment/navbar :: fragment-navbar}"></nav>
             <!-- /Navbar -->
+
             <!-- Content wrapper -->
-            <div class="content-wrapper">
+            <article class="content-wrapper">
                 <!-- Content -->
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <!-- 마을 Card -->
@@ -57,54 +64,54 @@
                     <!-- /마을 Card-->
                 </div>
                 <!-- / Content -->
-                <!-- footer -->
-                <div th:replace="~{fragment/footer.html :: fragment-footer}"></div>
-                <!-- / footer -->
-            </div>
+            </article>
             <!-- Content wrapper -->
-        </div>
+
+            <!-- footer -->
+            <footer>
+                <th:block th:insert="~{fragment/footer :: fragment-footer}"></th:block>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $("#createTownBtn").on("click", function () {
+                            if(confirm("마을을 추가하시겠습니까?")) {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/api/faker/town",
+                                    success: function (result) {
+                                        alert(result);
+                                    },
+                                    error: function (xhr) {
+                                        alert(xhr.responseText);
+                                    }
+                                });
+                            } else {
+                                return false;
+                            }
+                        });
+                        $("#resetRegionListBtn").on("click", function () {
+                            if(confirm("지역 목록을 초기화 하시겠습니까? (마을이 존재하면 외래키 제약조건에 의해 초기화가 불가능합니다)")) {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/api/faker/region",
+                                    success: function (result) {
+                                        alert(result);
+                                    },
+                                    error: function (xhr) {
+                                        alert(xhr.responseText);
+                                    }
+                                });
+                            } else {
+                                return false;
+                            }
+                        });
+                    });
+                </script>
+            </footer>
+            <!-- / footer -->
+
+        </section>
         <!-- / Layout page -->
     </div>
-    <!-- Overlay -->
-    <div class="layout-overlay layout-menu-toggle"></div>
 </div>
-<!-- / Layout wrapper -->
-<script type="text/javascript">
-    $(document).ready(function () {
-        $("#createTownBtn").on("click", function () {
-            if(confirm("마을을 추가하시겠습니까?")) {
-                $.ajax({
-                    type: "POST",
-                    url: "/api/faker/town",
-                    success: function (result) {
-                        alert(result);
-                    },
-                    error: function (xhr) {
-                        alert(xhr.responseText);
-                    }
-                });
-            } else {
-                return false;
-            }
-        });
-        $("#resetRegionListBtn").on("click", function () {
-            if(confirm("지역 목록을 초기화 하시겠습니까? (마을이 존재하면 외래키 제약조건에 의해 초기화가 불가능합니다)")) {
-                $.ajax({
-                    type: "POST",
-                    url: "/api/faker/region",
-                    success: function (result) {
-                        alert(result);
-                    },
-                    error: function (xhr) {
-                        alert(xhr.responseText);
-                    }
-                });
-            } else {
-                return false;
-            }
-        });
-    });
-</script>
-<div th:replace="~{fragment/header :: fragment-bottom-script}"></div>
 </body>
 </html>

@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.member.Account;
 import sejong.smartnotice.domain.member.Admin;
-import sejong.smartnotice.helper.dto.AdminModifyDTO;
+import sejong.smartnotice.helper.dto.request.AdminModifyRequest;
 import sejong.smartnotice.helper.dto.request.register.AdminRegisterDTO;
 import sejong.smartnotice.repository.AdminRepository;
 
@@ -44,19 +44,14 @@ public class AdminService {
     }
 
     // 관리자 정보 수정
-    public Long modifyAdminInfo(AdminModifyDTO modifyDTO) {
+    public Long modifyAdminInfo(AdminModifyRequest modifyDTO) {
         log.info("== 관리자 정보 수정 ==");
         // 1. 관리자 조회
         Admin admin = findById(modifyDTO.getId());
 
-        // 2. 전화번호 중복 검증 (전화번호가 이미 존재하고, 동일 인물이 아닌 경우)
-        Admin findAdmin = findByTel(modifyDTO.getTel());
-        if(findAdmin != null && !findAdmin.equals(admin)) {
-            log.warn("중복된 전화번호가 존재합니다");
-            throw new IllegalStateException("중복된 전화번호가 존재합니다");
-        }
-        
-        // 3. 정보 수정
+        // 2. 정보 수정
+        // 쿼리를 바로 날리는게 아니고, DTO를 통해 변경되는 값이 있는 경우에만 select + update 쿼리를 발생시킨다
+        // = DTO 변경 사항이 없으면 쿼리 자체를 내보내지 않는다
         admin.modifyAdminInfo(modifyDTO.getName(), modifyDTO.getTel());
         return admin.getId();
     }
@@ -70,9 +65,8 @@ public class AdminService {
 
     // 관리자 검색
     public Admin findById(Long id) {
-        log.info("== 관리자 아이디 조회 ==");
-        // 아이디 검증 이후 반환
-        return validateAdminId(id);
+        return adminRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("관리자가 존재하지 않습니다"));
     }
 
     /**
@@ -95,7 +89,7 @@ public class AdminService {
     @Transactional(readOnly = true)
     public List<Admin> findNotTownAdmin(Town town) {
         log.info("== 해당 마을 관리자가 아닌 관리자 목록 조회 ==");
-        List<Admin> adminList = em.createQuery("select a from Admin a where a.id not in(select at.admin.id from Admin_Town at where at.town.id=?1)", Admin.class)
+        List<Admin> adminList = em.createQuery("select a from Admin a where a.id not in(select at.admin.id from TownAdmin at where at.town.id=?1)", Admin.class)
                 .setParameter(1, town.getId()).getResultList();
         return adminList;
     }
@@ -125,29 +119,6 @@ public class AdminService {
         log.info("== 관리자 전화번호 조회 ==");
         return adminRepository.findByTel(tel)
                 .orElseThrow(() -> new EntityNotFoundException("관리자가 존재하지 않습니다"));
-    }
-
-    @Transactional(readOnly = true)
-    public List<Town> getTownList(Admin admin) {
-        log.info("== 관리자 관리 마을 목록 조회 ==");
-        List<Town> townList = em.createQuery("select distinct t from Town t join fetch t.atList at where at.admin=:admin", Town.class)
-                .setParameter("admin", admin).getResultList();
-        return townList;
-    }
-
-    // 마을 정보와 관리자 함께 조회
-    public Admin findAdminWithTown(Long id) {
-        return adminRepository.findAdminWithTown(id);
-    }
-
-    private Admin validateAdminId(Long id) {
-        log.info("== 관리자 아이디 검증 ==");
-        Optional<Admin> opt = adminRepository.findById(id);
-        if (opt.isEmpty()) {
-            log.warn("관리자가 존재하지 않습니다");
-            throw new NullPointerException("관리자가 존재하지 않습니다.");
-        }
-        return opt.get();
     }
 
     // 관리자 중복 검증

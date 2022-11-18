@@ -82,7 +82,7 @@ public class AnnounceController {
     @GetMapping("/text")
     public String getTextAnnounceForm(@AuthenticationPrincipal Admin admin, Model model) {
         model.addAttribute("admin", admin);
-        model.addAttribute("townList", adminService.getTownList(admin));
+        model.addAttribute("townList", townService.findTownByAdmin(admin));
         return "announce/newTextAnnounce";
     }
 
@@ -101,7 +101,7 @@ public class AnnounceController {
     @GetMapping("/voice")
     public String getVoiceAnnounceForm(@AuthenticationPrincipal Admin admin, Model model) {
         model.addAttribute("admin", admin);
-        model.addAttribute("townList", adminService.getTownList(admin));
+        model.addAttribute("townList", townService.findTownByAdmin(admin));
         return "announce/newVoiceAnnounce";
     }
 

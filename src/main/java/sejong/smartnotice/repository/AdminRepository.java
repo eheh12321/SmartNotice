@@ -14,13 +14,13 @@ public interface AdminRepository extends JpaRepository<Admin, Long> {
     @Query("select a from Admin a where a.name like %?1%")
     List<Admin> findByNameContaining(String name);
 
-    @Query("select distinct a from Admin a left join fetch a.atList at left join fetch at.town t")
+    @Query("select distinct a from Admin a left join fetch a.townAdminList at left join fetch at.town t")
     List<Admin> findAllWithTown();
 
-    @Query("select distinct a from Admin a join fetch a.atList at where at.town.id=?1")
+    @Query("select distinct a from Admin a join fetch a.townAdminList at where at.town.id=?1")
     List<Admin> findAdminByTown(Long townId);
 
-    @Query("select a from Admin a join fetch a.atList at join fetch at.town where at.admin.id=?1")
+    @Query("select a from Admin a join fetch a.townAdminList at join fetch at.town where at.admin.id=?1")
     Admin findAdminWithTown(Long id);
 
     Admin findByName(String name);

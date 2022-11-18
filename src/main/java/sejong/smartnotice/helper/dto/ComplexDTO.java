@@ -43,7 +43,7 @@ public class ComplexDTO {
                                   List<User> userList,
                                   List<Announce> announceList) {
 
-        int townAdminCnt = town.getAtList().size();
+        int townAdminCnt = town.getTownAdminList().size();
         int notConnectedCnt = 0;
         int mqttErrorCnt = 0;
         int sensorErrorCnt = 0;

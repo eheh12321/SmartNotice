@@ -2,9 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <body>
-<div th:fragment="fragment-sidebar (main, sub)">
+<th:block th:fragment="fragment-sidebar (main, sub)">
     <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-
         <div class="app-brand demo mb-3">
             <a href="/" class="app-brand-link">
               <span class="app-brand-logo demo">
@@ -73,19 +72,6 @@
         <div class="menu-inner-shadow"></div>
 
         <ul class="menu-inner py-1">
-<!--            &lt;!&ndash; 로그인 정보 &ndash;&gt;-->
-<!--            <li class="menu-item mb-3">-->
-<!--                <a class="menu-link">-->
-<!--                    <div class="fw-bold fs-4">-->
-<!--                        <p>-->
-<!--                            <span sec:authentication="name"></span>님-->
-<!--                            <br>-->
-<!--                            <span sec:authorize="hasRole('SUPER')">(최고 관리자)</span>-->
-<!--                            <span sec:authorize="!hasRole('SUPER')">(마을 관리자)</span>-->
-<!--                        </p>-->
-<!--                    </div>-->
-<!--                </a>-->
-<!--            </li>-->
 
             <!-- 홈(마을 관리자만 보임) -->
             <li id="sidebar_home" class="menu-item">
@@ -218,17 +204,17 @@
                 </form>
             </li>
         </ul>
-    </aside>
-    <script type="text/javascript" th:inline="javascript">
-        var main = [[${main}]];
-        var sub = [[${sub}]];
+        <script type="text/javascript" th:inline="javascript">
+            var main = [[${main}]];
+            var sub = [[${sub}]];
 
-        document.getElementById(main).classList.add('active');
-        if(sub.length != 0) {
-            document.getElementById(main).classList.add('open'); // 메인 토글 열기
-            document.getElementById(sub).classList.add('active');
-        }
-    </script>
-</div>
+            document.getElementById(main).classList.add('active');
+            if(sub.length != 0) {
+                document.getElementById(main).classList.add('open'); // 메인 토글 열기
+                document.getElementById(sub).classList.add('active');
+            }
+        </script>
+    </aside>
+</th:block>
 </body>
 </html>

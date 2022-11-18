@@ -2,13 +2,10 @@ package sejong.smartnotice.domain;
 
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.User;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static javax.persistence.CascadeType.ALL;
 
@@ -37,8 +34,8 @@ public class Town {
     @OneToMany(mappedBy = "town", cascade = ALL)
     private List<Announce_Town> announceList;
 
-    @OneToMany(mappedBy = "town", cascade = ALL)
-    private List<Admin_Town> atList;
+    @OneToMany(mappedBy = "town", cascade = ALL, orphanRemoval = true)
+    private List<TownAdmin> townAdminList = new ArrayList<>();
 
     // 마을 생성
     public static Town createTown(String name, Region region) {
@@ -47,7 +44,7 @@ public class Town {
                 .region(region)
                 .userList(new ArrayList<>())
                 .announceList(new ArrayList<>())
-                .atList(new ArrayList<>()).build();
+                .townAdminList(new ArrayList<>()).build();
     }
 
     // 마을 정보 수정
@@ -64,17 +61,17 @@ public class Town {
                 ", region=" + region +
                 '}';
     }
-
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Town town = (Town) o;
-        return Objects.equals(getId(), town.getId()) && Objects.equals(getName(), town.getName()) && Objects.equals(getRegion(), town.getRegion());
+        return Objects.equals(id, town.id) && Objects.equals(region, town.region);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getRegion());
+        return Objects.hash(id, region);
     }
 }
