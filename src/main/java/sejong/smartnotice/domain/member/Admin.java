@@ -3,7 +3,7 @@ package sejong.smartnotice.domain.member;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import sejong.smartnotice.domain.Admin_Town;
+import sejong.smartnotice.domain.TownAdmin;
 
 import javax.persistence.*;
 import java.util.*;
@@ -16,8 +16,8 @@ import static javax.persistence.CascadeType.*;
 public class Admin extends UserAccount {
 
     // Admin 커밋 시 자동으로 딸려감
-    @OneToMany(mappedBy = "admin", cascade = ALL)
-    private final List<Admin_Town> atList = new ArrayList<>();
+    @OneToMany(mappedBy = "admin", cascade = ALL, orphanRemoval = true)
+    private final List<TownAdmin> townAdminList = new ArrayList<>();
 
     @Enumerated(value = EnumType.STRING)
     private AdminType type; // 관리자 타입
