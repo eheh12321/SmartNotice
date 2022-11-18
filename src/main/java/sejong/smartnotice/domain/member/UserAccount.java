@@ -7,6 +7,7 @@ import sejong.smartnotice.domain.AuditingFields;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.Objects;
 
 @Getter
 @DiscriminatorColumn
@@ -42,6 +43,20 @@ public abstract class UserAccount extends AuditingFields implements UserDetails 
     protected void changeUserAccountInfo(String name, String tel) {
         this.name = name;
         this.tel = tel;
+    }
+
+    // 회원 식별번호가 같으면 동일한 객체
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserAccount that = (UserAccount) o;
+        return id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     /**

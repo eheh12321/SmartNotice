@@ -41,15 +41,15 @@ public class TownController {
     public String getTownDetail(@AuthenticationPrincipal Admin admin, @PathVariable Long id, Model model) throws IOException {
         log.info("== 마을 상세 조회 ==");
         Town town = townService.findById(id);
-        List<Admin_Town> adminTownList = town.getAtList();
+        List<TownAdmin> adminTownList = town.getTownAdminList();
         List<Admin> adminList = new ArrayList<>();
 
-        for (Admin_Town adminTown : adminTownList) {
+        for (TownAdmin adminTown : adminTownList) {
             adminList.add(adminTown.getAdmin());
         }
 
         boolean isAdmin = adminTownList.stream()
-                .map(Admin_Town::getAdmin)
+                .map(TownAdmin::getAdmin)
                 .anyMatch(a -> a.equals(admin));
 
         if (!isAdmin) {
@@ -90,6 +90,7 @@ public class TownController {
     @PostMapping("/{id}/admin/new")
     public String addTownAdmin(@PathVariable Long id, @RequestParam(required = false) Long userId, @RequestParam(required = false) Long adminId) {
         log.info("== 마을 관리자 등록 ==");
+        Town town = townService.findById(id);
 
         if (userId != null && adminId == null) {
             User user = userService.findById(userId); // 주민 정보 조회
@@ -97,9 +98,9 @@ public class TownController {
                     user.getAccount().getLoginId(), user.getAccount().getLoginPw(), AdminType.ADMIN);
             Long newAdminId = adminService.register(registerDTO); // 주민 계정 정보로 관리자 계정 생성
             user.modifyUserIsAdmin(); // 마을 주민이 마을 관리자라는 상태 표시
-            townService.addTownAdmin(id, newAdminId); // 관리자와 마을 연결
+            townService.addTownAdmin(adminService.findById(adminId), town); // 관리자와 마을 연결
         } else if (userId == null && adminId != null) {
-            townService.addTownAdmin(id, adminId); // 관리자와 마을 연결
+            townService.addTownAdmin(adminService.findById(adminId), town); // 관리자와 마을 연결
         } else {
             log.warn("잘못된 요청입니다");
         }
@@ -110,7 +111,7 @@ public class TownController {
     @DeleteMapping("/{id}/admin")
     public String removeTownAdmin(@PathVariable Long id, @RequestParam Long adminId) {
         log.info("== 마을 관리자 삭제 ==");
-        townService.removeTownAdmin(id, adminId);
+        townService.removeTownAdmin(adminService.findById(adminId), townService.findById(id));
         return "redirect:/towns/{id}";
     }
 }
