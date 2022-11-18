@@ -1,11 +1,22 @@
 package sejong.smartnotice.helper.exceptionAdvice;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
-@AllArgsConstructor
+import java.util.List;
+
+@Getter
 public class ErrorResult {
-    private String code;
-    private String message;
+    private final String message; // 에러 메세지
+    private final List<ErrorDetail> errors; // 각 필드 에러 정보
+
+    public ErrorResult(String message) {
+        this.message = message;
+        this.errors = List.of();
+    }
+
+    public ErrorResult(String message, List<ErrorDetail> errors) {
+        this.message = message;
+        this.errors = errors;
+    }
 }
+
