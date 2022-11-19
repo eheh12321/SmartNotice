@@ -32,7 +32,7 @@ public class Town {
     private List<User> userList; // 소속 마을 주민 목록
 
     @OneToMany(mappedBy = "town", cascade = ALL)
-    private List<Announce_Town> announceList;
+    private List<TownAnnounce> announceList = new ArrayList<>();
 
     @OneToMany(mappedBy = "town", cascade = ALL, orphanRemoval = true)
     private List<TownAdmin> townAdminList = new ArrayList<>();

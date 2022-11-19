@@ -2,7 +2,6 @@ package sejong.smartnotice.controller.restController;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -17,7 +16,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/api/admin", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping( "/api/admin")
 @RequiredArgsConstructor
 public class AdminApiController {
 

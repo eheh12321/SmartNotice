@@ -121,13 +121,18 @@
                     <div data-i18n="Account Settings">방송 목록 조회</div>
                 </a>
                 <ul class="menu-sub">
+                    <li id="sidebar_announce_list_all" class="menu-item">
+                        <a href="/announces" class="menu-link">
+                            <div data-i18n="Account">전체 방송</div>
+                        </a>
+                    </li>
                     <li id="sidebar_announce_list_normal" class="menu-item">
-                        <a href="/announces/normal" class="menu-link">
+                        <a href="/announces?category=normal" class="menu-link">
                             <div data-i18n="Account">마을 방송</div>
                         </a>
                     </li>
                     <li id="sidebar_announce_list_disaster" class="menu-item">
-                        <a href="/announces/disaster" class="menu-link">
+                        <a href="/announces?category=disaster" class="menu-link">
                             <div data-i18n="Notifications">재난 방송</div>
                         </a>
                     </li>

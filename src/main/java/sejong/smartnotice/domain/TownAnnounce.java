@@ -13,10 +13,10 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Announce_Town {
+public class TownAnnounce {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "announce_town_id", nullable = false)
+    @Column(name = "town_announce_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -30,5 +30,11 @@ public class Announce_Town {
     @Override
     public String toString() {
         return town.getName();
+    }
+
+    // 연관관계 설정 메서드
+    public void createAnnounce() {
+        town.getAnnounceList().add(this);
+        announce.getTownAnnounceList().add(this);
     }
 }

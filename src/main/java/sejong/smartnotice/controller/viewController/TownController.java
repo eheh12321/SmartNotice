@@ -56,7 +56,7 @@ public class TownController {
             throw new AccessDeniedException("마을 관리 권한이 없습니다");
         }
 
-        List<Announce> announceList = em.createQuery("select a from Announce a join fetch a.atList at where at.town=:town", Announce.class)
+        List<Announce> announceList = em.createQuery("select a from Announce a join fetch a.townAnnounceList at where at.town=:town", Announce.class)
                 .setParameter("town", town)
                 .getResultList();
         List<User> userList = town.getUserList();

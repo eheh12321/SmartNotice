@@ -79,7 +79,7 @@ public class HomeController {
             userList = em.createQuery("select distinct u from User u left join fetch u.alertList left join fetch u.device", User.class)
                     .getResultList();
             // (4) 마을 + 방송 fetch
-            announceList = em.createQuery("select distinct a from Announce a join fetch a.atList at join fetch at.town order by a.time desc", Announce.class)
+            announceList = em.createQuery("select distinct a from Announce a join fetch a.townAnnounceList at join fetch at.town order by a.time desc", Announce.class)
                     .getResultList();
 
             // (5) 마을 추가에 들어가는 지역 목록
@@ -104,7 +104,7 @@ public class HomeController {
             userList = em.createQuery("select distinct u from User u left join fetch u.alertList left join fetch u.device", User.class)
                     .getResultList();
             // (5) 마을 + 방송 fetch
-            announceList = em.createQuery("select distinct a from Announce a join fetch a.atList at join fetch at.town order by a.time desc", Announce.class)
+            announceList = em.createQuery("select distinct a from Announce a join fetch a.townAnnounceList at join fetch at.town order by a.time desc", Announce.class)
                     .getResultList();
 
             alertList = em.createQuery("select a from EmergencyAlert a", EmergencyAlert.class).getResultList();
@@ -129,7 +129,7 @@ public class HomeController {
 
             List<Announce> aal = new ArrayList<>();
             for (Announce announce : announceList) {
-                for (Announce_Town at : announce.getAtList()) {
+                for (TownAnnounce at : announce.getTownAnnounceList()) {
                     if (at.getTown().equals(town)) {
                         aal.add(announce);
                     }

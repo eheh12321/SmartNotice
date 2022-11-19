@@ -43,7 +43,8 @@ public class SecurityConfig extends AbstractHttpConfigurer<SecurityConfig, HttpS
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/resources/**", "/test*", "/alerts/api", "/profile", "/api/**", "/login", "/register/**").permitAll()
+                .antMatchers("/resources/**", "/test*", "/alerts/api", "/profile", "/login", "/register/**").permitAll()
+                .antMatchers("/storage/**", "/api/**").authenticated() // 아무 권한이나 있으면
                 .antMatchers("/u/**").hasRole("USER")
                 .antMatchers("/s/**").hasRole("SUPPORTER")
                 .anyRequest().hasRole("ADMIN");

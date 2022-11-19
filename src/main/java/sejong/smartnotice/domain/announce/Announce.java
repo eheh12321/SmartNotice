@@ -1,8 +1,7 @@
 package sejong.smartnotice.domain.announce;
 
 import lombok.*;
-import sejong.smartnotice.domain.Announce_Town;
-import sejong.smartnotice.domain.Town;
+import sejong.smartnotice.domain.TownAnnounce;
 
 import javax.persistence.*;
 import java.io.File;
@@ -23,8 +22,8 @@ public class Announce {
     private Long id;
 
     @OneToMany(mappedBy = "announce", cascade = CascadeType.ALL)
-    private List<Announce_Town> atList = new ArrayList<>();
-    
+    private List<TownAnnounce> townAnnounceList = new ArrayList<>();
+
     @Column(nullable = false)
     private String producer; // 방송한 사람
 
@@ -38,6 +37,10 @@ public class Announce {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AnnounceType type; // 음성 or 문자
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AnnounceStatus status;
 
     private String directory; // 파일 저장위치
     
@@ -55,31 +58,9 @@ public class Announce {
     }
 
     // 파일 저장 성공 시 파일 경로 및 이름 세팅
-    public void setAnnounceFileSaved(String directory, String fileName) {
+    public void setAnnounceFileSaved(String directory, String fileName, AnnounceStatus status) {
         this.directory = directory;
         this.fileName = fileName;
-    }
-
-    public static Announce makeAnnounce(String producer, String contents, AnnounceCategory category, AnnounceType type,
-                                        List<Town> townList, String title) {
-        // 1. 방송 생성
-        Announce announce = Announce.builder()
-                .producer(producer)
-                .contents(contents)
-                .title(title)
-                .category(category)
-                .type(type)
-                .atList(new ArrayList<>())
-                .time(LocalDateTime.now()).build();
-
-        // 2. 마을에 방송 전파
-        for (Town town : townList) {
-            Announce_Town at = Announce_Town.builder()
-                    .announce(announce)
-                    .town(town).build();
-            announce.atList.add(at);
-            at.setTown(town); // 양방향 맺어주기
-        }
-        return announce;
+        this.status = status;
     }
 }
