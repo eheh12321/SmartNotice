@@ -33,7 +33,6 @@ public class FileService {
             log.info("파일 저장에 성공했습니다");
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
             log.warn("파일 저장에 실패하였습니다");
             return false;
         }

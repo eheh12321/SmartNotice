@@ -131,22 +131,24 @@
 
             $.ajax({
                 type:"GET",
-                url:"/announces/"+data[0],
+                url:"/api/announces/"+data[0],
                 success: function(result) {
                     console.log("방송을 가져왔습니다");
                     $("#modal_src").attr('src', result.src);
                     $("#modal_title").text("방송 제목: " + result.title);
                     $("#modal_producer").text("방송자: " + result.producer);
-                    $("#modal_contents").text("방송 내용: " + result.contents);
+                    $("#modal_contents").text("방송 내용: " + result.content);
                     $("#modal_time").text("방송 시각: " + result.time);
-
-                    $("#deleteFormId").attr('value', data[0])
-                    $("#deleteForm").attr('action', '/announces/' + data[0]);
                 },
                 error: function(xhr) {
                     alert("방송을 가져오는데 실패했습니다");
                 }
             });
+        });
+
+        // 모달 창 닫으면 미디어 재생 종료되도록
+        $("#announceModal").on('hidden.bs.modal', function() {
+            $("#modal_src").attr("src", "");
         });
     });
 </script>

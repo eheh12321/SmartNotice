@@ -154,9 +154,13 @@ public class TownService {
         return region;
     }
 
+    public List<Town> findTownsByTownIdList(List<Long> townIdList) {
+        return townRepository.findTownsByTownIdList(townIdList);
+    }
+
     // 관리자 관리 마을 목록 조회
     public List<Town> findTownByAdmin(Admin admin) {
-        return townRepository.findTownsByAdminId(admin.getId());
+        return townRepository.findTownsByAdmin(admin.getId());
     }
 
     // 마을 중복 검증

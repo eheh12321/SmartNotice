@@ -475,11 +475,7 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <form action="" method="post" id="deleteForm">
-                                        <input type="hidden" name="id" value="" id="deleteFormId"/>
-                                        <input type="hidden" name="_method" value="DELETE"/>
-                                        <button id="deleteBtn" class="btn btn-danger" type="submit">삭제</button>
-                                    </form>
+                                    <button type="button" id="deleteBtn" class="btn btn-danger" >삭제</button>
                                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">닫기
                                     </button>
                                 </div>
@@ -608,17 +604,17 @@
 
                 $.ajax({
                     type: "GET",
-                    url: "/announces/" + data[0],
+                    url: "/api/announces/" + data[0],
                     success: function (result) {
                         console.log("방송을 가져왔습니다");
                         $("#modal_src").attr('src', result.src);
+                        $("#modal_id").val(result.id);
                         $("#modal_title").text("방송 제목: " + result.title);
                         $("#modal_producer").text("방송자: " + result.producer);
-                        $("#modal_contents").text("방송 내용: " + result.contents);
+                        $("#modal_contents").text("방송 내용: " + result.content);
                         $("#modal_time").text("방송 시각: " + result.time);
 
                         $("#deleteFormId").attr('value', data[0])
-                        $("#deleteForm").attr('action', '/announces/' + data[0]);
                     },
                     error: function (xhr) {
                         alert("방송을 가져오는데 실패했습니다");
@@ -629,8 +625,22 @@
             $("#deleteBtn").on("click", function (e) {
                 e.preventDefault();
                 if (confirm("방송을 삭제하시겠습니까?")) {
-                    var formObj = $("#deleteForm");
-                    formObj.submit();
+                    var id = $("#modal_id").val();
+
+                    if (confirm("방송을 삭제하시겠습니까?")) {
+                        $.ajax({
+                            method: "DELETE",
+                            url: "/api/announces/" + id,
+                            dataType: "text",
+                            success: function (result) {
+                                alert(result);
+                                window.location.reload(); // 현재 페이지 새로고침
+                            },
+                            error: function (xhr) {
+                                alert("알 수 없는 오류가 발생했습니다");
+                            }
+                        });
+                    }
                 }
             });
         });
@@ -664,6 +674,11 @@
                     $("#weatherSyncIcon").removeClass("bx-spin");
                 }
             });
+        });
+
+        // 모달 창 닫으면 미디어 재생 종료되도록
+        $("#announceModal").on('hidden.bs.modal', function() {
+            $("#modal_src").attr("src", "");
         });
     });
 </script>

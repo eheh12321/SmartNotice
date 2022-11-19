@@ -1,32 +1,38 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragment/header :: fragment-header ('음성 방송 페이지')}"></head>
+
 <head>
+    <th:block th:insert="~{fragment/header :: fragment-header ('음성 방송 페이지')}"></th:block>
     <style>
         .accordion-button:not(.collapsed) {
             background: #C6E2FF;
             color: #333333;
         }
+
         .accordion-button.collapsed {
             background: #CCCCCC;
             color: #333333;
         }
     </style>
 </head>
+
 <body>
-<!-- Layout wrapper -->
 <div class="layout-wrapper layout-content-navbar">
     <div class="layout-container">
-        <!-- Sidebar fragment -->
-        <div th:replace="~{fragment/sidebar :: fragment-sidebar('sidebar_announce', 'sidebar_announce_voice')}"></div>
+
+        <!-- Sidebar -->
+        <aside th:replace="~{fragment/sidebar :: fragment-sidebar('sidebar_announce', 'sidebar_announce_voice')}"></aside>
         <!-- /Sidebar -->
+
         <!-- Layout container -->
-        <div class="layout-page">
-            <!-- Navbar(검색창) -->
-            <div th:replace="~{fragment/navbar :: fragment-navbar}"></div>
+        <section class="layout-page">
+
+            <!-- Navbar -->
+            <nav th:replace="~{fragment/navbar :: fragment-navbar}"></nav>
             <!-- /Navbar -->
+
             <!-- Content wrapper -->
-            <div class="content-wrapper">
+            <article class="content-wrapper">
                 <!-- Content -->
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <!-- 마을 Card -->
@@ -43,7 +49,8 @@
                                         <hr>
                                     </div>
                                     <div class="card-body">
-                                        <form method="post" action="/announces/voice" role="form" id="formObj" enctype="multipart/form-data">
+                                        <form method="post" action="/announces/voice" role="form" id="formObj"
+                                              enctype="multipart/form-data">
                                             <label for="title">제목</label>
                                             <input type="text" id="title" name="title" class="form-control"
                                                    placeholder="방송 제목 입력" value="[임시 제목]">
@@ -79,11 +86,17 @@
                                             <div class="accordion mt-3" id="accordionExample">
                                                 <div class="card accordion-item active">
                                                     <h2 class="accordion-header" id="headingOne">
-                                                        <button class="accordion-button mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                                            <p class="font-weight-bold" id="recorderTitle" style="font-size: 1.5em; margin-bottom: 0;">녹음을 통해 방송하기</p>
+                                                        <button class="accordion-button mb-3" type="button"
+                                                                data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                                                                aria-expanded="true" aria-controls="collapseOne">
+                                                            <p class="font-weight-bold" id="recorderTitle"
+                                                               style="font-size: 1.5em; margin-bottom: 0;">녹음을 통해
+                                                                방송하기</p>
                                                         </button>
                                                     </h2>
-                                                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                                    <div id="collapseOne" class="accordion-collapse collapse show"
+                                                         aria-labelledby="headingOne"
+                                                         data-bs-parent="#accordionExample">
                                                         <div class="accordion-body">
                                                             <section class="main-controls">
                                                                 <h3 id="timerText">
@@ -95,7 +108,8 @@
                                                                     <button class="btn btn-success" id="recordBtn"
                                                                             type="button">Record
                                                                     </button>
-                                                                    <button class="btn btn-danger" id="stopBtn" type="button">
+                                                                    <button class="btn btn-danger" id="stopBtn"
+                                                                            type="button">
                                                                         Stop
                                                                     </button>
                                                                 </div>
@@ -104,7 +118,8 @@
                                                             <button type="button" class="btn btn-warning"
                                                                     id="testPlayByRecordBtn">미리 듣기
                                                             </button>
-                                                            <button type="button" class="btn btn-danger" id="saveByRecordBtn">
+                                                            <button type="button" class="btn btn-danger"
+                                                                    id="saveByRecordBtn">
                                                                 방송하기
                                                             </button>
                                                         </div>
@@ -112,21 +127,30 @@
                                                 </div>
                                                 <div class="card accordion-item">
                                                     <h2 class="accordion-header" id="headingTwo">
-                                                        <button class="accordion-button collapsed mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                                            <p class="font-weight-bold " style="font-size: 1.5em; margin-bottom: 0;">음성 파일 업로드를 통해 방송하기</p>
+                                                        <button class="accordion-button collapsed mb-3" type="button"
+                                                                data-bs-toggle="collapse" data-bs-target="#collapseTwo"
+                                                                aria-expanded="false" aria-controls="collapseTwo">
+                                                            <p class="font-weight-bold "
+                                                               style="font-size: 1.5em; margin-bottom: 0;">음성 파일 업로드를 통해
+                                                                방송하기</p>
                                                         </button>
                                                     </h2>
-                                                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                                    <div id="collapseTwo" class="accordion-collapse collapse"
+                                                         aria-labelledby="headingTwo"
+                                                         data-bs-parent="#accordionExample">
                                                         <div class="accordion-body">
                                                             <div class="form-group uploadDiv">
-                                                                <input class="btn btn-primary" type="file" name="uploadFile"
-                                                                       id="files" accept="audio/mpeg" style="max-width: 90%">
+                                                                <input class="btn btn-primary" type="file"
+                                                                       name="uploadFile"
+                                                                       id="files" accept="audio/mpeg"
+                                                                       style="max-width: 90%">
                                                             </div>
                                                             <hr>
                                                             <button type="button" class="btn btn-warning"
                                                                     id="testPlayByUploadBtn">미리 듣기
                                                             </button>
-                                                            <button type="button" class="btn btn-danger" id="saveByUploadBtn">
+                                                            <button type="button" class="btn btn-danger"
+                                                                    id="saveByUploadBtn">
                                                                 방송하기
                                                             </button>
                                                         </div>
@@ -142,374 +166,374 @@
                     <!-- /마을 Card-->
                 </div>
                 <!-- / Content -->
-                <!-- footer -->
-                <div th:replace="~{fragment/footer.html :: fragment-footer}"></div>
-                <!-- / footer -->
-            </div>
+            </article>
             <!-- Content wrapper -->
-        </div>
+
+            <!-- footer -->
+            <footer>
+                <th:block th:insert="~{fragment/footer :: fragment-footer}"></th:block>
+                <script type="text/javascript">
+
+                    const header = document.querySelector('#recorderTitle');
+                    const canvas = document.querySelector('.visualizer');
+                    const mainSection = document.querySelector('.main-controls');
+                    const formObj = document.querySelector("form[role='form']");
+
+                    var gumStream; 						//stream from getUserMedia()
+                    var recorder; 						//WebAudioRecorder object
+                    var input; 							//MediaStreamAudioSourceNode  we'll be recording
+                    var encodingType; 					//holds selected encoding for resulting audio (file)
+                    var encodeAfterRecord = true;       // when to encode
+                    var audioContext;
+
+                    const canvasCtx = canvas.getContext("2d")
+
+                    var recordButton = document.getElementById("recordBtn");
+                    var stopButton = document.getElementById("stopBtn");
+                    var testPlayByRecordButton = document.getElementById("testPlayByRecordBtn");
+                    var saveRecordBtn = document.getElementById("saveByRecordBtn");
+                    var testPlayByUploadButton = document.getElementById("testPlayByUploadBtn");
+                    var saveUploadBtn = document.getElementById("saveByUploadBtn");
+
+                    var lastBlob; // 가장 마지막에 녹음된 파일을 담은 blob
+
+                    // 타이머
+                    var timerText = document.querySelector("#timerText");
+                    var sec = 0;
+                    var min = 0;
+                    var hrs = 0;
+                    var t;
+
+                    //add events to those 2 buttons
+                    recordButton.addEventListener("click", startRecording);
+                    stopButton.addEventListener("click", stopRecording);
+                    testPlayByRecordButton.addEventListener("click", testPlaying);
+                    saveRecordBtn.addEventListener("click", saveRecording);
+                    testPlayByUploadButton.addEventListener("click", testPlayingByUpload);
+                    saveUploadBtn.addEventListener("click", saveByUpload);
+
+                    let onSuccess = function (stream) {
+                        console.log("getUserMedia() Success");
+                        audioContext = new AudioContext();
+                        // 음성 파장 시각화
+                        visualize(stream);
+
+                        // 버튼 비활성화
+                        stopButton.disabled = true;
+                        testPlayByRecordButton.disabled = true;
+                    };
+                    let onError = function (err) {
+                        console.log('The following error occurred: ' + err);
+                    };
+                    navigator.mediaDevices.getUserMedia({audio: true, video: false}).then(onSuccess, onError);
+
+                    function startRecording() {
+                        navigator.mediaDevices.getUserMedia({audio: true, video: false}).then(function (stream) {
+                            console.log("startRecording() called");
+
+                            audioContext = new AudioContext();
+
+                            //assign to gumStream for later use
+                            gumStream = stream;
+
+                            /* use the stream */
+                            input = audioContext.createMediaStreamSource(stream);
+
+                            //get the encoding
+                            encodingType = "mp3";
+
+                            recorder = new WebAudioRecorder(input, {
+                                workerDir: "/resources/js/", // must end with slash
+                                encoding: encodingType,
+                                numChannels: 2, //2 is the default, mp3 encoding supports only 2
+                                onEncoderLoading: function (recorder, encoding) {
+                                    // show "loading encoder..." display
+                                    console.log("Loading " + encoding + " encoder...");
+                                },
+                                onEncoderLoaded: function (recorder, encoding) {
+                                    // hide "loading encoder..." display
+                                    console.log(encoding + " encoder loaded");
+                                }
+                            });
+                            recorder.onComplete = function (recorder, blob) {
+                                console.log("Encoding complete: " + blob);
+                                lastBlob = blob;
+                                testPlayByRecordButton.disabled = false;
+                            }
+                            recorder.setOptions({
+                                timeLimit: 120,
+                                encodeAfterRecord: encodeAfterRecord,
+                                ogg: {quality: 0.5},
+                                mp3: {bitRate: 160}
+                            });
+
+                            // 타이머 초기화 이후 시작
+                            timerText.textContent = "00:00:00";
+                            sec = 0;
+                            min = 0;
+                            hrs = 0;
+                            t = setTimeout(add, 1000);
+                            header.textContent = "녹음 진행중";
+
+                            //start the recording process
+                            recorder.startRecording();
+                            console.log("Recording started");
+
+                        }).catch(function (err) {
+                            //enable the record button if getUSerMedia() fails
+                            recordButton.disabled = false;
+                            stopButton.disabled = true;
+                        });
+                        //disable the record button
+                        recordButton.disabled = true;
+                        stopButton.disabled = false;
+                        testPlayByRecordButton.disabled = true; // 미리듣기는 encoding 완료 이후 클릭가능
+                    }
+
+                    function stopRecording() {
+                        console.log("stopRecording() called");
+
+                        //stop microphone access
+                        gumStream.getAudioTracks()[0].stop();
+
+                        //disable the stop button
+                        stopButton.disabled = true;
+                        recordButton.disabled = false;
+
+                        //tell the recorder to finish the recording (stop recording + encode the recorded audio)
+                        recorder.finishRecording();
+
+                        // 타이머 종료
+                        clearTimeout(t);
+                        header.textContent = "녹음을 통해 방송하기";
+
+                        console.log('Recording stopped');
+                    }
+
+                    function testPlaying() {
+                        lastBlob.arrayBuffer().then(result => {
+                            playSound(result);
+                        });
+                    }
+
+                    function playSound(arraybuffer) {
+                        audioContext.decodeAudioData(arraybuffer, function (buf) {
+                            var source = audioContext.createBufferSource();
+                            source.connect(audioContext.destination);
+                            source.buffer = buf;
+                            source.start(0);
+                        });
+                    }
+
+                    function saveRecording() {
+                        let townIdList = document.querySelectorAll("input[name='townId']:checked");
+                        if (townIdList.length == 0) {
+                            alert("마을을 선택해주세요");
+                            return;
+                        }
+                        if (lastBlob == null) {
+                            alert("녹음된 파일이 없습니다!");
+                            return false;
+                        }
+                        blobToBase64(lastBlob).then(result => {
+                            if (confirm("녹음한 파일로 방송 하시겠습니까??")) {
+                                var input = document.createElement('input');
+                                input.type = 'hidden';
+                                input.name = 'voiceData';
+                                input.value = result.toString().replace("data:audio/mpeg;base64,", '');
+                                formObj.appendChild(input);
+
+                                var data = $("form[role='form']").serialize();
+                                $.ajax({
+                                    method: "POST",
+                                    url: "/api/announces",
+                                    data: data,
+                                    success: function (result) {
+                                        window.location.href = "/announces";
+                                    },
+                                    error: function (response) {
+                                        alert("알 수 없는 오류가 발생했습니다");
+                                    }
+                                });
+                            }
+                        });
+                    }
+
+                    function blobToBase64(blob) {
+                        return new Promise((resolve, _) => {
+                            const reader = new FileReader();
+                            reader.onloadend = () => resolve(reader.result);
+                            reader.readAsDataURL(blob);
+                        });
+                    }
+
+                    // 녹음 파장 시각화
+                    function visualize(stream) {
+                        const source = audioContext.createMediaStreamSource(stream);
+                        const analyser = audioContext.createAnalyser();
+                        analyser.fftSize = 2048;
+                        const bufferLength = analyser.frequencyBinCount;
+                        const dataArray = new Uint8Array(bufferLength);
+
+                        source.connect(analyser);
+                        draw()
+
+                        function draw() {
+                            const WIDTH = canvas.width
+                            const HEIGHT = canvas.height;
+
+                            requestAnimationFrame(draw);
+
+                            analyser.getByteTimeDomainData(dataArray);
+
+                            canvasCtx.fillStyle = 'rgb(200, 200, 200)';
+                            canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
+
+                            canvasCtx.lineWidth = 2;
+                            canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
+
+                            canvasCtx.beginPath();
+
+                            let sliceWidth = WIDTH * 1.0 / bufferLength;
+                            let x = 0;
+
+
+                            for (let i = 0; i < bufferLength; i++) {
+
+                                let v = dataArray[i] / 128.0;
+                                let y = v * HEIGHT / 2;
+
+                                if (i === 0) {
+                                    canvasCtx.moveTo(x, y);
+                                } else {
+                                    canvasCtx.lineTo(x, y);
+                                }
+
+                                x += sliceWidth;
+                            }
+
+                            canvasCtx.lineTo(canvas.width, canvas.height / 2);
+                            canvasCtx.stroke();
+
+                        }
+                    }
+
+                    var inputForm = document.getElementById("files");
+                    var fileList;
+                    var file;
+                    var audioContents;
+
+                    inputForm.addEventListener('change', function (event) {
+                        fileList = inputForm.files || event.target.files;
+                        file = fileList[0];
+                        if (!checkExtension(file.name, file.size)) {
+                            console.log("검증 실패");
+                            inputForm.value = '';
+                            audioContents = '';
+                            return false;
+                        } else {
+                            console.log("검증 성공");
+                            var fileReader = new FileReader();
+                            fileReader.onload = function (e) {
+                                console.log(e.target.result);
+                                audioContents = e.target.result;
+                            };
+                            fileReader.readAsDataURL(file);
+                        }
+                    });
+
+                    function testPlayingByUpload() {
+                        console.log("첨부파일 미리듣기 클릭");
+                        if (audioContents == undefined || audioContents.length == 0) {
+                            alert("업로드된 파일이 없습니다!");
+                            return false;
+                        }
+                        file.arrayBuffer().then(buffer => {
+                            playSound(buffer);
+                        });
+                    }
+
+                    function saveByUpload() {
+                        console.log("첨부파일 저장 클릭");
+                        if (audioContents == undefined || audioContents.length == 0) {
+                            alert("업로드된 파일이 없습니다!");
+                            return false;
+                        }
+                        let townIdList = document.querySelectorAll("input[name='townId']:checked");
+                        if (townIdList.length == 0) {
+                            alert("마을을 선택해주세용");
+                            return false;
+                        }
+                        if (confirm("첨부한 파일로 방송하시겠습니까??")) {
+                            var input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = 'voiceData';
+                            input.value = audioContents.replace("data:audio/mpeg;base64,", '');
+
+                            formObj.appendChild(input);
+                            var data = $("form[role='form']").serialize();
+                            $.ajax({
+                                method: "POST",
+                                url: "/api/announces",
+                                data: data,
+                                success: function (result) {
+                                    window.location.href = "/announces";
+                                },
+                                error: function (response) {
+                                    alert("알 수 없는 오류가 발생했습니다");
+                                }
+                            });
+                        }
+                    }
+
+                    function _arrayBufferToBase64(buffer) {
+                        var binary = '';
+                        var bytes = new Uint8Array(buffer);
+                        var len = bytes.byteLength;
+                        for (var i = 0; i < len; i++) {
+                            binary += String.fromCharCode(bytes[i]);
+                        }
+                        return window.btoa(binary);
+                    }
+
+                    function tick() {
+                        sec++;
+                        if (sec >= 60) {
+                            sec = 0;
+                            min++;
+                            if (min >= 60) {
+                                min = 0;
+                                hrs++;
+                            }
+                        }
+                    }
+
+                    function add() {
+                        tick();
+                        timerText.textContent = (hrs > 9 ? hrs : "0" + hrs)
+                            + ":" + (min > 9 ? min : "0" + min)
+                            + ":" + (sec > 9 ? sec : "0" + sec);
+                        timer();
+                    }
+
+                    function timer() {
+                        t = setTimeout(add, 1000);
+                    }
+
+                    window.onresize = function () {
+                        canvas.width = mainSection.offsetWidth;
+                    }
+                    window.onresize();
+
+                </script>
+                <script src="/resources/js/WebAudioRecorder.min.js"></script>
+                <script src="/resources/custom/customFileScript.js"></script>
+            </footer>
+            <!-- / footer -->
+
+        </section>
         <!-- / Layout page -->
     </div>
-    <!-- Overlay -->
-    <div class="layout-overlay layout-menu-toggle"></div>
 </div>
-<!-- / Layout wrapper -->
-<script type="text/javascript">
-
-    const header = document.querySelector('#recorderTitle');
-    const canvas = document.querySelector('.visualizer');
-    const mainSection = document.querySelector('.main-controls');
-    const formObj = document.querySelector("form[role='form']");
-
-    var gumStream; 						//stream from getUserMedia()
-    var recorder; 						//WebAudioRecorder object
-    var input; 							//MediaStreamAudioSourceNode  we'll be recording
-    var encodingType; 					//holds selected encoding for resulting audio (file)
-    var encodeAfterRecord = true;       // when to encode
-    var audioContext;
-
-    const canvasCtx = canvas.getContext("2d")
-
-    var recordButton = document.getElementById("recordBtn");
-    var stopButton = document.getElementById("stopBtn");
-    var testPlayByRecordButton = document.getElementById("testPlayByRecordBtn");
-    var saveRecordBtn = document.getElementById("saveByRecordBtn");
-    var testPlayByUploadButton = document.getElementById("testPlayByUploadBtn");
-    var saveUploadBtn = document.getElementById("saveByUploadBtn");
-
-    var lastBlob; // 가장 마지막에 녹음된 파일을 담은 blob
-
-    // 타이머
-    var timerText = document.querySelector("#timerText");
-    var sec = 0;
-    var min = 0;
-    var hrs = 0;
-    var t;
-
-    //add events to those 2 buttons
-    recordButton.addEventListener("click", startRecording);
-    stopButton.addEventListener("click", stopRecording);
-    testPlayByRecordButton.addEventListener("click", testPlaying);
-    saveRecordBtn.addEventListener("click", saveRecording);
-    testPlayByUploadButton.addEventListener("click", testPlayingByUpload);
-    saveUploadBtn.addEventListener("click", saveByUpload);
-
-    let onSuccess = function (stream) {
-        console.log("getUserMedia() Success");
-        audioContext = new AudioContext();
-        // 음성 파장 시각화
-        visualize(stream);
-
-        // 버튼 비활성화
-        stopButton.disabled = true;
-        testPlayByRecordButton.disabled = true;
-    };
-    let onError = function (err) {
-        console.log('The following error occurred: ' + err);
-    };
-    navigator.mediaDevices.getUserMedia({audio: true, video: false}).then(onSuccess, onError);
-
-    function startRecording() {
-        navigator.mediaDevices.getUserMedia({audio: true, video: false}).then(function (stream) {
-            console.log("startRecording() called");
-
-            audioContext = new AudioContext();
-
-            //assign to gumStream for later use
-            gumStream = stream;
-
-            /* use the stream */
-            input = audioContext.createMediaStreamSource(stream);
-
-            //get the encoding
-            encodingType = "mp3";
-
-            recorder = new WebAudioRecorder(input, {
-                workerDir: "/resources/js/", // must end with slash
-                encoding: encodingType,
-                numChannels: 2, //2 is the default, mp3 encoding supports only 2
-                onEncoderLoading: function (recorder, encoding) {
-                    // show "loading encoder..." display
-                    console.log("Loading " + encoding + " encoder...");
-                },
-                onEncoderLoaded: function (recorder, encoding) {
-                    // hide "loading encoder..." display
-                    console.log(encoding + " encoder loaded");
-                }
-            });
-            recorder.onComplete = function (recorder, blob) {
-                console.log("Encoding complete: " + blob);
-                lastBlob = blob;
-                testPlayByRecordButton.disabled = false;
-            }
-            recorder.setOptions({
-                timeLimit: 120,
-                encodeAfterRecord: encodeAfterRecord,
-                ogg: {quality: 0.5},
-                mp3: {bitRate: 160}
-            });
-
-            // 타이머 초기화 이후 시작
-            timerText.textContent = "00:00:00";
-            sec = 0;
-            min = 0;
-            hrs = 0;
-            t = setTimeout(add, 1000);
-            header.textContent = "녹음 진행중";
-
-            //start the recording process
-            recorder.startRecording();
-            console.log("Recording started");
-
-        }).catch(function (err) {
-            //enable the record button if getUSerMedia() fails
-            recordButton.disabled = false;
-            stopButton.disabled = true;
-        });
-        //disable the record button
-        recordButton.disabled = true;
-        stopButton.disabled = false;
-        testPlayByRecordButton.disabled = true; // 미리듣기는 encoding 완료 이후 클릭가능
-    }
-
-    function stopRecording() {
-        console.log("stopRecording() called");
-
-        //stop microphone access
-        gumStream.getAudioTracks()[0].stop();
-
-        //disable the stop button
-        stopButton.disabled = true;
-        recordButton.disabled = false;
-
-        //tell the recorder to finish the recording (stop recording + encode the recorded audio)
-        recorder.finishRecording();
-
-        // 타이머 종료
-        clearTimeout(t);
-        header.textContent = "녹음을 통해 방송하기";
-
-        console.log('Recording stopped');
-    }
-
-    function testPlaying() {
-        lastBlob.arrayBuffer().then(result => {
-            playSound(result);
-        });
-    }
-
-    function playSound(arraybuffer) {
-        audioContext.decodeAudioData(arraybuffer, function (buf) {
-            var source = audioContext.createBufferSource();
-            source.connect(audioContext.destination);
-            source.buffer = buf;
-            source.start(0);
-        });
-    }
-
-    function saveRecording() {
-        let townIdList = document.querySelectorAll("input[name='townId']:checked");
-        if (townIdList.length == 0) {
-            alert("마을을 선택해주세요");
-            return;
-        }
-        if (lastBlob == null) {
-            alert("녹음된 파일이 없습니다!");
-            return false;
-        }
-        blobToBase64(lastBlob).then(result => {
-            if (confirm("녹음한 파일로 방송 하시겠습니까??")) {
-                var input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'voiceData';
-                input.value = result.toString().replace("data:audio/mpeg;base64,", '');
-                formObj.appendChild(input);
-                formObj.submit();
-            }
-        });
-    }
-
-    function blobToBase64(blob) {
-        return new Promise((resolve, _) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result);
-            reader.readAsDataURL(blob);
-        });
-    }
-
-    // 녹음 파장 시각화
-    function visualize(stream) {
-        const source = audioContext.createMediaStreamSource(stream);
-        const analyser = audioContext.createAnalyser();
-        analyser.fftSize = 2048;
-        const bufferLength = analyser.frequencyBinCount;
-        const dataArray = new Uint8Array(bufferLength);
-
-        source.connect(analyser);
-        draw()
-
-        function draw() {
-            const WIDTH = canvas.width
-            const HEIGHT = canvas.height;
-
-            requestAnimationFrame(draw);
-
-            analyser.getByteTimeDomainData(dataArray);
-
-            canvasCtx.fillStyle = 'rgb(200, 200, 200)';
-            canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
-
-            canvasCtx.lineWidth = 2;
-            canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
-
-            canvasCtx.beginPath();
-
-            let sliceWidth = WIDTH * 1.0 / bufferLength;
-            let x = 0;
-
-
-            for (let i = 0; i < bufferLength; i++) {
-
-                let v = dataArray[i] / 128.0;
-                let y = v * HEIGHT / 2;
-
-                if (i === 0) {
-                    canvasCtx.moveTo(x, y);
-                } else {
-                    canvasCtx.lineTo(x, y);
-                }
-
-                x += sliceWidth;
-            }
-
-            canvasCtx.lineTo(canvas.width, canvas.height / 2);
-            canvasCtx.stroke();
-
-        }
-    }
-
-    var inputForm = document.getElementById("files");
-    var fileList;
-    var file;
-    var audioContents;
-
-    inputForm.addEventListener('change', function (event) {
-        fileList = inputForm.files || event.target.files;
-        file = fileList[0];
-        if(!checkExtension(file.name, file.size)) {
-            console.log("검증 실패");
-            inputForm.value='';
-            audioContents = '';
-            return false;
-        } else {
-            console.log("검증 성공");
-            var fileReader = new FileReader();
-            fileReader.onload = function (e) {
-                console.log(e.target.result);
-                audioContents = e.target.result;
-            };
-            fileReader.readAsDataURL(file);
-        }
-    });
-
-    function testPlayingByUpload() {
-        console.log("첨부파일 미리듣기 클릭");
-        if (audioContents == undefined || audioContents.length == 0) {
-            alert("업로드된 파일이 없습니다!");
-            return false;
-        }
-        file.arrayBuffer().then(buffer => {
-            playSound(buffer);
-        });
-    }
-
-    function saveByUpload() {
-        console.log("첨부파일 저장 클릭");
-        if (audioContents == undefined || audioContents.length == 0) {
-            alert("업로드된 파일이 없습니다!");
-            return false;
-        }
-        let townIdList = document.querySelectorAll("input[name='townId']:checked");
-        if(townIdList.length == 0) {
-            alert("마을을 선택해주세용");
-            return false;
-        }
-        if(confirm("첨부한 파일로 방송하시겠습니까??")) {
-            var input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'voiceData';
-            input.value = audioContents.replace("data:audio/mpeg;base64,", '');
-
-            formObj.appendChild(input);
-            formObj.submit();
-        }
-    }
-
-    // 파일 용량 및 확장자 검사
-    var maxSize = 10485760; // 10MB
-    var regex = new RegExp("(.*?)\.(mp3)$");
-
-    function checkExtension(fileName, fileSize) {
-        if (fileSize > maxSize) {
-            alert("파일 사이즈 초과");
-            return false;
-        }
-        if (!regex.test(fileName)) {
-            alert("mp3 확장자만 업로드 할 수 있습니다.");
-            return false;
-        }
-        return true;
-    }
-
-    function _arrayBufferToBase64(buffer) {
-        var binary = '';
-        var bytes = new Uint8Array(buffer);
-        var len = bytes.byteLength;
-        for (var i = 0; i < len; i++) {
-            binary += String.fromCharCode(bytes[i]);
-        }
-        return window.btoa(binary);
-    }
-
-    // uuid 이름 생성
-    function uuidv4() {
-        return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-            (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-        );
-    }
-
-    function tick() {
-        sec++;
-        if (sec >= 60) {
-            sec = 0;
-            min++;
-            if (min >= 60) {
-                min = 0;
-                hrs++;
-            }
-        }
-    }
-
-    function add() {
-        tick();
-        timerText.textContent = (hrs > 9 ? hrs : "0" + hrs)
-            + ":" + (min > 9 ? min : "0" + min)
-            + ":" + (sec > 9 ? sec : "0" + sec);
-        timer();
-    }
-
-    function timer() {
-        t = setTimeout(add, 1000);
-    }
-
-    window.onresize = function () {
-        canvas.width = mainSection.offsetWidth;
-    }
-    window.onresize();
-
-</script>
-<script src="/resources/js/WebAudioRecorder.min.js"></script>
-
-<div th:replace="~{fragment/header :: fragment-bottom-script}"></div>
 </body>
 </html>
