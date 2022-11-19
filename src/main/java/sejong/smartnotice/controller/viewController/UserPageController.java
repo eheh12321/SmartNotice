@@ -47,7 +47,7 @@ public class UserPageController {
     public String getNormalAnnounceListPage(Authentication auth, Model model) {
         User authUser = userService.findByLoginId(auth.getName());
         Town town = authUser.getTown();
-        List<Announce> announceList = em.createQuery("select distinct a from Announce a join fetch a.atList at where at.town.id=:townId", Announce.class)
+        List<Announce> announceList = em.createQuery("select distinct a from Announce a join fetch a.townAnnounceList at where at.town.id=:townId", Announce.class)
                 .setParameter("townId", town.getId())
                 .getResultList();
 
@@ -60,7 +60,7 @@ public class UserPageController {
     public String getEmergencyAnnounceListPage(Authentication auth, Model model) {
         User authUser = userService.findByLoginId(auth.getName());
         Town town = authUser.getTown();
-        List<Announce> announceList = em.createQuery("select distinct a from Announce a join fetch a.atList at where at.town.id=:townId", Announce.class)
+        List<Announce> announceList = em.createQuery("select distinct a from Announce a join fetch a.townAnnounceList at where at.town.id=:townId", Announce.class)
                 .setParameter("townId", town.getId())
                 .getResultList();
 
