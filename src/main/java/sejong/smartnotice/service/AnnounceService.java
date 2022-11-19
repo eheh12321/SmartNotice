@@ -7,16 +7,20 @@ import com.google.cloud.texttospeech.v1.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sejong.smartnotice.domain.TownAnnounce;
 import sejong.smartnotice.domain.announce.Announce;
 import sejong.smartnotice.domain.Town;
+import sejong.smartnotice.domain.announce.AnnounceCategory;
+import sejong.smartnotice.domain.announce.AnnounceStatus;
 import sejong.smartnotice.domain.member.Admin;
-import sejong.smartnotice.helper.dto.AnnounceOutputDTO;
-import sejong.smartnotice.helper.dto.AnnounceRegisterDTO;
+import sejong.smartnotice.helper.dto.request.AnnounceRequest;
 import sejong.smartnotice.helper.event.CreatedAnnounceEvent;
 import sejong.smartnotice.repository.AnnounceRepository;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -34,17 +38,21 @@ public class AnnounceService {
 
     private final ApplicationEventPublisher publisher;
 
-    public Long registerAnnounce(AnnounceRegisterDTO registerDTO) {
+    public Long registerAnnounce(AnnounceRequest registerDTO) {
         log.info("== 방송 등록 ==");
         Admin admin = adminService.findById(registerDTO.getAdminId());
 
         // 1. 방송 생성
-        List<Town> townList = registerDTO.getTownId().stream()
-                .map(townService::findById)
-                .collect(Collectors.toList());
+        List<Town> townList = townService.findTownsByTownIdList(registerDTO.getTownId());
+        Announce announce = registerDTO.toEntity(admin.getName());
 
-        Announce announce = Announce.makeAnnounce(admin.getName(), registerDTO.getTextData(), registerDTO.getCategory(),
-                registerDTO.getType(), townList, registerDTO.getTitle());
+        // TODO: batch insert를 적용해보고 싶은데 나중에 한번 찾아보기
+        townList.forEach(town -> {
+            TownAnnounce townAnnounce = TownAnnounce.builder()
+                    .announce(announce)
+                    .town(town).build();
+            townAnnounce.createAnnounce();
+        });
         announceRepository.save(announce);
 
         // 2. 파일 저장을 위한 Event 생성
@@ -61,14 +69,43 @@ public class AnnounceService {
         announceRepository.delete(announce);
     }
 
-    public Announce findById(Long id) {
-        log.info("== 방송 아이디 조회 ==");
-        Optional<Announce> opt = announceRepository.findById(id);
-        if(opt.isEmpty()) {
-            log.warn("방송이 존재하지 않습니다");
-            throw new RuntimeException("에러");
+    public void setAnnounceStatus(Long id, String directory, String fileName, AnnounceStatus status) {
+        Announce announce = findById(id);
+        announce.setAnnounceFileSaved(directory, fileName, status);
+    }
+
+    // 현재 관리하고 있는 마을과 관련된 방송을 가져오는 메서드
+    public List<Announce> findManagedTownAnnounces(Admin admin, String category) {
+        List<Announce> announceList;
+        
+        if (!admin.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPER"))) {
+            // 마을 관리자인 경우 관리 마을 대상으로 한 방송 목록만 조회
+            List<Town> managedTownList = townService.findTownByAdmin(admin);
+            announceList = findAllAnnounceToTown(managedTownList);
+        } else {
+            // 최고 관리자의 경우 전부 다 가져옴
+            announceList = findAll();
         }
-        return opt.get();
+        // 카테고리 필터링
+        switch (category) {
+            case "normal":
+                announceList = announceList.stream()
+                        .filter(announce -> announce.getCategory().equals(AnnounceCategory.NORMAL))
+                        .collect(Collectors.toList());
+                break;
+            case "disaster":
+                announceList = announceList.stream()
+                        .filter(announce -> announce.getCategory().equals(AnnounceCategory.DISASTER))
+                        .collect(Collectors.toList());
+                break;
+        }
+        return announceList;
+    }
+
+    public Announce findById(Long id) {
+        log.info("== 아이디로 방송 조회 ==");
+        return announceRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("방송이 존재하지 않습니다"));
     }
 
     @Transactional(readOnly = true)
@@ -78,15 +115,9 @@ public class AnnounceService {
     }
 
     @Transactional(readOnly = true)
-    public List<Announce> findAllAnnounceToTownById(Long townId) {
-        log.info("== 방송 목록 전체 조회(fetch) ==");
-        return announceRepository.findAllAnnounceToTownById(townId);
-    }
-
-    @Transactional(readOnly = true)
     public List<Announce> findAllAnnounceToTown(List<Town> townList) {
         log.info("== 특정 마을 대상 방송 목록 조회 ==");
-        return announceRepository.findAllAnnounceToTown(townList);
+        return announceRepository.findAnnouncesByTownList(townList);
     }
 
     /**
@@ -127,19 +158,19 @@ public class AnnounceService {
     }
 
     // 문자방송 파일 생성
-    public AnnounceOutputDTO makeTextAnnounce(String text) {
+    public byte[] makeTextAnnounce(String text) {
         log.info("== 문자 방송 생성 (API 통신) ==");
         log.info("방송 시각: {}", LocalDateTime.now());
         log.info("방송 내용: {}", text);
         log.info("문자 길이: {}", text.length());
         log.info("==================");
-        if(text.length() > 1000) { // 제한
+        if (text.length() > 1000) { // 제한
             throw new IllegalStateException("1000자를 초과할 수 없습니다");
         }
         try {
             byte[] audioContents = synthesizeText(text); // API 통신
             log.info("성공!");
-            return new AnnounceOutputDTO(audioContents);
+            return audioContents;
         } catch (Exception e) {
             log.warn("방송 파일 생성 실패");
             e.printStackTrace();
