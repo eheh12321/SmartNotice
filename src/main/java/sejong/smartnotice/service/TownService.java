@@ -7,8 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.TownAdmin;
 import sejong.smartnotice.domain.Region;
 import sejong.smartnotice.domain.Town;
+import sejong.smartnotice.domain.TownData;
 import sejong.smartnotice.domain.member.Admin;
-import sejong.smartnotice.helper.dto.TownModifyDTO;
+import sejong.smartnotice.helper.dto.request.TownModifyRequest;
 import sejong.smartnotice.helper.dto.TownRegisterDTO;
 import sejong.smartnotice.repository.TownRepository;
 
@@ -22,6 +23,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class TownService {
 
+    private final TownDataService townDataService;
+
     private final AdminService adminService;
     private final TownRepository townRepository;
     private final EntityManager em;
@@ -32,14 +35,11 @@ public class TownService {
         // 1. 지역 조회
         Region region = findRegion(registerDTO.getRegionCode());
 
-        // 2. 중복 검증
-        validateDuplicateTown(registerDTO.getName(), region);
-
-        // 3. 마을 생성
+        // 2. 마을 생성
         Town town = Town.createTown(registerDTO.getName(), region);
-        townRepository.save(town);
-
-        return town.getId();
+        Town saveTown = townRepository.save(town);
+        
+        return saveTown.getId();
     }
 
     // 마을 삭제
@@ -59,7 +59,7 @@ public class TownService {
     }
 
     // 마을 정보 수정
-    public void modifyTownInfo(TownModifyDTO modifyDTO) {
+    public void modifyTownInfo(TownModifyRequest modifyDTO) {
         log.info("== 마을 정보 수정 ==");
         // 1. 마을 조회 및 검증
         Town town = findById(modifyDTO.getId());
@@ -67,16 +67,14 @@ public class TownService {
         // 2. 지역 조회 및 검증
         Region region = findRegion(modifyDTO.getRegionCode());
 
-        // 3. 바뀐 정보가 없으면 아무것도 하지 않음
-        if (town.getName().equals(modifyDTO.getName()) && town.getRegion().equals(region)) {
-            return;
-        }
-
-        // 4. 중복 검증
-        validateDuplicateTown(modifyDTO.getName(), region);
-
-        // 5. 마을 정보 수정
+        // 3. 마을 정보 수정
         town.modifyTownInfo(modifyDTO.getName(), region);
+
+        // Redis Update
+        TownData townData = townDataService.findById(town.getId());
+        townData.setTownName(modifyDTO.getName());
+        townData.setRegionId(region.getId());
+        townDataService.save(townData);
     }
 
     // 관리자 관리 마을 목록 수정
@@ -99,6 +97,11 @@ public class TownService {
             if (!townIdSet.contains(town.getId())) {
                 // 마을 관리 삭제
                 removeTownAdmin(admin, town);
+
+                // Redis Update
+                TownData townData = townDataService.findById(town.getId());
+                townData.setTownAdminCnt(townData.getTownAdminCnt() - 1);
+                townDataService.save(townData);
             } else {
                 townIdSet.remove(town.getId());
             }
@@ -109,8 +112,19 @@ public class TownService {
             for (Town town : newManageTownSet) {
                 // 신규 관리자 추가
                 addTownAdmin(admin, town);
+
+                // Redis Update
+                TownData townData = townDataService.findById(town.getId());
+                townData.setTownAdminCnt(townData.getTownAdminCnt() + 1);
+                townDataService.save(townData);
             }
         }
+    }
+
+    // 관리자가 해당 마을 관리자가 맞는지 검증
+    public boolean isTownAdmin(Long townId, Long adminId) {
+        return townRepository.findTownsByAdmin(adminId).stream()
+                .anyMatch(town -> town.getId().equals(townId));
     }
 
     public void addTownAdmin(Admin admin, Town town) {
@@ -130,6 +144,11 @@ public class TownService {
     public Town findById(Long townId) {
         return townRepository.findById(townId)
                 .orElseThrow(() -> new EntityNotFoundException("마을이 존재하지 않습니다"));
+    }
+
+    // 관리자가 관리하는 마을 목록 조회
+    public List<Town> findByAdmin(Long adminId) {
+        return townRepository.findTownsByAdmin(adminId);
     }
 
     // 마을 목록 조회
@@ -161,14 +180,5 @@ public class TownService {
     // 관리자 관리 마을 목록 조회
     public List<Town> findTownByAdmin(Admin admin) {
         return townRepository.findTownsByAdmin(admin.getId());
-    }
-
-    // 마을 중복 검증
-    private void validateDuplicateTown(String townName, Region region) {
-        log.info("== 마을 중복 검증 ==");
-        if (townRepository.existsByRegionAndName(region, townName)) {
-            log.warn("같은 지역에 동일한 마을이 존재합니다");
-            throw new IllegalArgumentException("같은 지역에 동일한 마을이 존재합니다");
-        }
     }
 }
