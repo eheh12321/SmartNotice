@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.Town;
+import sejong.smartnotice.domain.TownData;
 import sejong.smartnotice.domain.device.Device;
 import sejong.smartnotice.domain.member.Account;
 import sejong.smartnotice.domain.member.User;
@@ -27,6 +28,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
+    private final TownDataService townDataService;
     private final UserRepository userRepository;
     private final TownService townService;
     private final DeviceService deviceService;
@@ -48,6 +50,11 @@ public class UserService implements UserDetailsService {
        User user = User.createUser(registerDTO.getName(), registerDTO.getTel(),
                 registerDTO.getAddress(), registerDTO.getBirth(), town, account);
         userRepository.save(user);
+
+        // Redis Update
+        TownData townData = townDataService.findById(town.getId());
+        townData.setUserCnt(townData.getUserCnt() + 1);
+        townDataService.save(townData);
 
         return user.getId();
     }

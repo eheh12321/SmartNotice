@@ -11,6 +11,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.TownAnnounce;
+import sejong.smartnotice.domain.TownData;
 import sejong.smartnotice.domain.announce.Announce;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.announce.AnnounceCategory;
@@ -35,6 +36,7 @@ public class AnnounceService {
     private final AdminService adminService;
     private final TownService townService;
     private final AnnounceRepository announceRepository;
+    private final TownDataService townDataService;
 
     private final ApplicationEventPublisher publisher;
 
@@ -52,6 +54,10 @@ public class AnnounceService {
                     .announce(announce)
                     .town(town).build();
             townAnnounce.createAnnounce();
+
+            TownData findTownData = townDataService.findById(town.getId());
+            findTownData.setAnnounceCnt(findTownData.getAnnounceCnt() + 1);
+            townDataService.save(findTownData);
         });
         announceRepository.save(announce);
 
