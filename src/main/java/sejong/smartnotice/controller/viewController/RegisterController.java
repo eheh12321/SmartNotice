@@ -39,6 +39,11 @@ public class RegisterController {
         dataBinder.addValidators(userAccountRegisterValidator);
     }
 
+    @GetMapping
+    public String SelectRegisterAuthPage() {
+        return "register/index";
+    }
+
     @GetMapping("/admin")
     public String registerAdminForm(Model model) {
         model.addAttribute("admin", new AdminRegisterDTO());

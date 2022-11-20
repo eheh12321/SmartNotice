@@ -1,16 +1,15 @@
-package sejong.smartnotice.helper.dto;
+package sejong.smartnotice.helper.dto.request;
 
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-@Getter @Setter
-@Builder
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
-public class TownModifyDTO {
+public class TownModifyRequest {
 
+    @Setter
     private Long id;
 
     @NotBlank

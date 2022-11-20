@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.AlertType;
 import sejong.smartnotice.domain.EmergencyAlert;
+import sejong.smartnotice.domain.TownData;
 import sejong.smartnotice.domain.member.Supporter;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.repository.EmergencyAlertRepository;
@@ -30,6 +31,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EmergencyAlertService {
 
+    private final TownDataService townDataService;
     private final EmergencyAlertRepository emRepository;
     private final UserService userService;
 
@@ -86,6 +88,13 @@ public class EmergencyAlertService {
 //        }
         EmergencyAlert alert = EmergencyAlert.createAlert(user, alertType);
         emRepository.save(alert);
+
+        // Redis Update
+        TownData townData = townDataService.findById(user.getTown().getId());
+        townData.setAlertCnt(townData.getAlertCnt() + 1);
+        townData.setUserAlertCnt(townData.getUserAlertCnt() + 1);
+        townDataService.save(townData);
+
         return alert.getId();
     }
 

@@ -2,17 +2,12 @@ package sejong.smartnotice.helper.exceptionAdvice;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import java.nio.file.AccessDeniedException;
-import java.util.Set;
 
 @Slf4j
 @ControllerAdvice(basePackages = "sejong.smartnotice.controller.viewController")
@@ -34,8 +29,9 @@ public class ExceptionControllerAdvice {
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler
-    public ModelAndView handleAccessDeniedException(AccessDeniedException e) {
+    public ModelAndView handleAccessDeniedException(AccessDeniedException e, Model model) {
         log.error("[AccessDeniedException e] -> {}", e.getMessage());
+        model.addAttribute("errorMessage", e.getMessage());
         return new ModelAndView("error/403");
     }
 

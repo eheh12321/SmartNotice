@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -23,6 +24,7 @@ import sejong.smartnotice.helper.handler.*;
 import sejong.smartnotice.service.UserAccountService;
 
 @RequiredArgsConstructor
+@EnableMethodSecurity(securedEnabled = true)
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig extends AbstractHttpConfigurer<SecurityConfig, HttpSecurity> {
@@ -43,7 +45,7 @@ public class SecurityConfig extends AbstractHttpConfigurer<SecurityConfig, HttpS
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/resources/**", "/test*", "/alerts/api", "/profile", "/login", "/register/**").permitAll()
+                .antMatchers("/resources/**", "/alerts/api", "/profile", "/login", "/register/**", "/test/**").permitAll()
                 .antMatchers("/storage/**", "/api/**").authenticated() // 아무 권한이나 있으면
                 .antMatchers("/u/**").hasRole("USER")
                 .antMatchers("/s/**").hasRole("SUPPORTER")

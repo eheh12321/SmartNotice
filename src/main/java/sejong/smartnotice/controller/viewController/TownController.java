@@ -3,24 +3,19 @@ package sejong.smartnotice.controller.viewController;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.*;
-import sejong.smartnotice.domain.announce.Announce;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.AdminType;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.helper.dto.request.register.AdminRegisterDTO;
-import sejong.smartnotice.helper.dto.ComplexDTO;
-import sejong.smartnotice.helper.dto.TownModifyDTO;
 import sejong.smartnotice.service.*;
 
 import javax.persistence.EntityManager;
-import java.io.IOException;
-import java.nio.file.AccessDeniedException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -29,45 +24,31 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TownController {
 
+    private final TownDataService townDataService;
+
     private final TownService townService;
     private final AdminService adminService;
     private final UserService userService;
     private final EntityManager em;
 
-    /**
-     * 자료 가져올 때도 페이징 적용이 되었으면 좋겠는데..
-     */
-    @GetMapping("/{id}")
-    public String getTownDetail(@AuthenticationPrincipal Admin admin, @PathVariable Long id, Model model) throws IOException {
+    @GetMapping("/{townId}")
+    public String getTownDetail(@AuthenticationPrincipal Admin admin,
+                                @PathVariable Long townId,
+                                Model model) {
         log.info("== 마을 상세 조회 ==");
-        Town town = townService.findById(id);
-        List<TownAdmin> adminTownList = town.getTownAdminList();
-        List<Admin> adminList = new ArrayList<>();
-
-        for (TownAdmin adminTown : adminTownList) {
-            adminList.add(adminTown.getAdmin());
-        }
-
-        boolean isAdmin = adminTownList.stream()
-                .map(TownAdmin::getAdmin)
-                .anyMatch(a -> a.equals(admin));
-
-        if (!isAdmin) {
+        // 1. 마을 관리 권한 확인
+        if(!townService.isTownAdmin(townId, admin.getId())) {
             throw new AccessDeniedException("마을 관리 권한이 없습니다");
         }
 
-        List<Announce> announceList = em.createQuery("select a from Announce a join fetch a.townAnnounceList at where at.town=:town", Announce.class)
-                .setParameter("town", town)
-                .getResultList();
-        List<User> userList = town.getUserList();
+        // 2. Redis에서 캐시 데이터 조회
+        TownData townData = townDataService.findById(townId);
+        model.addAttribute("townData", townData);
 
-        ComplexDTO dto = ComplexDTO.from(town, adminList, userList, announceList);
-
+        // 3. 마을 수정을 위한 전체 지역 목록 조회
+        // TODO: 이거 별도로 분리하기 (마을 수정 분리)
         List<Region> regionList = em.createQuery("select r from Region r", Region.class).getResultList();
-
-        model.addAttribute("dto", dto);
         model.addAttribute("regionList", regionList);
-        model.addAttribute("town", new TownModifyDTO(town.getId(), town.getName(), town.getRegion().getId()));
         return "town/townDetail";
     }
 

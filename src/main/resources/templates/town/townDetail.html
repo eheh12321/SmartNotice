@@ -1,28 +1,36 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
-<head th:replace="~{fragment/header :: fragment-header ('마을 상세 페이지')}"></head>
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <th:block th:insert="~{fragment/header :: fragment-header ('마을 상세 페이지')}"></th:block>
+</head>
+
 <body>
-<!-- Layout wrapper -->
 <div class="layout-wrapper layout-content-navbar">
     <div class="layout-container">
-        <!-- Sidebar fragment -->
-        <div th:replace="~{fragment/sidebar :: fragment-sidebar('sidebar_town', '')}"></div>
+
+        <!-- Sidebar -->
+        <aside th:replace="~{fragment/sidebar :: fragment-sidebar('sidebar_town', '')}"></aside>
         <!-- /Sidebar -->
+
         <!-- Layout container -->
-        <div class="layout-page">
-            <!-- Navbar(검색창) -->
-            <div th:replace="~{fragment/navbar :: fragment-navbar}"></div>
+        <section class="layout-page">
+
+            <!-- Navbar -->
+            <nav th:replace="~{fragment/navbar :: fragment-navbar}"></nav>
             <!-- /Navbar -->
+
             <!-- Content wrapper -->
-            <div class="content-wrapper">
+            <article class="content-wrapper">
                 <!-- Content -->
                 <div class="container-xxl flex-grow-1 container-p-y">
 
                     <div class="alert alert-primary" role="alert">
-                        <span th:text="|${dto.town.name} 현재 기상 정보 - |">xx마을 현재 기상 정보</span>
+                        <span th:text="|${townData.townName} 현재 기상 정보 - |">xx마을 현재 기상 정보</span>
                         <span id="weatherInfoText">-</span>
-                        <button type="button" class="btn bg-transparent" id="reloadWeatherInfoBtn" style="position: absolute; right: 0px; top: 0px;">
+                        <button type="button" class="btn bg-transparent" id="reloadWeatherInfoBtn"
+                                style="position: absolute; right: 0px; top: 0px;">
                             <i class='bx bx-sync bx-rotate-90 bx-md' id="weatherSyncIcon"></i>
                         </button>
                     </div>
@@ -33,7 +41,7 @@
                             <div class="card">
                                 <div class="d-flex align-items-end row">
                                     <div class="card-header">
-                                        <h2 class="d-inline ms-2" th:text="|${dto.town.name} 상세|">xx마을 상세</h2>
+                                        <h2 class="d-inline ms-2" th:text="|${townData.townName} 상세|">xx마을 상세</h2>
                                         <button class="btn bg-transparent pt-0 pb-0" style="float: right"
                                                 th:onclick="|location.href='/'|">
                                             <i class='bx bxs-left-arrow-circle bx-md'></i>
@@ -42,160 +50,154 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="row mb-4">
-                                            <div class="col-sm-7 ps-4">
-                                                <div class="row row-bordered g-0">
-                                                    <!-- Chart -->
-                                                    <div class="col-md-7">
-                                                        <canvas id="myChart" width="400" height="400"></canvas>
-                                                        <script th:inline="javascript">
-                                                            var notConnectedCnt = [[${dto.status_notConnected}]];
-                                                            var mqttErrorCnt = [[${dto.status_error_mqtt}]];
-                                                            var sensorErrorCnt = [[${dto.status_error_sensor}]];
-                                                            var fireAlertCnt = [[${dto.alert_fire}]];
-                                                            var userAlertCnt = [[${dto.alert_user}]];
-                                                            var motionAlertCnt = [[${dto.alert_motion}]];
-                                                            var ctx = document.getElementById("myChart").getContext('2d');
-                                                            var myChart = new Chart(ctx, {
-                                                                type: 'bar',
-                                                                data: {
-                                                                    labels: ['단말기 미연결', '단말기 장애', '긴급 호출'],
-                                                                    datasets: [
-                                                                        {
-                                                                            label: '단말기 미연결',
-                                                                            data: [notConnectedCnt, -1, -1],
-                                                                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                                                                            borderColor: 'rgb(0, 0, 0, 0.5)',
-                                                                            stack: 'Stack 0',
-                                                                            borderWidth: 1,
-                                                                        },
-                                                                        {
-                                                                            label: '통신 장애',
-                                                                            data: [-1, mqttErrorCnt, -1],
-                                                                            backgroundColor: 'rgba(255, 159, 64, 0.2)',
-                                                                            borderColor: 'rgb(0, 0, 0, 0.5)',
-                                                                            stack: 'Stack 0',
-                                                                            borderWidth: 1,
-                                                                        },
-                                                                        {
-                                                                            label: '센서 장애',
-                                                                            data: [-1, sensorErrorCnt, -1],
-                                                                            backgroundColor: 'rgba(255, 205, 86, 0.2)',
-                                                                            borderColor: 'rgb(0, 0, 0, 0.5)',
-                                                                            stack: 'Stack 0',
-                                                                            borderWidth: 1,
-                                                                        },
-                                                                        {
-                                                                            label: '사용자 호출',
-                                                                            data: [-1, -1, userAlertCnt],
-                                                                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                                                                            borderColor: 'rgb(0, 0, 0, 0.5)',
-                                                                            stack: 'Stack 0',
-                                                                            borderWidth: 1,
-                                                                        },
-                                                                        {
-                                                                            label: '화재 감지',
-                                                                            data: [-1, -1, fireAlertCnt],
-                                                                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                                                                            borderColor: 'rgb(0, 0, 0, 0.5)',
-                                                                            stack: 'Stack 0',
-                                                                            borderWidth: 1,
-                                                                        },
-                                                                        {
-                                                                            label: '동작 감지',
-                                                                            data: [-1, -1, motionAlertCnt],
-                                                                            backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                                                                            borderColor: 'rgb(0, 0, 0, 0.5)',
-                                                                            stack: 'Stack 0',
-                                                                            borderWidth: 1,
-                                                                        },
-                                                                    ]
+                                            <div class="col-md-4">
+                                                <canvas id="myChart" height="250"></canvas>
+                                                <script th:inline="javascript">
+                                                    var notConnectedCnt = [[${townData.connectionErrorCnt}]];
+                                                    var mqttErrorCnt = [[${townData.connectionErrorCnt}]];
+                                                    var sensorErrorCnt = [[${townData.sensorErrorCnt}]];
+                                                    var fireAlertCnt = [[${townData.fireAlertCnt}]];
+                                                    var userAlertCnt = [[${townData.userAlertCnt}]];
+                                                    var motionAlertCnt = [[${townData.motionAlertCnt}]];
+                                                    var ctx = document.getElementById("myChart").getContext('2d');
+                                                    var myChart = new Chart(ctx, {
+                                                        type: 'bar',
+                                                        data: {
+                                                            labels: ['단말기 미연결', '단말기 장애', '긴급 호출'],
+                                                            datasets: [
+                                                                {
+                                                                    label: '단말기 미연결',
+                                                                    data: [notConnectedCnt, -1, -1],
+                                                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                                                    borderColor: 'rgb(0, 0, 0, 0.5)',
+                                                                    stack: 'Stack 0',
+                                                                    borderWidth: 1,
                                                                 },
-                                                                options: {
-                                                                    plugins: {
-                                                                        title: {
-                                                                            display: true,
-                                                                            text: '마을 현황 차트'
-                                                                        },
-                                                                        legend: {
-                                                                            display: false
-                                                                        }
-                                                                    },
-                                                                    responsive: true,
-                                                                    interaction: {
-                                                                        intersect: false,
-                                                                    },
-                                                                    scales: {
-                                                                        x: {
-                                                                            stacked: true,
-                                                                        },
-                                                                        y: {
-                                                                            min: 0,
-                                                                            suggestedMax: 10,
-                                                                            stacked: true,
-                                                                            beginAtZero: true,
-                                                                            ticks: {
-                                                                                stepSize: 10
-                                                                            },
-                                                                        }
-                                                                    }
+                                                                {
+                                                                    label: '통신 장애',
+                                                                    data: [-1, mqttErrorCnt, -1],
+                                                                    backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                                                                    borderColor: 'rgb(0, 0, 0, 0.5)',
+                                                                    stack: 'Stack 0',
+                                                                    borderWidth: 1,
+                                                                },
+                                                                {
+                                                                    label: '센서 장애',
+                                                                    data: [-1, sensorErrorCnt, -1],
+                                                                    backgroundColor: 'rgba(255, 205, 86, 0.2)',
+                                                                    borderColor: 'rgb(0, 0, 0, 0.5)',
+                                                                    stack: 'Stack 0',
+                                                                    borderWidth: 1,
+                                                                },
+                                                                {
+                                                                    label: '사용자 호출',
+                                                                    data: [-1, -1, userAlertCnt],
+                                                                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                                                    borderColor: 'rgb(0, 0, 0, 0.5)',
+                                                                    stack: 'Stack 0',
+                                                                    borderWidth: 1,
+                                                                },
+                                                                {
+                                                                    label: '화재 감지',
+                                                                    data: [-1, -1, fireAlertCnt],
+                                                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                                                    borderColor: 'rgb(0, 0, 0, 0.5)',
+                                                                    stack: 'Stack 0',
+                                                                    borderWidth: 1,
+                                                                },
+                                                                {
+                                                                    label: '동작 감지',
+                                                                    data: [-1, -1, motionAlertCnt],
+                                                                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                                                                    borderColor: 'rgb(0, 0, 0, 0.5)',
+                                                                    stack: 'Stack 0',
+                                                                    borderWidth: 1,
+                                                                },
+                                                            ]
+                                                        },
+                                                        options: {
+                                                            plugins: {
+                                                                title: {
+                                                                    display: true,
+                                                                    text: '마을 현황 차트'
+                                                                },
+                                                                legend: {
+                                                                    display: false
                                                                 }
-                                                            });
-                                                        </script>
-                                                    </div>
-                                                    <!-- /Chart -->
-                                                    <div class="col-md-5 ps-3">
-                                                        <h5 class="text-center fw-bold">마을 현황</h5>
-                                                        <table class="table table-borderless border border-secondary">
-                                                            <tbody>
-                                                            <tr>
-                                                                <td class="fw-bold">마을 주민</td>
-                                                                <td th:text="|${dto.getUserList.size()}명|">-명</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td class="fw-bold" style="color: #e83e8c"
-                                                                    th:text="|단말기 미연결:${dto.status_notConnected}|">정상:-
-                                                                </td>
-                                                                <td class="fw-bold" style="color: coral"
-                                                                    th:text="|통신 장애:${dto.status_error_mqtt}|">통신 장애:-
-                                                                </td>
-                                                                <td class="fw-bold" style="color: #dc3545"
-                                                                    th:text="|센서 장애:${dto.status_error_sensor}|">센서 장애:-
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td class="fw-bold">마을 관리자</td>
-                                                                <td th:text="|${dto.townAdminCnt}명|">-명</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td class="fw-bold">긴급 호출</td>
-                                                                <td th:text="|${dto.getAlertList.size()}건|">-건</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td class="fw-bold" style="color: #e83e8c"
-                                                                    th:text="|사용자:${dto.getAlert_user()}|">사용자:-
-                                                                </td>
-                                                                <td class="fw-bold" style="color: coral"
-                                                                    th:text="|동작:${dto.getAlert_motion()}|">동작:-
-                                                                </td>
-                                                                <td class="fw-bold" style="color: #dc3545"
-                                                                    th:text="|화재:${dto.getAlert_fire()}|">화재:-
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td class="fw-bold">방송 송출</td>
-                                                                <td th:text="|${dto.getAnnounceList.size()}건|">-건</td>
-                                                            </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
+                                                            },
+                                                            responsive: true,
+                                                            interaction: {
+                                                                intersect: false,
+                                                            },
+                                                            scales: {
+                                                                x: {
+                                                                    stacked: true,
+                                                                },
+                                                                y: {
+                                                                    min: 0,
+                                                                    suggestedMax: 10,
+                                                                    stacked: true,
+                                                                    beginAtZero: true,
+                                                                    ticks: {
+                                                                        stepSize: 10
+                                                                    },
+                                                                }
+                                                            }
+                                                        }
+                                                    });
+                                                </script>
                                             </div>
-                                            <div class="col-sm-5 pe-4">
+                                            <div class="col-md-4">
+                                                <h5 class="text-center fw-bold">마을 현황</h5>
+                                                <table class="table table-borderless border border-secondary">
+                                                    <tbody>
+                                                    <tr>
+                                                        <td class="fw-bold">마을 주민</td>
+                                                        <td th:text="|${townData.userCnt}명|">-명</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="fw-bold" style="color: #e83e8c"
+                                                            th:text="|단말기 미연결:${townData.deviceErrorCnt}|">정상:-
+                                                        </td>
+                                                        <td class="fw-bold" style="color: coral"
+                                                            th:text="|통신 장애:${townData.connectionErrorCnt}|">통신 장애:-
+                                                        </td>
+                                                        <td class="fw-bold" style="color: #dc3545"
+                                                            th:text="|센서 장애:${townData.sensorErrorCnt}|">센서 장애:-
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="fw-bold">마을 관리자</td>
+                                                        <td th:text="|${townData.townAdminCnt}명|">-명</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="fw-bold">긴급 호출</td>
+                                                        <td th:text="|${townData.alertCnt}건|">-건</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="fw-bold" style="color: #e83e8c"
+                                                            th:text="|사용자:${townData.userAlertCnt}|">사용자:-
+                                                        </td>
+                                                        <td class="fw-bold" style="color: coral"
+                                                            th:text="|동작:${townData.motionAlertCnt}|">동작:-
+                                                        </td>
+                                                        <td class="fw-bold" style="color: #dc3545"
+                                                            th:text="|화재:${townData.fireAlertCnt}|">화재:-
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="fw-bold">방송 송출</td>
+                                                        <td th:text="|${townData.announceCnt}건|">-건</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="col-sm-4">
                                                 <div class="row row-bordered g-0">
                                                     <div class="col-12 mb-4">
                                                         <table class="table table-borderless">
                                                             <form id="formObj"
-                                                                  th:action="@{/towns/{id}(id=${dto.town.id})}"
+                                                                  th:action="@{/towns/{id}(id=${townData.townId})}"
                                                                   method="post">
                                                                 <tr>
                                                                     <td>
@@ -203,7 +205,7 @@
                                                                             <label>마을 이름</label>
                                                                             <input type="text" class="form-control"
                                                                                    name="name"
-                                                                                   th:value="${dto.town.name}">
+                                                                                   th:value="${townData.townName}">
                                                                         </div>
                                                                     </td>
                                                                 </tr>
@@ -213,9 +215,10 @@
                                                                             <div>지역 선택</div>
                                                                             <select name="regionCode"
                                                                                     class="form-select"
-                                                                                    th:field="${town.regionCode}">
+                                                                                    th:value="${townData.regionId}">
                                                                                 <option th:each="region : ${regionList}"
                                                                                         th:value="${region.getId}"
+                                                                                        th:selected="${region.getId} == ${townData.regionId}"
                                                                                         th:text="${region.toString()}">
                                                                                     지역명
                                                                                 </option>
@@ -233,7 +236,8 @@
                                                                                 id="townDeleteBtn">삭제
                                                                         </button>
                                                                         <button type="button" class="btn btn-success"
-                                                                                th:onclick="|location.href='@{/towns/{id}/admin/new(id=${dto.town.id})}'|">
+                                                                                onclick="alert('임시 중단')">
+                                                                            <!--                                                                                th:onclick="|location.href='@{/towns/{id}/admin/new(id=${townData.townId})}'|">-->
                                                                             관리자 추가
                                                                         </button>
                                                                     </td>
@@ -250,438 +254,205 @@
                         </div>
                     </div>
                     <!-- /마을 Card-->
-                    <!-- 마을 Card -->
-                    <div class="row">
-                        <div class="col mb-4">
-                            <div class="card">
-                                <div class="d-flex align-items-end row">
-                                    <div class="card-header">
-                                        <h2 class="d-inline">마을 관리자 정보</h2>
-                                        <hr>
-                                    </div>
-
-                                    <div class="card-body">
-                                        <div id="adminDiv">
-                                            <table class="table table-bordered" id="adminTable">
-                                                <thead class="table-secondary">
-                                                <tr>
-                                                    <th>이름</th>
-                                                    <th>전화번호</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                <tr th:each="admin : ${dto.getAdminList}"
-                                                    th:if="${admin.type.toString() == 'ADMIN'}">
-                                                    <td th:text="${admin.name}">이름</td>
-                                                    <td th:text="${admin.tel}">전화번호</td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <hr>
-                                        <table class="table table-borderless">
-                                            <tr class="text-center">
-                                                <td>
-                                                    <button class="btn btn-primary w-100" id="showUserTableBtn">마을 주민
-                                                        목록
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <button class="btn btn-primary w-100" id="showAnnounceTableBtn">마을
-                                                        방송 목록
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <button class="btn btn-primary w-100" id="showAlertTableBtn">긴급 호출
-                                                        목록
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /마을 Card-->
-                    <!-- 마을 Card (동적 생성) -->
-                    <div class="row" id="userDiv" style="display: none;">
-                        <div class="col mb-4">
-                            <div class="card">
-                                <div class="d-flex align-items-end row">
-                                    <div class="card-header">
-                                        <h2 class="d-inline">마을 주민 목록</h2>
-                                        <hr>
-                                    </div>
-                                    <div class="card-body">
-                                        <table class="table table-bordered" id="userTable">
-                                            <thead class="table-secondary">
-                                            <tr>
-                                                <th>이름</th>
-                                                <th>생년월일</th>
-                                                <th>전화번호</th>
-                                                <th>주소</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr th:each="user : ${dto.getUserList}">
-                                                <td th:text="${user.name}">이름</td>
-                                                <td th:text="${user.birth}">생년월일</td>
-                                                <td th:text="${user.tel}">전화번호</td>
-                                                <td th:text="${user.address}">주소</td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /마을 Card-->
-                    <!-- 마을 Card (동적 생성) -->
-                    <div class="row" id="announceDiv" style="display: none;">
-                        <div class="col mb-4">
-                            <div class="card">
-                                <div class="d-flex align-items-end row">
-                                    <div class="card-header">
-                                        <h2 class="d-inline">마을 방송 목록</h2>
-                                        <hr>
-                                    </div>
-                                    <div class="card-body">
-                                        <table class="table table-bordered table-hover" id="announceTable">
-                                            <thead class="table-secondary">
-                                            <tr>
-                                                <th>#</th>
-                                                <th>방송 제목</th>
-                                                <th>타입</th>
-                                                <th>방송자</th>
-                                                <th>시각</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr th:each="announce : ${dto.getAnnounceList()}">
-                                                <td th:text="${announce.id}">#</td>
-                                                <td th:text="${announce.title}">제목</td>
-                                                <td th:text="${announce.category.toString() == 'NORMAL' ? '일반' : '재난'}">
-                                                    타입
-                                                </td>
-                                                <td th:text="${announce.producer}">이름</td>
-                                                <td th:text="${#temporals.format(announce.time, 'yy/MM/dd HH:mm:ss')}"></td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /마을 Card-->
-                    <!-- 마을 Card (동적 생성) -->
-                    <div class="row" id="alertDiv" style="display: none;">
-                        <div class="col mb-4">
-                            <div class="card">
-                                <div class="d-flex align-items-end row">
-                                    <div class="card-header">
-                                        <h2 class="d-inline">긴급호출 목록</h2>
-                                        <hr>
-                                    </div>
-                                    <div class="card-body">
-                                        <table class="table table-bordered table-hover" id="alertTable">
-                                            <thead class="table-secondary">
-                                            <tr>
-                                                <th>호출인</th>
-                                                <th>호출시각</th>
-                                                <th>분류</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr th:each="alert : ${dto.getAlertList()}">
-                                                <td th:text="${alert.user.name}">호출인</td>
-                                                <td th:text="${#temporals.format(alert.alertTime, 'yy/MM/dd HH:mm:ss')}"></td>
-                                                <td th:text="${alert.getAlertType().toString() == 'USER' ? '사용자 호출' : '화재 감지'}"></td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /마을 Card-->
-                    <!-- 마을 Card -->
-                    <div class="row">
-                        <div class="col mb-4">
-                            <div class="card">
-                                <div class="d-flex align-items-end row">
-                                    <div class="card-header">
-                                        <h2 class="d-inline">마을 주민 정보</h2>
-                                        <hr>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="row mb-5">
-                                            <div class="col-md-4" th:each="user, i : ${dto.getUserList()}">
-                                                <div class="card text-start border border-secondary mb-3">
-                                                    <a th:href="@{/users/{id}(id=${user.id})}">
-                                                        <div class="card-body">
-                                                            <h5 class="card-title" th:text="|주민 ${user.name} 정보|"></h5>
-                                                            <div th:unless="${user.device}">
-                                                                <p style="color:#dc3545;">[단말기 미연결]</p>
-                                                            </div>
-                                                            <div th:if="${user.device}">
-                                                                <p style="color:forestgreen;">[정상]</p>
-                                                            </div>
-                                                            <p th:if="${user.supporterList.size() > 0}"
-                                                               th:text="|대표 보호자: ${user.supporterList.get(0).name},
-                                                               ${user.supporterList.get(0).tel}|">
-                                                            </p>
-                                                            <p th:unless="${user.supporterList.size() > 0}"
-                                                               th:text="|대표 보호자: -|">
-                                                            </p>
-                                                            <p th:text="|연락처: ${user.tel}|"></p>
-                                                            <p th:text="|최근 긴급호출 횟수: ${user.alertList.size()}회|"></p>
-                                                            <br>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /마을 Card-->
-                    <!-- Modal -->
-                    <div class="modal fade" id="announceModal" tabindex="-1"
-                         aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="modalCenterTitle">방송 듣기</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="row">
-                                        <div class="col mb-3">
-                                            <audio id="modal_src" src="" controls>방송</audio>
-                                            <hr>
-                                            <p id="modal_title">방송 제목</p>
-                                            <p id="modal_producer">방송자</p>
-                                            <p id="modal_contents">내용</p>
-                                            <p id="modal_time">방송 시각</p>
-                                            <hr>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" id="deleteBtn" class="btn btn-danger" >삭제</button>
-                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">닫기
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /Modal -->
                 </div>
                 <!-- / Content -->
-                <!-- footer -->
-                <div th:replace="~{fragment/footer.html :: fragment-footer}"></div>
-                <!-- / footer -->
-            </div>
+            </article>
             <!-- Content wrapper -->
-        </div>
-        <!-- / Layout page -->
-    </div>
-    <!-- Overlay -->
-    <div class="layout-overlay layout-menu-toggle"></div>
-</div>
-<!-- / Layout wrapper -->
-<script type="text/javascript" th:inline="javascript">
-    $(document).ready(function () {
-        $("#adminTable").DataTable();
-        $("#userTable").DataTable();
-        $("#announceTable").DataTable();
-        $("#alertTable").DataTable();
 
-        var townId = [[${dto.town.id}]];
-        var regionId = [[${dto.town.region.id}]];
+            <!-- footer -->
+            <footer>
+                <th:block th:insert="~{fragment/footer :: fragment-footer}"></th:block>
+                <script type="text/javascript" th:inline="javascript">
+                    $(document).ready(function () {
+                        $("#adminTable").DataTable();
+                        $("#userTable").DataTable();
+                        $("#announceTable").DataTable();
+                        $("#alertTable").DataTable();
 
-        $("#weatherSyncIcon").addClass("bx-spin");
+                        var townId = [[${townData.townId}]];
+                        var regionId = [[${townData.regionId}]];
 
-        // 페이지 로딩 완료 시 먼저 1회 수행
-        $.ajax({
-            type: "GET",
-            url: "/api/weather?regionId=" + regionId,
-            dataType: "json",
-            success: function (result) {
-                $("#weatherSyncIcon").removeClass("bx-spin");
+                        $("#weatherSyncIcon").addClass("bx-spin");
 
-                var weather = result.weather;
-
-                if(weather == null) {
-                    $("#weatherInfoText").text("날씨를 불러오는 중 오류가 발생했습니다.");
-                } else {
-                    var lastUpdateTime = weather.lastUpdateTime;
-                    var temp = weather.temp;
-                    var humid = weather.humid;
-                    var rainAmount = weather.rainAmount;
-                    $("#weatherInfoText").text(" 온도: " + temp + "℃, 습도: " + humid
-                        + "%, 강수량: " + rainAmount + "mm (기준 시점: " + lastUpdateTime + "시)");
-                }
-            },
-            error: function (xhr) {
-                alert(xhr.responseText);
-                $("#weatherSyncIcon").removeClass("bx-spin");
-            }
-        });
-
-        $("#townDeleteBtn").on("click", function () {
-            if (confirm("마을을 삭제하시겠습니까? (주의:해당 마을에 주민이 존재하는 경우 삭제가 불가능합니다.)")) {
-                if ([[${dto.userList.size()}]] != 0) {
-                    alert("마을 주민이 존재하면 마을을 삭제할 수 없습니다");
-                    return false;
-                }
-                $.ajax({
-                    type: "DELETE",
-                    url: "/towns/" + townId,
-                    dataType: "text",
-                    success: function (result) {
-                        alert(result);
-                        window.location.href = "/";
-                    },
-                    error: function (xhr) {
-                        var result = JSON.parse(xhr.responseText);
-                        alert(result.message);
-                        window.location.reload();
-                    }
-                });
-            } else {
-                return false;
-            }
-        });
-
-        $("#townSaveBtn").on("click", function () {
-            if (confirm("수정된 정보를 저장하시겠습니까?")) {
-                var name = $("input[name='name']").val();
-                var regionCode = $("select[name='regionCode']").val();
-
-                $.ajax({
-                    type: "PUT",
-                    url: "/towns/",
-                    data: {id: townId, name: name, regionCode: regionCode},
-                    dataType: "text",
-                    success: function (result) {
-                        alert(result);
-                        window.location.href = "/towns/" + townId;
-                    },
-                    error: function (xhr) {
-                        var result = JSON.parse(xhr.responseText);
-                        alert(result.message);
-                        window.location.reload();
-                    }
-                });
-            } else {
-                return false;
-            }
-        });
-
-        $("#showUserTableBtn").on("click", function () {
-            $("#userDiv").css('display', '');
-            $("#announceDiv").css('display', 'none');
-            $("#alertDiv").css('display', 'none');
-        });
-
-        $("#showAnnounceTableBtn").on("click", function () {
-            $("#userDiv").css('display', 'none');
-            $("#announceDiv").css('display', '');
-            $("#alertDiv").css('display', 'none');
-
-            $("#announceTable tbody").on("click", "tr", function () {
-                var data = $("#announceTable").DataTable().row(this).data();
-                console.log("click: " + data);
-                $("#announceModal").modal("show");
-
-                $.ajax({
-                    type: "GET",
-                    url: "/api/announces/" + data[0],
-                    success: function (result) {
-                        console.log("방송을 가져왔습니다");
-                        $("#modal_src").attr('src', result.src);
-                        $("#modal_id").val(result.id);
-                        $("#modal_title").text("방송 제목: " + result.title);
-                        $("#modal_producer").text("방송자: " + result.producer);
-                        $("#modal_contents").text("방송 내용: " + result.content);
-                        $("#modal_time").text("방송 시각: " + result.time);
-
-                        $("#deleteFormId").attr('value', data[0])
-                    },
-                    error: function (xhr) {
-                        alert("방송을 가져오는데 실패했습니다");
-                    }
-                });
-            });
-
-            $("#deleteBtn").on("click", function (e) {
-                e.preventDefault();
-                if (confirm("방송을 삭제하시겠습니까?")) {
-                    var id = $("#modal_id").val();
-
-                    if (confirm("방송을 삭제하시겠습니까?")) {
+                        // 페이지 로딩 완료 시 먼저 1회 수행
                         $.ajax({
-                            method: "DELETE",
-                            url: "/api/announces/" + id,
-                            dataType: "text",
+                            type: "GET",
+                            url: "/api/weather?regionId=" + regionId,
+                            dataType: "json",
                             success: function (result) {
-                                alert(result);
-                                window.location.reload(); // 현재 페이지 새로고침
+                                $("#weatherSyncIcon").removeClass("bx-spin");
+
+                                var weather = result.weather;
+
+                                if (weather == null) {
+                                    $("#weatherInfoText").text("날씨를 불러오는 중 오류가 발생했습니다.");
+                                } else {
+                                    var lastUpdateTime = weather.lastUpdateTime;
+                                    var temp = weather.temp;
+                                    var humid = weather.humid;
+                                    var rainAmount = weather.rainAmount;
+                                    $("#weatherInfoText").text(" 온도: " + temp + "℃, 습도: " + humid
+                                        + "%, 강수량: " + rainAmount + "mm (기준 시점: " + lastUpdateTime + "시)");
+                                }
                             },
                             error: function (xhr) {
-                                alert("알 수 없는 오류가 발생했습니다");
+                                alert(xhr.responseText);
+                                $("#weatherSyncIcon").removeClass("bx-spin");
                             }
                         });
-                    }
-                }
-            });
-        });
 
-        $("#showAlertTableBtn").on("click", function () {
-            $("#userDiv").css('display', 'none');
-            $("#announceDiv").css('display', 'none');
-            $("#alertDiv").css('display', '');
-        });
+                        $("#townDeleteBtn").on("click", function () {
+                            if (confirm("마을을 삭제하시겠습니까? (주의:해당 마을에 주민이 존재하는 경우 삭제가 불가능합니다.)")) {
+                                if ([[${townData.userCnt}]] != 0) {
+                                    alert("마을 주민이 존재하면 마을을 삭제할 수 없습니다");
+                                    return false;
+                                }
+                                $.ajax({
+                                    type: "DELETE",
+                                    url: "/towns/" + townId,
+                                    dataType: "text",
+                                    success: function (result) {
+                                        alert(result);
+                                        window.location.href = "/";
+                                    },
+                                    error: function (xhr) {
+                                        var result = JSON.parse(xhr.responseText);
+                                        alert(result.message);
+                                        window.location.reload();
+                                    }
+                                });
+                            } else {
+                                return false;
+                            }
+                        });
 
-        $("#reloadWeatherInfoBtn").on("click", function () {
+                        $("#townSaveBtn").on("click", function () {
+                            if (confirm("수정된 정보를 저장하시겠습니까?")) {
+                                var name = $("input[name='name']").val();
+                                var regionCode = $("select[name='regionCode']").val();
 
-            $("#weatherSyncIcon").addClass("bx-spin");
+                                $.ajax({
+                                    type: "PATCH",
+                                    url: "/api/towns/" + [[${townData.townId}]],
+                                    data: {id: townId, name: name, regionCode: regionCode},
+                                    dataType: "text",
+                                    success: function (result) {
+                                        alert(result);
+                                        window.location.href = "/towns/" + townId;
+                                    },
+                                    error: function (xhr) {
+                                        var result = JSON.parse(xhr.responseText);
+                                        alert(result.message);
+                                        window.location.reload();
+                                    }
+                                });
+                            } else {
+                                return false;
+                            }
+                        });
 
-            $.ajax({
-                type: "GET",
-                url: "/api/weather?regionId=" + regionId,
-                dataType: "json",
-                success: function (result) {
-                    var weather = result.weather;
-                    var lastUpdateTime = weather.lastUpdateTime;
-                    var temp = weather.temp;
-                    var humid = weather.humid;
-                    var rainAmount = weather.rainAmount;
-                    $("#weatherInfoText").text(" 온도: " + temp + "º, 습도: " + humid
-                        + "%, 강수량: " + rainAmount + "mm (기준 시점: " + lastUpdateTime + "시)");
-                    $("#weatherSyncIcon").removeClass("bx-spin");
-                },
-                error: function (xhr) {
-                    alert(xhr.responseText);
-                    $("#weatherSyncIcon").removeClass("bx-spin");
-                }
-            });
-        });
+                        $("#showUserTableBtn").on("click", function () {
+                            $("#userDiv").css('display', '');
+                            $("#announceDiv").css('display', 'none');
+                            $("#alertDiv").css('display', 'none');
+                        });
 
-        // 모달 창 닫으면 미디어 재생 종료되도록
-        $("#announceModal").on('hidden.bs.modal', function() {
-            $("#modal_src").attr("src", "");
-        });
-    });
-</script>
-<div th:replace="~{fragment/header :: fragment-bottom-script}"></div>
+                        $("#showAnnounceTableBtn").on("click", function () {
+                            $("#userDiv").css('display', 'none');
+                            $("#announceDiv").css('display', '');
+                            $("#alertDiv").css('display', 'none');
+
+                            $("#announceTable tbody").on("click", "tr", function () {
+                                var data = $("#announceTable").DataTable().row(this).data();
+                                console.log("click: " + data);
+                                $("#announceModal").modal("show");
+
+                                $.ajax({
+                                    type: "GET",
+                                    url: "/api/announces/" + data[0],
+                                    success: function (result) {
+                                        console.log("방송을 가져왔습니다");
+                                        $("#modal_src").attr('src', result.src);
+                                        $("#modal_id").val(result.id);
+                                        $("#modal_title").text("방송 제목: " + result.title);
+                                        $("#modal_producer").text("방송자: " + result.producer);
+                                        $("#modal_contents").text("방송 내용: " + result.content);
+                                        $("#modal_time").text("방송 시각: " + result.time);
+
+                                        $("#deleteFormId").attr('value', data[0])
+                                    },
+                                    error: function (xhr) {
+                                        alert("방송을 가져오는데 실패했습니다");
+                                    }
+                                });
+                            });
+
+                            $("#deleteBtn").on("click", function (e) {
+                                e.preventDefault();
+                                if (confirm("방송을 삭제하시겠습니까?")) {
+                                    var id = $("#modal_id").val();
+
+                                    if (confirm("방송을 삭제하시겠습니까?")) {
+                                        $.ajax({
+                                            method: "DELETE",
+                                            url: "/api/announces/" + id,
+                                            dataType: "text",
+                                            success: function (result) {
+                                                alert(result);
+                                                window.location.reload(); // 현재 페이지 새로고침
+                                            },
+                                            error: function (xhr) {
+                                                alert("알 수 없는 오류가 발생했습니다");
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        });
+
+                        $("#showAlertTableBtn").on("click", function () {
+                            $("#userDiv").css('display', 'none');
+                            $("#announceDiv").css('display', 'none');
+                            $("#alertDiv").css('display', '');
+                        });
+
+                        $("#reloadWeatherInfoBtn").on("click", function () {
+
+                            $("#weatherSyncIcon").addClass("bx-spin");
+
+                            $.ajax({
+                                type: "GET",
+                                url: "/api/weather?regionId=" + regionId,
+                                dataType: "json",
+                                success: function (result) {
+                                    var weather = result.weather;
+                                    var lastUpdateTime = weather.lastUpdateTime;
+                                    var temp = weather.temp;
+                                    var humid = weather.humid;
+                                    var rainAmount = weather.rainAmount;
+                                    $("#weatherInfoText").text(" 온도: " + temp + "º, 습도: " + humid
+                                        + "%, 강수량: " + rainAmount + "mm (기준 시점: " + lastUpdateTime + "시)");
+                                    $("#weatherSyncIcon").removeClass("bx-spin");
+                                },
+                                error: function (xhr) {
+                                    alert(xhr.responseText);
+                                    $("#weatherSyncIcon").removeClass("bx-spin");
+                                }
+                            });
+                        });
+
+                        // 모달 창 닫으면 미디어 재생 종료되도록
+                        $("#announceModal").on('hidden.bs.modal', function () {
+                            $("#modal_src").attr("src", "");
+                        });
+                    });
+                </script>
+            </footer>
+            <!-- / footer -->
+
+        </section>
+        <!-- / Layout page -->
+    </div>
+</div>
 </body>
 </html>
