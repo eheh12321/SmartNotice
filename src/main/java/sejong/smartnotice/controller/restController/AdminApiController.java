@@ -47,9 +47,7 @@ public class AdminApiController {
         adminService.modifyAdminInfo(modifyDto);
         
         // 3. 관리자 관리 마을 수정
-        if(townIdList != null) {
-            townService.modifyAdminManagedTownList(adminId, townIdList);
-        }
+        townService.modifyAdminManagedTownList(adminId, townIdList);
 
         return ResponseEntity.ok().body("수정을 완료하였습니다");
     }

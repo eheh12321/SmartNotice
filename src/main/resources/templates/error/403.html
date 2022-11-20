@@ -34,8 +34,8 @@
         <div class="notfound-404">
             <h1>403</h1>
         </div>
-        <h2>페이지 접근 권한이 없습니다(FORBIDDEN)!</h2>
-        <p>페이지를 볼 수 있는 권한이 없습니다. 로그인 이후 진행해 주세요</p><br>
+        <h2>페이지 접근 권한이 없습니다!</h2>
+        <p th:text="${errorMessage}"></p><br>
         <a href="/login">로그인 화면으로</a>
     </div>
 </div>
