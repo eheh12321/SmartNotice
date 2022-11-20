@@ -50,4 +50,11 @@ public class TownApiController {
         return ResponseEntity.ok("성공적으로 삭제했습니다");
     }
 
+    @Secured({"ROLE_SUPER"})
+    @PostMapping("/{townId}/rep")
+    public ResponseEntity<String> setRepresentativeTownAdmin(@PathVariable @Positive Long townId,
+                                                             @RequestParam Long adminId) {
+        townService.setTownRepresentativeAdmin(townId, adminId);
+        return ResponseEntity.ok("대표 관리자를 설정했습니다");
+    }
 }

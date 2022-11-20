@@ -2,6 +2,7 @@ package sejong.smartnotice.domain;
 
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.domain.member.User;
 
 import javax.persistence.*;
@@ -36,6 +37,8 @@ public class Town {
 
     @OneToMany(mappedBy = "town", cascade = ALL, orphanRemoval = true)
     private List<TownAdmin> townAdminList = new ArrayList<>();
+    
+    private Long representativeAdminId; // 마을 대표 관리자 ID
 
     // 마을 생성
     public static Town createTown(String name, Region region) {
@@ -51,6 +54,11 @@ public class Town {
     public void modifyTownInfo(String name, Region region) {
         this.name = name;
         this.region = region;
+    }
+
+    // 마을 대표 관리자 설정
+    public void setRepresentativeAdmin(Long adminId) {
+        this.representativeAdminId = adminId;
     }
 
     @Override

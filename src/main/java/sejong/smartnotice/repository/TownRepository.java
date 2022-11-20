@@ -29,4 +29,7 @@ public interface TownRepository extends JpaRepository<Town, Long> {
 
     @Query("select t from Town t where t.id in ?1")
     List<Town> findTownsByTownIdList(List<Long> townIdList); // IN 문을 이용해 한꺼번에 조회하는 용도 (List)
+
+    @Query("select t from Town t where t.representativeAdminId=?1")
+    List<Town> findByRepresentativeAdminId(Long adminId);
 }

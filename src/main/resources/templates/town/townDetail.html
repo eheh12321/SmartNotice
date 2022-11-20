@@ -42,7 +42,7 @@
                                 <div class="d-flex align-items-end row">
                                     <div class="card-header">
                                         <h2 class="d-inline ms-2" th:text="|${townData.townName} 상세|">xx마을 상세</h2>
-                                        <button class="btn bg-transparent pt-0 pb-0" style="float: right"
+                                        <button class="btn bg-transparent py-0" style="float: right"
                                                 th:onclick="|location.href='/'|">
                                             <i class='bx bxs-left-arrow-circle bx-md'></i>
                                         </button>
@@ -254,6 +254,77 @@
                         </div>
                     </div>
                     <!-- /마을 Card-->
+
+                    <!-- 마을 Card -->
+                    <div class="row">
+                        <div class="col mb-4">
+                            <div class="card">
+                                <div class="d-flex align-items-end row">
+                                    <div class="card-header">
+                                        <h2 class="d-inline ms-2">마을 대표 관리자</h2>
+                                        <!-- 최고 관리자만 보임 -->
+                                        <button type="button" class="btn bg-transparent py-0"
+                                                sec:authorize="hasRole('SUPER')"
+                                                id="RepTownAdminSettingBtn"
+                                                style="float: right">
+                                            <i class='bx bxs-cog bx-md'></i>
+                                        </button>
+                                        <hr>
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-bordered">
+                                            <thead class="table-secondary">
+                                            <tr>
+                                                <th>이름</th>
+                                                <th>연락처</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td th:text="${townData.mainAdminName}"></td>
+                                                <td th:text="${townData.mainAdminTel}"></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /마을 Card-->
+                    <!-- Modal -->
+                    <div class="modal fade" id="RepTownAdminSettingModal" data-bs-backdrop="static" tabindex="-1"
+                         style="display: none;" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <form class="modal-content">
+                                <div class="modal-header">
+                                    <h3 class="modal-title" id="backDropModalTitle">대표 관리자 등록</h3>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>이름</th>
+                                            <th>연락처</th>
+                                            <th>선택</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="adminList" class="text-center">
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="modal-footer">
+                                    <hr>
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">닫기
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- /Modal -->
                 </div>
                 <!-- / Content -->
             </article>
@@ -441,11 +512,55 @@
                             });
                         });
 
+                        $("#RepTownAdminSettingBtn").on("click", function () {
+                            $.ajax({
+                                type: "GET",
+                                url: "/api/admin?townId=" + [[${townData.townId}]],
+                                success: function (result) {
+                                    console.log(result);
+                                    $("#adminList").empty(); // 먼저 모달 데이터 초기화
+                                    var str = '';
+                                    $("#RepTownAdminSettingModal").modal('show');
+                                    $.each(result, function (i) {
+                                        str += '<tr>';
+                                        str += '<td>'
+                                            + result[i].id + '</td><td>'
+                                            + result[i].name + '</td><td>'
+                                            + result[i].tel + '</td><td>'
+                                            + '<button type="button" class="btn btn-success" onclick="rtaBtnClick(' + [[${townData.townId}]] + ',' + result[i].id + ')">선택</button>'
+                                            + '</td>'
+                                        str += '</tr>';
+                                    });
+                                    $("#adminList").append(str);
+                                },
+                                error: function (result) {
+                                    alert(result.responseText);
+                                }
+                            });
+                        });
+
+
                         // 모달 창 닫으면 미디어 재생 종료되도록
                         $("#announceModal").on('hidden.bs.modal', function () {
                             $("#modal_src").attr("src", "");
                         });
                     });
+
+                    function rtaBtnClick(townId, adminId) {
+                        if (confirm('대표 관리자로 등록하시겠습니까?')) {
+                            $.ajax({
+                                type: "POST",
+                                url: "/api/towns/" + townId + "/rep?adminId=" + adminId,
+                                success: function(result) {
+                                    alert(result);
+                                    window.location.reload();
+                                },
+                                error: function (result) {
+                                    alert(result.responseText);
+                                }
+                            });
+                        }
+                    }
                 </script>
             </footer>
             <!-- / footer -->
