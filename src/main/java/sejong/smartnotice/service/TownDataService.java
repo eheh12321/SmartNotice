@@ -16,6 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -39,7 +40,7 @@ public class TownDataService {
                     save(actionAfterTownData);
                 }, () -> initTownData(townId));
     }
-
+    
     // 캐시 데이터 생성 및 동기화
     private TownData initTownData(Long townId) {
         log.info("마을_{}의 캐시 데이터를 초기화 합니다", townId);
@@ -94,7 +95,6 @@ public class TownDataService {
                 .setParameter("adminId", town.getRepresentativeAdminId())
                 .getSingleResult();
         townData.setMainAdminName(representativeAdmin.getName());
-        townData.setMainAdminTel(representativeAdmin.getTel());
 
         // update
         return townDataRepository.save(townData);

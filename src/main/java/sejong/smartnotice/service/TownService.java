@@ -39,7 +39,7 @@ public class TownService {
         // 2. 마을 생성
         Town town = Town.createTown(registerDTO.getName(), region);
         Town saveTown = townRepository.save(town);
-
+        
         // Redis create
         townDataService.action(townData -> townData, town.getId());
         return saveTown.getId();
@@ -143,7 +143,7 @@ public class TownService {
             return townData;
         }, town.getId());
     }
-
+    
     // 관리자가 해당 마을 관리자가 맞는지 검증
     public boolean isTownAdmin(Long townId, Long adminId) {
         return townRepository.findTownsByAdmin(adminId).stream()

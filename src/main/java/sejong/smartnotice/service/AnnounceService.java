@@ -54,7 +54,6 @@ public class AnnounceService {
                     .announce(announce)
                     .town(town).build();
             townAnnounce.createAnnounce();
-
             townDataService.action(townData -> {
                 townData.setAnnounceCnt(townData.getAnnounceCnt() + 1);
                 return townData;

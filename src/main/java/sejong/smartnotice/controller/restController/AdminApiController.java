@@ -75,5 +75,4 @@ public class AdminApiController {
         return ResponseEntity.ok().body("수정을 완료하였습니다");
     }
 
-
 }
