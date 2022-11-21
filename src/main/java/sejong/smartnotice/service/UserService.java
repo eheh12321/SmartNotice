@@ -52,9 +52,10 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
 
         // Redis Update
-        TownData townData = townDataService.findById(town.getId());
-        townData.setUserCnt(townData.getUserCnt() + 1);
-        townDataService.save(townData);
+        townDataService.action(townData -> {
+            townData.setUserCnt(townData.getUserCnt() + 1);
+            return townData;
+        }, town.getId());
 
         return user.getId();
     }

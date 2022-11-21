@@ -7,7 +7,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.Town;
-import sejong.smartnotice.domain.TownData;
 import sejong.smartnotice.domain.member.Account;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.helper.dto.request.AdminModifyRequest;
@@ -60,12 +59,11 @@ public class AdminService {
 
         // 3. 마을 대표 관리자인 경우 Redis Update
         townRepository.findByRepresentativeAdminId(admin.getId()).forEach(
-                town -> {
-                    TownData townData = townDataService.findById(town.getId());
+                town -> townDataService.action(townData -> {
                     townData.setMainAdminName(admin.getName());
                     townData.setMainAdminTel(admin.getTel());
-                    townDataService.save(townData);
-                }
+                    return townData;
+                }, town.getId())
         );
         return admin.getId();
     }

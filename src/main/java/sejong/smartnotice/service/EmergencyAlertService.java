@@ -90,11 +90,11 @@ public class EmergencyAlertService {
         emRepository.save(alert);
 
         // Redis Update
-        TownData townData = townDataService.findById(user.getTown().getId());
-        townData.setAlertCnt(townData.getAlertCnt() + 1);
-        townData.setUserAlertCnt(townData.getUserAlertCnt() + 1);
-        townDataService.save(townData);
-
+        townDataService.action(townData -> {
+            townData.setAlertCnt(townData.getAlertCnt() + 1);
+            townData.setUserAlertCnt(townData.getUserAlertCnt() + 1);
+            return townData;
+        }, user.getTown().getId());
         return alert.getId();
     }
 
