@@ -12,6 +12,7 @@ import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.helper.dto.request.AdminModifyRequest;
 import sejong.smartnotice.helper.dto.request.register.AdminRegisterDTO;
 import sejong.smartnotice.repository.AdminRepository;
+import sejong.smartnotice.repository.TownRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
@@ -25,6 +26,8 @@ public class AdminService {
 
     private final EntityManager em;
     private final AdminRepository adminRepository;
+    private final TownRepository townRepository;
+    private final TownDataService townDataService;
     private static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
     // 회원가입
@@ -53,6 +56,15 @@ public class AdminService {
         // 쿼리를 바로 날리는게 아니고, DTO를 통해 변경되는 값이 있는 경우에만 select + update 쿼리를 발생시킨다
         // = DTO 변경 사항이 없으면 쿼리 자체를 내보내지 않는다
         admin.modifyAdminInfo(modifyDTO.getName(), modifyDTO.getTel());
+
+        // 3. 마을 대표 관리자인 경우 Redis Update
+        townRepository.findByRepresentativeAdminId(admin.getId()).forEach(
+                town -> townDataService.action(townData -> {
+                    townData.setMainAdminName(admin.getName());
+                    townData.setMainAdminTel(admin.getTel());
+                    return townData;
+                }, town.getId())
+        );
         return admin.getId();
     }
 
@@ -110,7 +122,6 @@ public class AdminService {
 
     @Transactional(readOnly = true)
     public List<Admin> findAdminByTown(Long townId) {
-        log.info("== 마을 관리자 목록 조회(fetch) ==");
         return adminRepository.findAdminByTown(townId);
     }
 

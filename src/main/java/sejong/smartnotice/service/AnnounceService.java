@@ -54,10 +54,10 @@ public class AnnounceService {
                     .announce(announce)
                     .town(town).build();
             townAnnounce.createAnnounce();
-
-            TownData findTownData = townDataService.findById(town.getId());
-            findTownData.setAnnounceCnt(findTownData.getAnnounceCnt() + 1);
-            townDataService.save(findTownData);
+            townDataService.action(townData -> {
+                townData.setAnnounceCnt(townData.getAnnounceCnt() + 1);
+                return townData;
+            }, town.getId());
         });
         announceRepository.save(announce);
 

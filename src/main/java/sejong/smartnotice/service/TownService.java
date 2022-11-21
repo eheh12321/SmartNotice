@@ -16,6 +16,7 @@ import sejong.smartnotice.repository.TownRepository;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -39,6 +40,8 @@ public class TownService {
         Town town = Town.createTown(registerDTO.getName(), region);
         Town saveTown = townRepository.save(town);
         
+        // Redis create
+        townDataService.action(townData -> townData, town.getId());
         return saveTown.getId();
     }
 
@@ -71,10 +74,11 @@ public class TownService {
         town.modifyTownInfo(modifyDTO.getName(), region);
 
         // Redis Update
-        TownData townData = townDataService.findById(town.getId());
-        townData.setTownName(modifyDTO.getName());
-        townData.setRegionId(region.getId());
-        townDataService.save(townData);
+        townDataService.action(townData -> {
+            townData.setTownName(modifyDTO.getName());
+            townData.setRegionId(region.getId());
+            return townData;
+        }, town.getId());
     }
 
     // 관리자 관리 마을 목록 수정
@@ -99,9 +103,10 @@ public class TownService {
                 removeTownAdmin(admin, town);
 
                 // Redis Update
-                TownData townData = townDataService.findById(town.getId());
-                townData.setTownAdminCnt(townData.getTownAdminCnt() - 1);
-                townDataService.save(townData);
+                townDataService.action(townData -> {
+                    townData.setTownAdminCnt(townData.getTownAdminCnt() - 1);
+                    return townData;
+                }, town.getId());
             } else {
                 townIdSet.remove(town.getId());
             }
@@ -114,13 +119,31 @@ public class TownService {
                 addTownAdmin(admin, town);
 
                 // Redis Update
-                TownData townData = townDataService.findById(town.getId());
-                townData.setTownAdminCnt(townData.getTownAdminCnt() + 1);
-                townDataService.save(townData);
+                townDataService.action(townData -> {
+                    townData.setTownAdminCnt(townData.getTownAdminCnt() + 1);
+                    return townData;
+                }, town.getId());
             }
         }
     }
 
+    // 마을 대표 관리자 설정
+    public void setTownRepresentativeAdmin(Long townId, Long adminId) {
+        Town town = findById(townId);
+        if (!isTownAdmin(townId, adminId)) {
+            throw new IllegalArgumentException("마을에 속한 관리자가 아닙니다");
+        }
+        Admin admin = adminService.findById(adminId);
+        town.setRepresentativeAdmin(adminId);
+
+        // Redis Update
+        townDataService.action(townData -> {
+            townData.setMainAdminName(admin.getName());
+            townData.setMainAdminTel(admin.getTel());
+            return townData;
+        }, town.getId());
+    }
+    
     // 관리자가 해당 마을 관리자가 맞는지 검증
     public boolean isTownAdmin(Long townId, Long adminId) {
         return townRepository.findTownsByAdmin(adminId).stream()
@@ -180,5 +203,12 @@ public class TownService {
     // 관리자 관리 마을 목록 조회
     public List<Town> findTownByAdmin(Admin admin) {
         return townRepository.findTownsByAdmin(admin.getId());
+    }
+
+    // 마을 관리자가 대표 관리자로 있는 마을의 ID 리턴
+    public List<Long> findByRepresentativeAdminId(Long adminId) {
+        return townRepository.findByRepresentativeAdminId(adminId).stream()
+                .map(Town::getId)
+                .collect(Collectors.toList());
     }
 }
