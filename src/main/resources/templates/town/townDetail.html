@@ -197,7 +197,7 @@
                                                     <div class="col-12 mb-4">
                                                         <table class="table table-borderless">
                                                             <form id="formObj"
-                                                                  th:action="@{/towns/{id}(id=${townData.townId})}"
+                                                                  th:action="@{/api/towns/{id}(id=${townData.townId})}"
                                                                   method="post">
                                                                 <tr>
                                                                     <td>
@@ -380,13 +380,11 @@
                                 $.ajax({
                                     type: "DELETE",
                                     url: "/api/towns/" + townId,
-                                    dataType: "text",
                                     success: function (result) {
-                                        alert(result);
+                                        alert(result.message);
                                         window.location.href = "/";
                                     },
-                                    error: function (xhr) {
-                                        var result = JSON.parse(xhr.responseText);
+                                    error: function (result) {
                                         alert(result.message);
                                         window.location.reload();
                                     }
@@ -398,20 +396,22 @@
 
                         $("#townSaveBtn").on("click", function () {
                             if (confirm("수정된 정보를 저장하시겠습니까?")) {
-                                var name = $("input[name='name']").val();
-                                var regionCode = $("select[name='regionCode']").val();
-
+                                var townModifyData = {
+                                    id: [[${townData.townId}]],
+                                    name: $("input[name='name']").val(),
+                                    regionCode: $("select[name='regionCode']").val()
+                                };
                                 $.ajax({
                                     type: "PATCH",
-                                    url: "/api/towns/" + [[${townData.townId}]],
-                                    data: {id: townId, name: name, regionCode: regionCode},
-                                    dataType: "text",
+                                    url: "/api/towns",
+                                    data: JSON.stringify(townModifyData),
+                                    dataType: "JSON",
+                                    contentType: 'application/json; charset=utf-8',
                                     success: function (result) {
-                                        alert(result);
-                                        window.location.href = "/towns/" + townId;
+                                        alert(result.message);
+                                        window.location.reload();
                                     },
-                                    error: function (xhr) {
-                                        var result = JSON.parse(xhr.responseText);
+                                    error: function (result) {
                                         alert(result.message);
                                         window.location.reload();
                                     }

@@ -1,0 +1,59 @@
+= 스마트 마을 알림 시스템 API Docs
+:sectnums:
+:toc: left
+:toclevels: 4
+:toc-title: 목차
+:source-highlighter: prettify
+
+스마트 마을 알림 시스템 API 문서입니다. (업데이트 중)
+
+배포 주소: https://www.smarttownnotice.gq/
+
+Github Repo: https://github.com/eheh12321/SmartNotice
+
+***
+== TownApiController
+=== 마을 등록
+.curl-request
+include::{snippets}/post-town/curl-request.adoc[]
+
+.http-request
+include::{snippets}/post-town/http-request.adoc[]
+
+.request-fields
+include::{snippets}/post-town/request-fields.adoc[]
+
+.http-response
+include::{snippets}/post-town/http-response.adoc[]
+
+.response-fields
+include::{snippets}/post-town/response-fields.adoc[]
+
+=== 마을 수정
+.curl-request
+include::{snippets}/patch-town/curl-request.adoc[]
+
+.http-request
+include::{snippets}/patch-town/http-request.adoc[]
+
+.path-parameters
+include::{snippets}/patch-town/path-parameters.adoc[]
+
+.request-fields
+include::{snippets}/patch-town/request-fields.adoc[]
+
+.http-response
+include::{snippets}/patch-town/http-response.adoc[]
+
+=== 마을 삭제
+.curl-request
+include::{snippets}/delete-town/curl-request.adoc[]
+
+.http-request
+include::{snippets}/delete-town/http-request.adoc[]
+
+.path-parameters
+include::{snippets}/delete-town/path-parameters.adoc[]
+
+.http-response
+include::{snippets}/delete-town/http-response.adoc[]

@@ -42,3 +42,4 @@ storage/2022/
 /src/main/resources/keystore.p12
 /src/main/resources/application-api.properties
 /src/main/resources/application-https.properties
+/src/main/resources/static/docs/**
