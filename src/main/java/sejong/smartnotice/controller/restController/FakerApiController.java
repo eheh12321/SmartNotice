@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sejong.smartnotice.domain.Region;
 import sejong.smartnotice.domain.Town;
-import sejong.smartnotice.helper.dto.TownRegisterDTO;
+import sejong.smartnotice.helper.dto.request.TownRequest;
+import sejong.smartnotice.helper.dto.request.TownRequest.TownCreateRequest;
 import sejong.smartnotice.service.TownService;
 
 import javax.annotation.Nullable;
@@ -73,7 +74,7 @@ public class FakerApiController {
         sb.append(" 마을");
         newCityName = sb.toString();
 
-        TownRegisterDTO registerDTO = new TownRegisterDTO(newCityName, newRegion.getId());
+        TownCreateRequest registerDTO = new TownCreateRequest(newCityName, newRegion.getId());
         townService.register(registerDTO);
 
         return ResponseEntity.ok("[" + newCityName + "]을 생성했습니다");
