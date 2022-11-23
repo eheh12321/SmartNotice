@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import sejong.smartnotice.domain.Town;
 import sejong.smartnotice.domain.member.AdminType;
 import sejong.smartnotice.domain.member.User;
+import sejong.smartnotice.helper.dto.request.AdminRequest.AdminRegisterRequest;
 import sejong.smartnotice.helper.dto.request.TownRequest.TownCreateRequest;
 import sejong.smartnotice.helper.dto.request.TownRequest.TownModifyRequest;
-import sejong.smartnotice.helper.dto.request.register.AdminRegisterDTO;
 import sejong.smartnotice.helper.dto.response.SingleResponse;
 import sejong.smartnotice.helper.dto.response.TownResponse;
 import sejong.smartnotice.service.AdminService;
@@ -81,9 +81,9 @@ public class TownApiController {
         Town town = townService.findById(id);
         if (userId != null && adminId == null) {
             User user = userService.findById(userId); // 주민 정보 조회
-            AdminRegisterDTO registerDTO = new AdminRegisterDTO(user.getName(), user.getTel(),
+            AdminRegisterRequest registerDTO = new AdminRegisterRequest(user.getName(), user.getTel(),
                     user.getAccount().getLoginId(), user.getAccount().getLoginPw(), AdminType.ADMIN);
-            Long newAdminId = adminService.register(registerDTO); // 주민 계정 정보로 관리자 계정 생성
+            adminService.register(registerDTO); // 주민 계정 정보로 관리자 계정 생성
             user.modifyUserIsAdmin(); // 마을 주민이 마을 관리자라는 상태 표시
             townService.addTownAdmin(adminService.findById(adminId), town); // 관리자와 마을 연결
         } else if (userId == null && adminId != null) {
