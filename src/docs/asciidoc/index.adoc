@@ -57,3 +57,75 @@ include::{snippets}/delete-town/path-parameters.adoc[]
 
 .http-response
 include::{snippets}/delete-town/http-response.adoc[]
+
+== AdminApiController
+=== 전체 관리자 조회
+.curl-request
+include::{snippets}/get-admin/curl-request.adoc[]
+
+.http-request
+include::{snippets}/get-admin/http-request.adoc[]
+
+.http-response
+include::{snippets}/get-admin/http-response.adoc[]
+
+.response-fields
+include::{snippets}/get-admin/response-fields.adoc[]
+
+=== 마을별 관리자 조회
+.curl-request
+include::{snippets}/get-townAdmin/curl-request.adoc[]
+
+.http-request
+include::{snippets}/get-townAdmin/http-request.adoc[]
+
+.request-parameters
+include::{snippets}/get-townAdmin/request-parameters.adoc[]
+
+.http-response
+include::{snippets}/get-townAdmin/http-response.adoc[]
+
+.response-fields
+include::{snippets}/get-townAdmin/response-fields.adoc[]
+
+=== 관리자 등록
+.curl-request
+include::{snippets}/post-admin/curl-request.adoc[]
+
+.http-request
+include::{snippets}/post-admin/http-request.adoc[]
+
+.request-fields
+include::{snippets}/post-admin/request-fields.adoc[]
+
+.http-response
+include::{snippets}/post-admin/http-response.adoc[]
+
+=== 관리자 수정
+.curl-request
+include::{snippets}/patch-admin/curl-request.adoc[]
+
+.http-request
+include::{snippets}/patch-admin/http-request.adoc[]
+
+.path-parameters
+include::{snippets}/patch-admin/path-parameters.adoc[]
+
+.request-fields
+include::{snippets}/patch-admin/request-fields.adoc[]
+
+.http-response
+include::{snippets}/patch-admin/http-response.adoc[]
+
+=== 관리자 삭제
+.curl-request
+include::{snippets}/delete-admin/curl-request.adoc[]
+
+.http-request
+include::{snippets}/delete-admin/http-request.adoc[]
+
+.path-parameters
+include::{snippets}/delete-admin/path-parameters.adoc[]
+
+.http-response
+include::{snippets}/delete-admin/http-response.adoc[]

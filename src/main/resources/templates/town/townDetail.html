@@ -520,13 +520,13 @@
                                     $("#adminList").empty(); // 먼저 모달 데이터 초기화
                                     var str = '';
                                     $("#RepTownAdminSettingModal").modal('show');
-                                    $.each(result, function (i) {
+                                    $.each(result.data, function (i) {
                                         str += '<tr>';
                                         str += '<td>'
-                                            + result[i].id + '</td><td>'
-                                            + result[i].name + '</td><td>'
-                                            + result[i].tel + '</td><td>'
-                                            + '<button type="button" class="btn btn-success" onclick="rtaBtnClick(' + [[${townData.townId}]] + ',' + result[i].id + ')">선택</button>'
+                                            + result.data[i].id + '</td><td>'
+                                            + result.data[i].name + '</td><td>'
+                                            + result.data[i].tel + '</td><td>'
+                                            + '<button type="button" class="btn btn-success" onclick="rtaBtnClick(' + [[${townData.townId}]] + ',' + result.data[i].id + ')">선택</button>'
                                             + '</td>'
                                         str += '</tr>';
                                     });
