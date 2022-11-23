@@ -124,24 +124,14 @@
 
                         $("#modifyBtn").on("click", function () {
                             if (confirm("정보를 수정하시겠습니까?")) {
-                                var selectedTown = [];
-                                $("input[type=checkbox][name=town]:checked").each(function() {
-                                    selectedTown.push($(this).val());
-                                })
-                                var adminModifyData = {
-                                    id: [[${admin.id}]],
-                                    name: $("#name").val(),
-                                    tel: $("#tel").val(),
-                                    townIdList: selectedTown
-                                }
+                                var data = $("#formObj").serialize();
                                 $.ajax({
                                     method: "PATCH",
                                     url: "/api/admin/" + [[${admin.id}]],
-                                    data: JSON.stringify(adminModifyData),
-                                    dataType: "JSON",
-                                    contentType: 'application/json; charset=utf-8',
+                                    data: data,
+                                    dataType: "text",
                                     success: function (result) {
-                                        alert(result.message);
+                                        alert(result);
                                         window.location.reload(); // 현재 페이지 새로고침
                                     },
                                     error: function (response) {
