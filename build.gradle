@@ -1,30 +1,39 @@
 plugins {
 	id 'org.springframework.boot' version '2.6.5'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id "org.asciidoctor.jvm.convert" version "3.3.2" // AsciiDoc 문서 생성을 위한 플러그인
 	id 'java'
 }
 
 group = 'sejong'
-version = '1.0.2-SNAPSHOT-' + new Date().format("yyyyMMddHHmmss")
+version = '1.0.3-SNAPSHOT-' + new Date().format("yyyyMMddHHmmss")
 sourceCompatibility = '11'
 
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+	asciidoctorExtensions
 }
 
 repositories {
 	mavenCentral()
 }
 
+ext { // 전역변수 (Extension)
+	snippetsDir = file('build/generated-snippets') // API 문서 스니핏이 생성될 경로 지정
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// Security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+	testImplementation 'org.springframework.security:spring-security-test'
 
 	// MQTT Integration
 	implementation("org.springframework.boot:spring-boot-starter-integration")
@@ -54,8 +63,9 @@ dependencies {
 	// JSON Parser
 	implementation 'org.json:json:20220320'
 
-	// Swagger
-	implementation "io.springfox:springfox-boot-starter:3.0.0"
+	// REST Docs
+	asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 
 	// MapStruct
 	implementation 'org.mapstruct:mapstruct:1.5.3.Final'
@@ -68,8 +78,28 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
-tasks.named('test') {
+tasks.named('test')  {
+	outputs.dir snippetsDir
 	useJUnitPlatform()
+}
+
+asciidoctor {
+	inputs.dir snippetsDir
+	configurations 'asciidoctorExtensions'
+	dependsOn test // test 결과에 의존한다 = test가 성공한 이후에 수행
+}
+
+task copyDocument(type: Copy) {
+	dependsOn asciidoctor // asciidoctor 성공한 이후에 수행
+	from file("${asciidoctor.outputDir}") // 생성된 html 파일을 리소스 폴더로 복사한다
+	into file("src/main/resources/static/docs")  // 인터넷을 통해 API 문서를 볼 수 있도록 하기 위함!
+}
+
+bootJar {
+	dependsOn copyDocument // copyDocument 성공한 이후에 수행
+	from ("${asciidoctor.outputDir}") {
+		into 'static/docs'
+	}
 }
 
 // plain.jar 생성 금지

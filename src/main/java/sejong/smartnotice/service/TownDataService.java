@@ -91,10 +91,13 @@ public class TownDataService {
         townData.setTownAdminCnt(townAdminCnt.intValue());
 
         // 5. 대표 관리자 조회
-        Admin representativeAdmin = em.createQuery("select a from Admin a where a.id=:adminId", Admin.class)
+        List<Admin> representativeAdminList = em.createQuery("select a from Admin a where a.id=:adminId", Admin.class)
                 .setParameter("adminId", town.getRepresentativeAdminId())
-                .getSingleResult();
-        townData.setMainAdminName(representativeAdmin.getName());
+                .getResultList(); 
+        if(!representativeAdminList.isEmpty()) {
+            townData.setMainAdminName(representativeAdminList.get(0).getName());
+        }
+        
 
         // update
         return townDataRepository.save(townData);
