@@ -7,10 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 import sejong.smartnotice.domain.TownAdmin;
 import sejong.smartnotice.domain.Region;
 import sejong.smartnotice.domain.Town;
+import sejong.smartnotice.domain.TownData;
 import sejong.smartnotice.domain.member.Admin;
-import sejong.smartnotice.helper.dto.request.TownRequest.TownCreateRequest;
-import sejong.smartnotice.helper.dto.request.TownRequest.TownModifyRequest;
-import sejong.smartnotice.helper.dto.response.TownResponse;
+import sejong.smartnotice.helper.dto.request.TownModifyRequest;
+import sejong.smartnotice.helper.dto.TownRegisterDTO;
 import sejong.smartnotice.repository.TownRepository;
 
 import javax.persistence.EntityManager;
@@ -31,18 +31,18 @@ public class TownService {
     private final EntityManager em;
 
     // 신규 마을 등록
-    public TownResponse register(TownCreateRequest registerDTO) {
+    public Long register(TownRegisterDTO registerDTO) {
         log.info("== 마을 등록 ==");
         // 1. 지역 조회
         Region region = findRegion(registerDTO.getRegionCode());
 
         // 2. 마을 생성
         Town town = Town.createTown(registerDTO.getName(), region);
-        Town createdTown = townRepository.save(town);
-
+        Town saveTown = townRepository.save(town);
+        
         // Redis create
-        townDataService.action(townData -> townData, createdTown.getId());
-        return TownResponse.from(createdTown);
+        townDataService.action(townData -> townData, town.getId());
+        return saveTown.getId();
     }
 
     // 마을 삭제
@@ -62,10 +62,10 @@ public class TownService {
     }
 
     // 마을 정보 수정
-    public TownResponse modifyTownInfo(Long townId, TownModifyRequest modifyDTO) {
+    public void modifyTownInfo(TownModifyRequest modifyDTO) {
         log.info("== 마을 정보 수정 ==");
         // 1. 마을 조회 및 검증
-        Town town = findById(townId);
+        Town town = findById(modifyDTO.getId());
 
         // 2. 지역 조회 및 검증
         Region region = findRegion(modifyDTO.getRegionCode());
@@ -79,8 +79,6 @@ public class TownService {
             townData.setRegionId(region.getId());
             return townData;
         }, town.getId());
-
-        return TownResponse.from(town);
     }
 
     // 관리자 관리 마을 목록 수정

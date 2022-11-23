@@ -9,7 +9,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sejong.smartnotice.domain.Town;
-import sejong.smartnotice.helper.dto.request.AdminRequest.AdminRegisterRequest;
+import sejong.smartnotice.helper.dto.request.register.AdminRegisterDTO;
 import sejong.smartnotice.helper.dto.request.register.SupporterRegisterDTO;
 import sejong.smartnotice.helper.dto.request.register.UserRegisterDTO;
 import sejong.smartnotice.helper.validator.UserAccountRegisterValidator;
@@ -46,12 +46,12 @@ public class RegisterController {
 
     @GetMapping("/admin")
     public String registerAdminForm(Model model) {
-        model.addAttribute("admin", new AdminRegisterRequest());
+        model.addAttribute("admin", new AdminRegisterDTO());
         return "register/admin";
     }
 
     @PostMapping("/admin")
-    public String registerAdmin(@Valid @ModelAttribute("admin") AdminRegisterRequest registerDTO,
+    public String registerAdmin(@Valid @ModelAttribute("admin") AdminRegisterDTO registerDTO,
                                 BindingResult bindingResult,
                                 RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {

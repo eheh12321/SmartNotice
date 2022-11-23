@@ -35,11 +35,6 @@ public class Region {
         this.ny = ny;
     }
 
-    public Region(String parentRegion, String childRegion) {
-        this.parentRegion = parentRegion;
-        this.childRegion = childRegion;
-    }
-
     // 날씨 갱신
     public void updateRegionWeather(Weather weather) {
         this.weather = weather;
