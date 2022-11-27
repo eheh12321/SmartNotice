@@ -137,22 +137,23 @@
                             $.ajax({
                                 type: "GET",
                                 url: "/api/announces/" + data[0],
+                                dataType: "JSON",
                                 success: function (result) {
                                     console.log("방송을 가져왔습니다");
-                                    $("#modal_src").attr('src', result.src);
-                                    $("#modal_id").val(result.id);
-                                    $("#modal_title").text("방송 제목: " + result.title);
-                                    $("#modal_producer").text("방송자: " + result.producer);
-                                    $("#modal_contents").text("방송 내용: " + result.content);
-                                    $("#modal_time").text("방송 시각: " + result.time);
+                                    $("#modal_src").attr('src', result.data.src);
+                                    $("#modal_id").val(result.data.id);
+                                    $("#modal_title").text("방송 제목: " + result.data.title);
+                                    $("#modal_producer").text("방송자: " + result.data.producer);
+                                    $("#modal_contents").text("방송 내용: " + result.data.content);
+                                    $("#modal_time").text("방송 시각: " + result.data.time);
 
-                                    if (result.status == "ABLE") {
+                                    if (result.data.status == "청취 가능") {
                                         $("#modal_status").attr('class', 'badge bg-success');
                                         $("#modal_status").text('청취 가능');
-                                    } else if (result.status == "DISABLE") {
+                                    } else if (result.data.status == "청취 불가능") {
                                         $("#modal_status").attr('class', 'badge bg-secondary');
                                         $("#modal_status").text('청취 불가능');
-                                    } else if (result.status == "ERROR") {
+                                    } else if (result.data.status == "방송 실패") {
                                         $("#modal_status").attr('class', 'badge bg-danger');
                                         $("#modal_status").text('방송 실패');
                                     } else {
@@ -162,8 +163,8 @@
 
                                     $("#deleteFormId").attr('value', data[0])
                                 },
-                                error: function (xhr) {
-                                    alert("방송을 가져오는데 실패했습니다");
+                                error: function (response) {
+                                    alert(response.message);
                                 }
                             });
                         });
@@ -175,13 +176,13 @@
                                 $.ajax({
                                     method: "DELETE",
                                     url: "/api/announces/" + id,
-                                    dataType: "text",
+                                    dataType: "JSON",
                                     success: function (result) {
-                                        alert(result);
+                                        alert(result.message);
                                         window.location.reload(); // 현재 페이지 새로고침
                                     },
-                                    error: function (xhr) {
-                                        alert("알 수 없는 오류가 발생했습니다");
+                                    error: function (result) {
+                                        alert(result.message);
                                     }
                                 });
                             }
