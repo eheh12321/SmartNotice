@@ -32,8 +32,8 @@ public class AnnounceResponse {
                 .producer(announce.getProducer())
                 .src(announce.getFullPath())
                 .content(announce.getContents())
-                .status(announce.getStatus().name())
-                .category(announce.getCategory().name())
+                .status(announce.getStatus().getName())
+                .category(announce.getCategory().getName())
                 .time(announce.getTime().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")))
                 .townList(townList).build();
     }

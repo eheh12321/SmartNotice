@@ -70,7 +70,7 @@
                                                     <input type="checkbox" th:value="*{town.id}" name="townId">
                                                 </li>
                                             </ul>
-                                            <input type="hidden" th:value="${admin.getId()}" name="adminId">
+                                            <input type="hidden" th:value="${admin.getId()}" id="adminId" name="adminId">
                                             <input type="hidden" name="category" value="NORMAL">
                                             <input type="hidden" name="type" value="TEXT">
                                             <hr>
@@ -155,20 +155,29 @@
                             }
 
                             if (confirm("문자 방송 하시겠습니까?")) {
-                                console.log(lastInputText);
-                                if (lastInputText != null && inputText == lastInputText) {
-                                    formObj.append($('<input/>', {type: 'hidden', name: 'voiceData', value: lastData}));
+                                var selectedTown = [];
+                                $("input[type=checkbox][name=townId]:checked").each(function() {
+                                    selectedTown.push($(this).val());
+                                })
+                                var textAnnounceData = {
+                                    title: $("#title").val(),
+                                    textData: inputText,
+                                    category: $("input[type=radio]:checked").val(),
+                                    adminId: $("#adminId").val(),
+                                    townId: selectedTown,
+                                    type: 'TEXT'
                                 }
-                                var data = formObj.serialize();
                                 $.ajax({
                                     method: "POST",
                                     url: "/api/announces",
-                                    data: data,
+                                    data: JSON.stringify(textAnnounceData),
+                                    dataType: "JSON", // 내가 받는
+                                    contentType: 'application/json; charset=utf-8', // 내가 주는
                                     success: function (result) {
                                         window.location.href = "/announces";
                                     },
                                     error: function (response) {
-                                        alert("알 수 없는 오류가 발생했습니다");
+                                        alert(response.message);
                                     }
                                 });
                             }
