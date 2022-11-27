@@ -57,6 +57,7 @@ include::{snippets}/delete-town/response-fields.adoc[]
 
 == AdminApiController
 === 전체 관리자 조회
+
 .http-request
 include::{snippets}/get-admin/http-request.adoc[]
 

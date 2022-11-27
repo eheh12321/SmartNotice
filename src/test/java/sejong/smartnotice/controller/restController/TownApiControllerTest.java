@@ -22,7 +22,6 @@ import sejong.smartnotice.helper.dto.response.TownResponse;
 import sejong.smartnotice.service.AdminService;
 import sejong.smartnotice.service.TownService;
 import sejong.smartnotice.service.UserService;
-
 import java.util.Locale;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -51,7 +50,7 @@ class TownApiControllerTest {
 
     @Autowired
     private MessageSource messageSource;
-
+    
     @MockBean
     private TownService townService;
 
