@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -26,6 +27,7 @@ import sejong.smartnotice.service.TownService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -51,6 +53,9 @@ class AdminApiControllerTest {
 
     @Autowired
     private MockMvc mvc;
+
+    @Autowired
+    private MessageSource messageSource;
 
     @MockBean
     private AdminService adminService;
@@ -90,6 +95,7 @@ class AdminApiControllerTest {
                 .andExpect(jsonPath("$.data[1].tel").value("111-1111-0002"))
                 .andExpect(jsonPath("$.data[1].type").value("마을 관리자"))
                 .andExpect(jsonPath("$.data[1].manageTownList.size()").value(1))
+                .andExpect(jsonPath("$.message").value(messageSource.getMessage("api.get.admin", null, Locale.KOREA)))
                 .andDo(document(
                         "get-admin",
                         preprocessRequest(prettyPrint()),
@@ -135,6 +141,7 @@ class AdminApiControllerTest {
                 .andExpect(jsonPath("$.data[1].tel").value("111-1111-0002"))
                 .andExpect(jsonPath("$.data[1].type").value("마을 관리자"))
                 .andExpect(jsonPath("$.data[1].manageTownList.size()").value(1))
+                .andExpect(jsonPath("$.message").value(messageSource.getMessage("api.get.admin", null, Locale.KOREA)))
                 .andDo(document(
                         "get-townAdmin",
                         preprocessRequest(prettyPrint()),
@@ -189,6 +196,7 @@ class AdminApiControllerTest {
                 .andExpect(jsonPath("$.data.tel").value("010-1234-1234"))
                 .andExpect(jsonPath("$.data.type").value("마을 관리자"))
                 .andExpect(jsonPath("$.data.manageTownList.size()").value(0))
+                .andExpect(jsonPath("$.message").value(messageSource.getMessage("api.create.admin", null, Locale.KOREA)))
                 .andDo(document(
                         "post-admin",
                         preprocessRequest(prettyPrint()),
@@ -241,6 +249,7 @@ class AdminApiControllerTest {
                 .andExpect(jsonPath("$.data.tel").value("010-1234-1234"))
                 .andExpect(jsonPath("$.data.type").value("마을 관리자"))
                 .andExpect(jsonPath("$.data.manageTownList.size()").value(1))
+                .andExpect(jsonPath("$.message").value(messageSource.getMessage("api.update.admin", null, Locale.KOREA)))
                 .andDo(document(
                         "patch-admin",
                         preprocessRequest(prettyPrint()),
@@ -283,7 +292,7 @@ class AdminApiControllerTest {
         actions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isArray())
-                .andExpect(jsonPath("$.message").value("관리자를 성공적으로 삭제했습니다."))
+                .andExpect(jsonPath("$.message").value(messageSource.getMessage("api.delete.admin", null, Locale.KOREA)))
                 .andDo(document(
                         "delete-admin",
                         preprocessRequest(prettyPrint()),

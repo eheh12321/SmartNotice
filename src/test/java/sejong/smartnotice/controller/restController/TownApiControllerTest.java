@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -21,6 +22,8 @@ import sejong.smartnotice.helper.dto.response.TownResponse;
 import sejong.smartnotice.service.AdminService;
 import sejong.smartnotice.service.TownService;
 import sejong.smartnotice.service.UserService;
+
+import java.util.Locale;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -45,6 +48,9 @@ class TownApiControllerTest {
 
     @Autowired
     private MockMvc mvc;
+
+    @Autowired
+    private MessageSource messageSource;
 
     @MockBean
     private TownService townService;
@@ -85,7 +91,7 @@ class TownApiControllerTest {
                 .andExpect(jsonPath("$.data.name").value("새 마을 이름"))
                 .andExpect(jsonPath("$.data.parentRegion").value("상위 지역명"))
                 .andExpect(jsonPath("$.data.childRegion").value("하위 지역명"))
-                .andExpect(jsonPath("$.message").value("마을 생성을 완료했습니다."))
+                .andExpect(jsonPath("$.message").value(messageSource.getMessage("api.create.town", null, Locale.KOREA)))
                 .andDo(document(
                         "post-town",
                         preprocessRequest(prettyPrint()),
@@ -134,7 +140,7 @@ class TownApiControllerTest {
                 .andExpect(jsonPath("$.data.name").value("수정된 마을 이름"))
                 .andExpect(jsonPath("$.data.parentRegion").value("상위 지역명"))
                 .andExpect(jsonPath("$.data.childRegion").value("하위 지역명"))
-                .andExpect(jsonPath("$.message").value("마을 수정을 완료했습니다."))
+                .andExpect(jsonPath("$.message").value(messageSource.getMessage("api.update.town", null, Locale.KOREA)))
                 .andDo(document(
                         "patch-town",
                         preprocessRequest(prettyPrint()),
@@ -171,7 +177,7 @@ class TownApiControllerTest {
         // Then
         actions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("마을 삭제를 완료했습니다."))
+                .andExpect(jsonPath("$.message").value(messageSource.getMessage("api.delete.town", null, Locale.KOREA)))
                 .andDo(document(
                         "delete-town",
                         preprocessRequest(prettyPrint()),
@@ -179,7 +185,7 @@ class TownApiControllerTest {
                         pathParameters(parameterWithName("townId").description("마을 번호")),
                         responseFields(
                                 fieldWithPath("data").type(OBJECT).description("응답 데이터").ignored(),
-                                fieldWithPath("message").type(STRING).description("마을 삭제를 완료했습니다.")
+                                fieldWithPath("message").type(STRING).description("응답 메시지")
                         )
                 ));
     }

@@ -2,6 +2,7 @@ package sejong.smartnotice.controller.restController;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
@@ -19,6 +20,7 @@ import sejong.smartnotice.service.TownService;
 import sejong.smartnotice.service.UserService;
 
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;
 
 @Slf4j
@@ -28,40 +30,45 @@ import javax.validation.constraints.Positive;
 @RequiredArgsConstructor
 public class TownApiController {
 
+    private final MessageSource messageSource;
+
     private final TownService townService;
     private final UserService userService;
     private final AdminService adminService;
 
     @Secured({"ROLE_SUPER"}) // 최고 관리자만 접근 가능
     @PostMapping
-    public ResponseEntity<SingleResponse<?>> register(@RequestBody TownCreateRequest registerDTO) {
+    public ResponseEntity<SingleResponse<?>> register(@RequestBody TownCreateRequest registerDTO,
+                                                      HttpServletRequest request) {
         if (registerDTO.getRegionCode() == 1L) {
             throw new IllegalArgumentException("마을을 선택해주세요");
         }
         TownResponse response = townService.register(registerDTO);
         return ResponseEntity.ok(SingleResponse.<TownResponse>builder()
                 .data(response)
-                .message("마을 생성을 완료했습니다.").build());
+                .message(messageSource.getMessage("api.create.town", null, request.getLocale())).build());
     }
 
     @Secured({"ROLE_SUPER"})
     @PatchMapping("/{townId}")
     public ResponseEntity<SingleResponse<?>> modify(
             @PathVariable @Positive Long townId,
-            @RequestBody TownModifyRequest modifyDTO) {
+            @RequestBody TownModifyRequest modifyDTO,
+            HttpServletRequest request) {
         TownResponse response = townService.modifyTownInfo(townId, modifyDTO);
         return ResponseEntity.ok(SingleResponse.<TownResponse>builder()
                 .data(response)
-                .message("마을 수정을 완료했습니다.").build());
+                .message(messageSource.getMessage("api.update.town", null, request.getLocale())).build());
     }
 
     @Secured({"ROLE_SUPER"})
     @DeleteMapping("/{townId}")
-    public ResponseEntity<SingleResponse<?>> remove(@PathVariable @Positive Long townId) {
+    public ResponseEntity<SingleResponse<?>> remove(@PathVariable @Positive Long townId,
+                                                    HttpServletRequest request) {
         townService.delete(townId);
         return ResponseEntity.ok(SingleResponse.<TownResponse>builder()
                 .data(null)
-                .message("마을 삭제를 완료했습니다.").build());
+                .message(messageSource.getMessage("api.delete.town", null, request.getLocale())).build());
     }
 
     @Secured({"ROLE_SUPER"})
