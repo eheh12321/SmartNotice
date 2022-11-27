@@ -18,6 +18,7 @@ import sejong.smartnotice.domain.announce.AnnounceCategory;
 import sejong.smartnotice.domain.announce.AnnounceStatus;
 import sejong.smartnotice.domain.member.Admin;
 import sejong.smartnotice.helper.dto.request.AnnounceRequest;
+import sejong.smartnotice.helper.dto.response.AnnounceResponse;
 import sejong.smartnotice.helper.event.CreatedAnnounceEvent;
 import sejong.smartnotice.repository.AnnounceRepository;
 
@@ -40,7 +41,7 @@ public class AnnounceService {
 
     private final ApplicationEventPublisher publisher;
 
-    public Long registerAnnounce(AnnounceRequest registerDTO) {
+    public AnnounceResponse registerAnnounce(AnnounceRequest registerDTO) {
         log.info("== 방송 등록 ==");
         Admin admin = adminService.findById(registerDTO.getAdminId());
 
@@ -59,14 +60,14 @@ public class AnnounceService {
                 return townData;
             }, town.getId());
         });
-        announceRepository.save(announce);
+        Announce savedAnnounce = announceRepository.save(announce);
 
         // 2. 파일 저장을 위한 Event 생성
         log.info(">> 방송 저장 Event 요청");
         byte[] audioContents = registerDTO.getVoiceData() != null ? Base64.getDecoder().decode(registerDTO.getVoiceData()) : null;
-        publisher.publishEvent(new CreatedAnnounceEvent(this, announce, audioContents));
+        publisher.publishEvent(new CreatedAnnounceEvent(this, savedAnnounce, audioContents));
 
-        return announce.getId();
+        return AnnounceResponse.from(savedAnnounce);
     }
 
     public void delete(Long announceId) {
@@ -109,7 +110,6 @@ public class AnnounceService {
     }
 
     public Announce findById(Long id) {
-        log.info("== 아이디로 방송 조회 ==");
         return announceRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("방송이 존재하지 않습니다"));
     }
