@@ -87,10 +87,7 @@ class TownApiControllerTest {
         // Then
         actions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.id").value(townId))
-                .andExpect(jsonPath("$.data.name").value("새 마을 이름"))
-                .andExpect(jsonPath("$.data.parentRegion").value("상위 지역명"))
-                .andExpect(jsonPath("$.data.childRegion").value("하위 지역명"))
+                .andExpect(jsonPath("$.data").exists())
                 .andExpect(jsonPath("$.message").value(messageSource.getMessage("api.create.town", null, Locale.KOREA)))
                 .andDo(document(
                         "post-town",
@@ -136,10 +133,7 @@ class TownApiControllerTest {
         // Then
         actions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.id").value(1L))
-                .andExpect(jsonPath("$.data.name").value("수정된 마을 이름"))
-                .andExpect(jsonPath("$.data.parentRegion").value("상위 지역명"))
-                .andExpect(jsonPath("$.data.childRegion").value("하위 지역명"))
+                .andExpect(jsonPath("$.data").exists())
                 .andExpect(jsonPath("$.message").value(messageSource.getMessage("api.update.town", null, Locale.KOREA)))
                 .andDo(document(
                         "patch-town",
@@ -177,6 +171,7 @@ class TownApiControllerTest {
         // Then
         actions
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").exists())
                 .andExpect(jsonPath("$.message").value(messageSource.getMessage("api.delete.town", null, Locale.KOREA)))
                 .andDo(document(
                         "delete-town",

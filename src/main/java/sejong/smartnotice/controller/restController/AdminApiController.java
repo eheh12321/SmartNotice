@@ -82,7 +82,7 @@ public class AdminApiController {
     }
 
     @PatchMapping("/{adminId}")
-    public ResponseEntity<SingleResponse<?>> modifyAdmin(@PathVariable Long adminId,
+    public ResponseEntity<SingleResponse<?>> updateAdmin(@PathVariable Long adminId,
                                                          @AuthenticationPrincipal Admin admin,
                                                          @Validated @RequestBody AdminModifyRequest modifyRequest,
                                                          BindingResult bindingResult,

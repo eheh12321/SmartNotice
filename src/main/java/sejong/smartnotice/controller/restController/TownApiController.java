@@ -13,6 +13,7 @@ import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.helper.dto.request.AdminRequest.AdminRegisterRequest;
 import sejong.smartnotice.helper.dto.request.TownRequest.TownCreateRequest;
 import sejong.smartnotice.helper.dto.request.TownRequest.TownModifyRequest;
+import sejong.smartnotice.helper.dto.response.Response;
 import sejong.smartnotice.helper.dto.response.SingleResponse;
 import sejong.smartnotice.helper.dto.response.TownResponse;
 import sejong.smartnotice.service.AdminService;
@@ -22,6 +23,7 @@ import sejong.smartnotice.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 @Slf4j
 @Validated
@@ -38,7 +40,7 @@ public class TownApiController {
 
     @Secured({"ROLE_SUPER"}) // 최고 관리자만 접근 가능
     @PostMapping
-    public ResponseEntity<SingleResponse<?>> register(@RequestBody TownCreateRequest registerDTO,
+    public ResponseEntity<SingleResponse<?>> createTown(@RequestBody TownCreateRequest registerDTO,
                                                       HttpServletRequest request) {
         if (registerDTO.getRegionCode() == 1L) {
             throw new IllegalArgumentException("마을을 선택해주세요");
@@ -51,7 +53,7 @@ public class TownApiController {
 
     @Secured({"ROLE_SUPER"})
     @PatchMapping("/{townId}")
-    public ResponseEntity<SingleResponse<?>> modify(
+    public ResponseEntity<SingleResponse<?>> updateTown(
             @PathVariable @Positive Long townId,
             @RequestBody TownModifyRequest modifyDTO,
             HttpServletRequest request) {
@@ -63,11 +65,11 @@ public class TownApiController {
 
     @Secured({"ROLE_SUPER"})
     @DeleteMapping("/{townId}")
-    public ResponseEntity<SingleResponse<?>> remove(@PathVariable @Positive Long townId,
-                                                    HttpServletRequest request) {
+    public ResponseEntity<Response<?>> deleteTown(@PathVariable @Positive Long townId,
+                                                  HttpServletRequest request) {
         townService.delete(townId);
-        return ResponseEntity.ok(SingleResponse.<TownResponse>builder()
-                .data(null)
+        return ResponseEntity.ok(Response.<String>builder()
+                .data(List.of())
                 .message(messageSource.getMessage("api.delete.town", null, request.getLocale())).build());
     }
 
