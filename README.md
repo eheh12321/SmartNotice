@@ -3,7 +3,7 @@
 
 <br>
 
-![image](https://user-images.githubusercontent.com/74748851/204075436-a8abbdf6-72b0-42a5-a788-70b888e4a339.png)
+![2022-11-26 15;32;59](https://user-images.githubusercontent.com/74748851/204188635-a8189254-3df2-4c08-8a35-f5952700af0a.PNG)
 
 * :link: 배포 링크: https://www.smarttownnotice.gq/
   - 관리자 계정: testSuperAdmin / testSuperAdmin!  
@@ -11,11 +11,11 @@
   - 보호자 계정: testSupporter / testSupporter!
   
 
-* :pushpin: 프로젝트 상세 소개 페이지: https://www.notion.so/dcca07ba3275410e95afe00b7a4953f1
+* :pushpin: 프로젝트 상세 소개 페이지: https://southern-sunflower-809.notion.site/b807a769421946229c95d7c01376fc4a
 <br>
 
 ## 1. 기술 스택
-![image](https://user-images.githubusercontent.com/74748851/204075222-af719afb-c155-499d-b5a5-c016302c1828.png)
+![image](https://user-images.githubusercontent.com/74748851/204188375-675728ca-61bd-4af3-bf16-7d03598ac84c.png)
 
 <br>
 
