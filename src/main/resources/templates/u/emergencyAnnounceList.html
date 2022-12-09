@@ -134,11 +134,11 @@
                 url:"/announces/"+data[0],
                 success: function(result) {
                     console.log("방송을 가져왔습니다");
-                    $("#modal_src").attr('src', result.src);
-                    $("#modal_title").text("방송 제목: " + result.title);
-                    $("#modal_producer").text("방송자: " + result.producer);
-                    $("#modal_contents").text("방송 내용: " + result.contents);
-                    $("#modal_time").text("방송 시각: " + result.time);
+                    $("#modal_src").attr('src', result.data.src);
+                    $("#modal_title").text("방송 제목: " + result.data.title);
+                    $("#modal_producer").text("방송자: " + result.data.producer);
+                    $("#modal_contents").text("방송 내용: " + result.data.contents);
+                    $("#modal_time").text("방송 시각: " + result.data.time);
 
                     $("#deleteFormId").attr('value', data[0])
                     $("#deleteForm").attr('action', '/announces/' + data[0]);
