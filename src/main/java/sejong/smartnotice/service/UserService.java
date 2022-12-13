@@ -2,6 +2,8 @@ package sejong.smartnotice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,11 +18,11 @@ import sejong.smartnotice.domain.member.Account;
 import sejong.smartnotice.domain.member.User;
 import sejong.smartnotice.helper.dto.UserModifyDTO;
 import sejong.smartnotice.helper.dto.request.register.UserRegisterDTO;
+import sejong.smartnotice.helper.dto.response.UserResponse;
 import sejong.smartnotice.repository.UserRepository;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -95,13 +97,12 @@ public class UserService implements UserDetailsService {
 
     // 마을 주민 조회
     public User findById(Long userId) {
-        log.info("== 마을 주민 아이디 조회 ==");
-        return validateUserId(userId);
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("마을 주민이 존재하지 않습니다"));
     }
 
-    public List<User> findAll() {
-        log.info("== 마을 주민 전체 조회 ==");
-        return userRepository.findAll();
+    public Page<UserResponse> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable).map(UserResponse::from);
     }
 
     // 마을 주민 목록 조회 (소속 마을과 함께 fetch join)
@@ -126,16 +127,6 @@ public class UserService implements UserDetailsService {
         log.info("== 마을 주민 전화번호 조회 ==");
         return userRepository.findByTel(tel)
                 .orElseThrow(() -> new EntityNotFoundException("마을 주민이 존재하지 않습니다"));
-    }
-
-    private User validateUserId(Long userId) {
-        log.info("== 마을 주민 아이디 검증 ==");
-        Optional<User> opt = userRepository.findById(userId);
-        if (opt.isEmpty()) {
-            log.warn("마들주민이 존재하지 않습니다");
-            throw new NullPointerException("마들주민이 존재하지 않습니다");
-        }
-        return opt.get();
     }
 
     // 주민 중복 검증

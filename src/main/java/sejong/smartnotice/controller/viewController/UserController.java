@@ -33,20 +33,20 @@ public class UserController {
 
     @GetMapping
     public String getUserList(Authentication auth, Model model, @RequestParam(required = false) String name) {
-        log.info("== 마을 주민 목록 조회 ==");
-        List<User> userList;
-        if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPER"))) {
-            // 마을 관리자인 경우 관리 마을 대상으로 한 주민 목록만 조회
-            Admin authAdmin = adminService.findByLoginId(auth.getName());
-            List<Town> managedTownList = townService.findTownByAdmin(authAdmin);
-            userList = em.createQuery("select distinct u from User u join fetch u.supporterList s join fetch u.town where u.town in(:townList)", User.class)
-                    .setParameter("townList", managedTownList)
-                    .getResultList();
-        } else {
-            userList = em.createQuery("select distinct u from User u left join fetch u.supporterList s join fetch u.town", User.class)
-                    .getResultList();
-        }
-        model.addAttribute("userList", userList);
+//        log.info("== 마을 주민 목록 조회 ==");
+//        List<User> userList;
+//        if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPER"))) {
+//            // 마을 관리자인 경우 관리 마을 대상으로 한 주민 목록만 조회
+//            Admin authAdmin = adminService.findByLoginId(auth.getName());
+//            List<Town> managedTownList = townService.findTownByAdmin(authAdmin);
+//            userList = em.createQuery("select distinct u from User u join fetch u.supporterList s join fetch u.town where u.town in(:townList)", User.class)
+//                    .setParameter("townList", managedTownList)
+//                    .getResultList();
+//        } else {
+//            userList = em.createQuery("select distinct u from User u left join fetch u.supporterList s join fetch u.town", User.class)
+//                    .getResultList();
+//        }
+//        model.addAttribute("userList", userList);
         return "user/list";
     }
 
