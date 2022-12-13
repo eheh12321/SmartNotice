@@ -44,19 +44,14 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr th:each="user: ${userList}">
-                                                <td th:text="${user.id}"></td>
-                                                <td th:text="${user.name}"></td>
-                                                <td th:text="${user.birth}"></td>
-                                                <td th:text="${user.tel}"></td>
-                                                <td th:text="${user.address}"></td>
-                                                <td th:text="${user.town.name}"></td>
-                                                <td th:if="${user.supporterList.size()>0}"
-                                                    th:text="${user.supporterList}">
-                                                </td>
-                                                <td th:unless="${user.supporterList.size()>0}"
-                                                    th:text="|-|">
-                                                </td>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>이름</td>
+                                                <td>2022-12-13</td>
+                                                <td>010-1234-1234</td>
+                                                <td>마을 주민 주소</td>
+                                                <td>마을 이름</td>
+                                                <td>보호자 이름</td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -81,12 +76,25 @@
 </div>
 <!-- / Layout wrapper -->
 <script type="text/javascript">
-    $(document).ready(function() {
-        var table = $("#userTable").DataTable();
+    $(document).ready(function () {
+        var table = $("#userTable").DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": "/api/user",
+            "columns": [
+                {"data": "id"},
+                {"data": "name"},
+                {"data": "birth"},
+                {"data": "tel"},
+                {"data": "address"},
+                {"data": "townName"},
+                {"data": "supporterList"}
+            ]
+        });
 
-        $("#userTable tbody").on("click", "tr", function (){
+        $("#userTable tbody").on("click", "tr", function () {
             var data = table.row(this).data();
-            window.location.href="/users/" + data[0];
+            window.location.href = "/users/" + data.id;
         });
     });
 </script>
