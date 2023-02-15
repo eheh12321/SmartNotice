@@ -10,8 +10,6 @@
   - 주민 계정: testUser / testUser!
   - 보호자 계정: testSupporter / testSupporter!
   
-
-* :pushpin: 프로젝트 상세 소개 페이지: https://southern-sunflower-809.notion.site/b807a769421946229c95d7c01376fc4a
 <br>
 
 ## 1. 기술 스택
