@@ -27,7 +27,7 @@ IDLE_PROFILE=$(find_idle_profile) # SubShell을 호출해 함수의 결과값을
 
 echo "> ${JAR_NAME} 을 profile=${IDLE_PROFILE} 로 실행합니다"
 
-nohup java -jar \
+java -jar \
         -Dspring.config.location=classpath:/application.properties,$REPOSITORY/application-real-db.properties,classpath:/application-$IDLE_PROFILE.properties,$REPOSITORY/application-api.properties,$REPOSITORY/application-https.properties \
         -Dspring.profiles.active=${IDLE_PROFILE} \
         ${JAR_NAME} > ${REPOSITORY}/nohup.out 2>&1 &
