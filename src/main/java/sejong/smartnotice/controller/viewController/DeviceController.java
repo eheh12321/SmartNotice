@@ -15,9 +15,9 @@ import sejong.smartnotice.service.DeviceService;
 import sejong.smartnotice.service.UserService;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Controller
 @RequestMapping("/devices")
@@ -72,6 +72,7 @@ public class DeviceController {
     }
 
     @ResponseBody
+    @Transactional
     @GetMapping("/{id}/update")
     public ResponseEntity<SensorDataDTO> updateUserDeviceSensorData(@PathVariable Long id) {
         User user = userService.findById(id);
@@ -80,9 +81,28 @@ public class DeviceController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
         Sensor sensor = em.createQuery("select s from Sensor s where s.device=:device order by s.id desc", Sensor.class)
-                .setParameter("device", device).setMaxResults(1).getSingleResult();
+                .setParameter("device", device).setMaxResults(1).getSingleResult(); // DB에 저장된 마지막 데이터 조회
 
-        SensorDataDTO dto = new SensorDataDTO(sensor.getId(), sensor.getMeasureTime(), sensor.getTemp(), sensor.getCo2(), sensor.getOxy(), sensor.getLumnc(), sensor.getAction());
-        return ResponseEntity.ok().body(dto);
+        // 임의로 데이터 값 변경
+        double[] op = new double[3];
+        double prefix;
+        for(int i = 0; i < op.length; i++) {
+            prefix = Math.random() * 2;
+            if(prefix < 1) {
+                op[i] -= Math.random();
+            } else {
+                op[i] += Math.random();
+            }
+        }
+        Sensor newSensorData = Sensor.builder()
+                .action(sensor.getAction())
+                .co2(sensor.getCo2() + op[0])
+                .lumnc(sensor.getLumnc())
+                .oxy(sensor.getOxy() + op[1])
+                .temp(sensor.getTemp() + op[2])
+                .measureTime(LocalDateTime.now())
+                .device(sensor.getDevice()).build();
+        em.persist(newSensorData);
+        return ResponseEntity.ok(SensorDataDTO.from(newSensorData));
     }
 }
